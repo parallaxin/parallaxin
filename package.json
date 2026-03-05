@@ -1,0 +1,17 @@
+{
+  "name": "parallaxin-root",
+  "private": true,
+  "workspaces": [
+    "site"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=site",
+    "build": "npm run build --workspace=site",
+    "preview": "npm run preview --workspace=site",
+    "check": "npm run check --workspace=site",
+    "lint:links": "npm run lint:links --workspace=site"
+  },
+  "devDependencies": {
+    "rosey": "^2.3.0"
+  }
+}
