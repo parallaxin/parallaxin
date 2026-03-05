@@ -1,0 +1,1 @@
+// Global styles live in public/styles/global.css. This directory is reserved for component-scoped styles 

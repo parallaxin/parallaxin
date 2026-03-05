@@ -1,0 +1,52 @@
+﻿---
+import { t, getDirection, type Locale } from '@i18n/utils';
+
+interface Props {
+  title?: string;
+  locale?: Locale;
+}
+
+const { title, locale = 'en' } = Astro.props;
+const dir = getDirection(locale);
+const siteTitle = t(locale, 'site.title');
+const pageTitle = title ?  ${title} | ${siteTitle} : siteTitle;
+---
+
+<!DOCTYPE html>
+<html lang={locale} dir={dir}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={t(locale, 'site.tagline')} />
+  
+  <!-- No tracking. Constitution Article 7.4 -->
+  <!-- No analytics scripts. Ever. -->
+  
+  <title>{pageTitle}</title>
+  <link rel="stylesheet" href="/styles/global.css" />
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/" class="site-title">{siteTitle}</a>
+      <span class="tagline">{t(locale, 'site.tagline')}</span>
+      <div class="nav-links">
+        <a href="/conflicts">{t(locale, 'site.nav.conflicts')}</a>
+        <a href="/actors">{t(locale, 'site.nav.actors')}</a>
+        <a href="/autopsies">{t(locale, 'site.nav.autopsies')}</a>
+        <a href="/constitution">{t(locale, 'site.nav.constitution')}</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <slot />
+  </main>
+
+  <footer>
+    <p>{t(locale, 'footer.constitution_link')}</p>
+    <p>{t(locale, 'footer.license_code')} Â· {t(locale, 'footer.license_content')}</p>
+    <p class="no-tracking">{t(locale, 'footer.no_tracking')}</p>
+  </footer>
+</body>
+</html>

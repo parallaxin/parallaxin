@@ -1,0 +1,41 @@
+﻿{
+  "site": {
+    "title": "Parallaxin",
+    "tagline": "What power says. What power does. The distance between.",
+    "nav": {
+      "conflicts": "Conflicts",
+      "actors": "Actors",
+      "autopsies": "Claim Autopsies",
+      "about": "About",
+      "constitution": "Constitution"
+    }
+  },
+  "content": {
+    "documented": "DOCUMENTED",
+    "inference": "INFERENCE",
+    "source_needed": "SOURCE NEEDED",
+    "last_updated": "Last updated",
+    "confidence": "Confidence",
+    "sources": "Sources",
+    "stated": "Stated position",
+    "documented_action": "Documented action",
+    "the_gap": "The gap",
+    "who_benefits": "Who benefits from this claim",
+    "draft_notice": "DRAFT â€” This record has not completed the Evidence Standard review. Sources marked [SOURCE NEEDED] require verification before publication.",
+    "framing_notice": "The selection of a start date is an editorial act. Events have documented antecedents. See full timeline."
+  },
+  "evidence": {
+    "tier1": "Primary source",
+    "tier2": "Corroborated",
+    "tier3": "Single-source â€” awaiting corroboration",
+    "high": "High confidence",
+    "medium": "Medium confidence",
+    "low": "Low confidence"
+  },
+  "footer": {
+    "license_code": "Code: MIT License",
+    "license_content": "Content: CC-BY 4.0",
+    "constitution_link": "Governed by the Parallaxin Constitution",
+    "no_tracking": "No tracking. No accounts. No data collected."
+  }
+}

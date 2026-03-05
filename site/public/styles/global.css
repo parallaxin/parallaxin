@@ -1,0 +1,228 @@
+﻿/* Parallaxin â€” Global Styles */
+/* Design principle: readable, fast, works everywhere */
+
+:root {
+  --color-bg: #0a0a0a;
+  --color-surface: #141414;
+  --color-border: #2a2a2a;
+  --color-text: #e0e0e0;
+  --color-text-muted: #888;
+  --color-accent: #4a9eff;
+  --color-documented: #4ade80;
+  --color-inference: #fbbf24;
+  --color-source-needed: #ef4444;
+  --color-gap: #f97316;
+  --font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Cascadia Code', 'Fira Code', monospace;
+  --max-width: 800px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html {
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* RTL support */
+[dir="rtl"] {
+  font-family: 'Noto Sans Arabic', var(--font-body);
+}
+
+/* Navigation */
+header nav {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.site-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.tagline {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  color: var(--color-accent);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+/* Content type badges */
+.badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-documented {
+  background: rgba(74, 222, 128, 0.15);
+  color: var(--color-documented);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.badge-inference {
+  background: rgba(251, 191, 36, 0.15);
+  color: var(--color-inference);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.badge-source-needed {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--color-source-needed);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badge-gap {
+  background: rgba(249, 115, 22, 0.15);
+  color: var(--color-gap);
+  border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+/* Draft notice */
+.draft-notice {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-left: 4px solid var(--color-source-needed);
+  padding: 1rem;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+/* Framing notice â€” Constitution 3.4 */
+.framing-notice {
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-left: 4px solid var(--color-inference);
+  padding: 1rem;
+  margin-bottom: 2rem;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+/* Source citations */
+.source {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.source a {
+  color: var(--color-accent);
+}
+
+.source .tier {
+  opacity: 0.7;
+}
+
+/* Gap analysis blocks */
+.gap-block {
+  border-left: 4px solid var(--color-gap);
+  padding: 1rem;
+  margin: 1.5rem 0;
+  background: rgba(249, 115, 22, 0.05);
+}
+
+.gap-block .stated { color: var(--color-text-muted); }
+.gap-block .actual { color: var(--color-text); }
+.gap-block .gap-summary { 
+  color: var(--color-gap); 
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+
+th, td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+[dir="rtl"] th,
+[dir="rtl"] td {
+  text-align: right;
+}
+
+th {
+  color: var(--color-text-muted);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+/* Footer */
+footer {
+  margin-top: 4rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.no-tracking {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  opacity: 0.5;
+}
+
+/* Headings */
+h1 { font-size: 1.8rem; margin-bottom: 1rem; }
+h2 { font-size: 1.4rem; margin: 2rem 0 0.75rem; color: var(--color-accent); }
+h3 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; }
+
+a { color: var(--color-accent); }
+
+/* Code comments â€” Constitution 3.5 */
+.context-note {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  border-left: 2px solid var(--color-border);
+  padding-left: 1rem;
+  margin: 1rem 0;
+}
+
+.context-note::before {
+  content: "// ";
+  opacity: 0.5;
+}
