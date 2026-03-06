@@ -377,10 +377,40 @@ Site-wide Consistency: Refactored autopsies/[id].astro to use the global tier st
 - Step 3: Update the GitHub Actions workflow.
 Replaced .github/workflows/deploy.yml:
 
-- Step 4: Enabling GitHub Pages in repo settings:
+- Step 4: Enabling GitHub Pages in repo settings
 
+- Step 5: Push and deploy
+`https://parallaxin.github.io/parallaxin/`
+
+![alt text](image-1.png)
 
 ---
+
+### Phase 2: Content Expansion (In Progress)
+
+#### 1. Actor Records Conversion (✅)
+Converted the raw draft reports from `tmp/raw-reports/` into schema-compliant frontmatter within `site/src/content/actors/`.
+
+- **ACT-2026-0001 (Benjamin Netanyahu)**: Mapped identity, stated positions, documented actions, and gap analysis. Preserved all `[SOURCE NEEDED]` markers.
+- **ACT-2026-0002 (Donald John Trump)**: Mapped identity and interests. Updated Miriam Adelson's PAC contribution figure to the verified **$106M**.
+
+**Decision**: Sticking with `record_id` (e.g., ACT-2026-0001) as the primary identifier instead of names. It reinforces the "archival record" aesthetic and avoids URL collisions.
+
+#### 2. Actor Detail Page (✅)
+Implemented `site/src/pages/actors/[id].astro`.
+
+- **Side-by-Side Gap Analysis**: Designed a responsive grid that contrasts **STATED** vs **DOCUMENTED** behavior, followed by "The Gap" analysis. 
+- **Personal Interests**: Added sections for documented interests (e.g., Netanyahu's corruption trials, Trump's real estate debt) labeled as `documented` or `inference`.
+- **Status Banners**: Draft records now show a clear banner warning about `[SOURCE NEEDED]` markers.
+
+#### 3. Build Verification (✅)
+- **Astro Build**: Confirmed **8 pages** are now indexed (1 home, 1 constitution, 1 autopsy list, 1 autopsy detail, 1 actor list, 2 actor details, 1 conflict list placeholder).
+- **Listing Page**: Fixed a dev-server sync issue (restarted) to ensure the `/actors` listing correctly enumerates both new records.
+
+#### 4. Next Steps (#TODO)
+- **CON-2025-0001**: Convert the primary conflict record. This is a complex mapping (timeline, antecedents, economic/human cost).
+- **Source Archiving**: Run `check-sources.mjs` on the new actor files to verify and archive the few live links we have (e.g., JCPOA memorandum).
+- **Conflict Page**: Build `site/src/pages/conflicts/[id].astro`.
 
 - Follow up on:
  `docs\7-status.md`
