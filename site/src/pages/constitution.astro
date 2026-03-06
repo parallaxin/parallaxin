@@ -1,0 +1,204 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Constitution">
+  <article class="constitution" style="max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem;">
+
+    <h1>The Parallaxin Constitution</h1>
+    <p class="meta" style="color: var(--color-text-muted); margin-bottom: 2rem;">
+      Version 1.0 — Ratified before the first line of code
+    </p>
+
+    <section class="preamble" style="border-left: 4px solid var(--color-inference); padding: 1rem 1.5rem; margin-bottom: 2.5rem; background: var(--color-inference-bg);">
+      <p>
+        Power speaks constantly. It speaks through press conferences, official
+        statements, sanctions, treaties, and bombs. It speaks through silence —
+        what it chooses not to say.
+      </p>
+      <p style="margin-top: 1rem;">
+        Parallaxin exists because there is a measurable, documentable distance
+        between what power says and what power does. That distance is not opinion.
+        It is not ideology. It is geometry — observable from enough angles, with
+        enough evidence, by anyone willing to look.
+      </p>
+      <p style="margin-top: 1rem;">
+        This platform does not hold truth. It holds evidence. It does not deliver
+        verdicts. It delivers the raw material from which any honest person can
+        reach their own.
+      </p>
+      <p style="margin-top: 1rem;">
+        We are not neutral. Neutrality is a political position that pretends
+        equidistance between a documented fact and a convenient lie. We are
+        <strong>objective</strong> — we follow evidence wherever it leads,
+        regardless of who it serves or who it damages.
+      </p>
+      <p style="margin-top: 1rem;">
+        We are a lens. Not an oracle. Not a judge. Not an activist. A lens.
+      </p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>Article 1: Purpose</h2>
+      <p><strong>1.1</strong> Parallaxin exists to document, in plain language and verifiable sources, the gap between the stated positions and the documented actions of powerful actors — governments, institutions, military forces, and individuals who command resources that affect human life at scale.</p>
+      <p style="margin-top: 0.75rem;"><strong>1.2</strong> Parallaxin is not a news organization. It does not compete for speed. It competes for accuracy and completeness.</p>
+      <p style="margin-top: 0.75rem;"><strong>1.3</strong> Parallaxin is not a political project. It has no position on how the world should be governed, which states should exist, or which ideologies are correct. It has one position only: that documented actions should be compared against stated claims, and the result should be available to every person on earth, free of charge, in their own language.</p>
+      <p style="margin-top: 0.75rem;"><strong>1.4</strong> The primary audience is the citizen — the person whose life is affected by the decisions of powerful actors and who deserves access to the documented record of what those actors say versus what they do.</p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>Article 2: The Evidence Standard</h2>
+      <p style="font-style: italic; color: var(--color-text-secondary); margin-bottom: 1rem;">This is the spine of the platform. Everything else is scaffolding around it.</p>
+
+      <h3 style="margin-top: 1.5rem;">2.1 — Hierarchy of Sources</h3>
+      <table class="tiers-table">
+        <thead>
+          <tr>
+            <th style="width: 100px;">Tier</th>
+            <th>Description</th>
+            <th>Use</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="source-tier source-tier--tier-1">Tier 1</span></td>
+            <td>Official documents, transcripts, court records, international body reports (UN, IAEA, ICC, ICJ), verified satellite imagery, video/photo with confirmed geolocation and timestamp, financial disclosures</td>
+            <td>Foundation of all claims</td>
+          </tr>
+          <tr>
+            <td><span class="source-tier source-tier--tier-2">Tier 2</span></td>
+            <td>Multiple independent outlets reporting the same fact with named sources; OSINT analysis with documented methodology; peer-reviewed academic research; leaked documents verified by 2+ outlets</td>
+            <td>Sufficient for publication</td>
+          </tr>
+          <tr>
+            <td><span class="source-tier source-tier--tier-3">Tier 3</span></td>
+            <td>One outlet, one named source, or anonymous source with circumstantial corroboration</td>
+            <td>Published <strong>only</strong> with label: <em>"Single-source — awaiting corroboration"</em></td>
+          </tr>
+          <tr>
+            <td><span class="source-tier source-tier--tier-4">Tier 4</span></td>
+            <td>Anonymous claims without corroboration, unverified social media, "sources say" without attribution</td>
+            <td><strong>Excluded from all content</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="margin-top: 1rem;"><strong>2.2</strong> No factual claim enters the platform without Tier 2 sourcing at minimum.</p>
+      <p style="margin-top: 0.75rem;"><strong>2.3</strong> Tier 3 material may appear in Claim Autopsies as <em>the claim being examined</em>, never as established fact.</p>
+      <p style="margin-top: 0.75rem;"><strong>2.4</strong> Tier 4 material does not appear on the platform in any context.</p>
+      <p style="margin-top: 0.75rem;"><strong>2.5</strong> Every source is linked. Every link is archived. If a source disappears, the archived version is cited.</p>
+      <p style="margin-top: 0.75rem;"><strong>2.6</strong> This standard applies equally to all actors — allied, adversarial, or unaligned with any position.</p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>Article 3: Content Principles</h2>
+
+      <p><strong>3.1 — Describe acts, not identities.</strong></p>
+      <ul style="margin: 0.75rem 0 0.75rem 1.5rem; color: var(--color-text-secondary);">
+        <li>Never: "terrorist," "freedom fighter," "regime," "moderate," "extremist"</li>
+        <li>Always: specific descriptions of specific acts with specific dates and specific sources</li>
+      </ul>
+
+      <p><strong>3.2 — Separate fact from inference. Always. Visibly.</strong></p>
+      <div style="margin: 0.75rem 0; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <span class="tag tag--documented" style="font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.4rem; border-radius: 2px; background: var(--color-documented); color: var(--color-bg);">DOCUMENTED</span>
+        <span style="color: var(--color-text-secondary); font-size: 0.9rem;">= a verifiable fact with cited source</span>
+      </div>
+      <div style="margin: 0.5rem 0; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <span class="tag tag--inference" style="font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.4rem; border-radius: 2px; background: var(--color-inference); color: var(--color-bg);">INFERENCE</span>
+        <span style="color: var(--color-text-secondary); font-size: 0.9rem;">= a reasoned conclusion drawn from documented facts, labeled as such</span>
+      </div>
+
+      <p style="margin-top: 1rem;"><strong>3.3 — Strong voice, not editorial voice.</strong></p>
+      <p style="color: var(--color-text-secondary);">We do not tell the reader what to think. We arrange documented facts in sequence so that the weight is felt without instruction.</p>
+
+      <p style="margin-top: 1rem;"><strong>3.4 — No framing by omission.</strong></p>
+      <p style="color: var(--color-text-secondary);">Choosing where a story "begins" is an editorial act. Parallaxin documents the full chain of documented causation, not a politically convenient starting point.</p>
+
+      <p style="margin-top: 1rem;"><strong>3.5 — "Code comments" for context.</strong></p>
+      <p style="color: var(--color-text-secondary);">Where context is needed, it is visually distinct from factual documentation — like a developer's comment in source code.</p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>Article 4: Governance</h2>
+      <p><strong>4.1 — Evidence over authority.</strong> No individual — including the founder — may override the Evidence Standard.</p>
+      <p style="margin-top: 0.75rem;"><strong>4.2 — Disputes are resolved by evidence, not consensus.</strong></p>
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); padding: 1rem; margin: 0.75rem 0; font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.8;">
+        Step 1: Claim challenged → challenger provides counter-evidence<br/>
+        Step 2: Both claims reviewed against primary sources<br/>
+        Step 3: If sources conflict → both documented with quality rating<br/>
+        Step 4: If one source clearly stronger → stronger source prevails<br/>
+        Step 5: If genuinely ambiguous → labeled "contested — see sources." Never resolved by vote.
+      </div>
+      <p style="margin-top: 0.75rem;"><strong>4.3</strong> All editorial decisions are public. No private channels.</p>
+      <p style="margin-top: 0.75rem;"><strong>4.4</strong> A first-time contributor's evidence is weighed identically to the founder's.</p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>Article 5: Anti-Capture</h2>
+      <table>
+        <thead><tr><th>Acceptable</th><th>Unacceptable</th></tr></thead>
+        <tbody>
+          <tr><td>Distributed crowdfunding (no single source &gt; 5%)</td><td>Foundation grants with reporting requirements</td></tr>
+          <tr><td>Infrastructure donations with zero editorial conditions</td><td>Corporate sponsorship of any kind</td></tr>
+          <tr><td>Volunteer labor</td><td>Government funding from any government</td></tr>
+          <tr><td>Free-tier hosting services</td><td>Advertising of any kind</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top: 0.75rem;"><strong>5.5 — Capture detection.</strong> The Git repository is the immune system. Every edit is permanently recorded. Capture cannot hide in a Git log.</p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>Article 6: The Founder Clause</h2>
+      <p><strong>6.1</strong> The individual who initiated this project holds no permanent authority over it.</p>
+      <p style="margin-top: 0.75rem;"><strong>6.2</strong> Upon the first external contribution, the founder becomes one contributor among equals.</p>
+      <p style="margin-top: 0.75rem;"><strong>6.3</strong> The founder holds no veto power, no special editing rights, no privileged access.</p>
+      <p style="margin-top: 0.75rem;"><strong>6.5</strong> If the founder attempts to override this Constitution, the community's response is to fork, not to comply.</p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>Article 7: Openness and Resilience</h2>
+      <p><strong>7.1</strong> All code is open source (MIT License). All content is open access (CC-BY 4.0).</p>
+      <p style="margin-top: 0.75rem;"><strong>7.2</strong> The complete platform is forkable at any time by anyone. No mechanism exists to prevent forking. This is by design.</p>
+      <p style="margin-top: 0.75rem;"><strong>7.3</strong> If the primary instance is captured, any fork adhering to this Constitution is a legitimate continuation.</p>
+      <p style="margin-top: 0.75rem;"><strong>7.4</strong> No user accounts required to read. No personal data collected. No analytics.</p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>Article 8: Language and Access</h2>
+      <p><strong>8.1</strong> Every human being affected by the actions of powerful actors deserves access to the documented record in their own language.</p>
+      <p style="margin-top: 0.75rem;"><strong>8.2</strong> English is the initial working language. Arabic and Farsi are immediate priorities.</p>
+      <p style="margin-top: 0.75rem;"><strong>8.4</strong> The technical architecture supports internationalization from day one.</p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>Article 9: What We Are Not</h2>
+      <ul style="margin: 0.75rem 0 0 1.5rem; line-height: 2;">
+        <li>We are not a news agency. We document patterns, not breaking stories.</li>
+        <li>We are not activists. We do not advocate for policy or regime change.</li>
+        <li>We are not judges. We present evidence and let the record speak.</li>
+        <li>We are not anonymous accusers. Every claim is sourced and verifiable.</li>
+        <li>We are not combatants. Documenting a conflict is not participating in it.</li>
+      </ul>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>Article 10: Amendment</h2>
+      <p><strong>10.1</strong> This Constitution may be amended by evidence-based argument documented publicly.</p>
+      <p style="margin-top: 0.75rem;"><strong>10.2</strong> No amendment may weaken the Evidence Standard (Article 2), Anti-Capture provisions (Article 5), or the Founder Clause (Article 6). These are immutable.</p>
+      <p style="margin-top: 0.75rem;"><strong>10.3</strong> Proposed amendments require a 30-day public comment period.</p>
+    </section>
+
+    <section style="border-top: 1px solid var(--color-border); padding-top: 2rem; margin-top: 3rem;">
+      <p style="color: var(--color-text-muted); font-style: italic;">
+        This document was written before the first line of code, before the first content record.
+        The platform belongs to this document. Not to its founder. Not to its most prolific contributor.
+        Not to any government, because none are welcome to the table.
+      </p>
+      <p style="margin-top: 1rem; color: var(--color-text-muted); font-family: var(--font-mono); font-size: 0.85rem;">
+        Parallaxin Constitution v1.0 · Committed 2026-03-05
+      </p>
+    </section>
+
+  </article>
+</Base>

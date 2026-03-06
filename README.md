@@ -6,9 +6,9 @@ A lens for documenting the gap between what powerful actors say and what they do
 
 ## Structure
 
-- `docs/` â€” Planning documents, templates, constitution
-- `site/` â€” Astro static site (the platform)
-- `CONSTITUTION.md` â€” Governing document (symlink to docs/4-constitution.md)
+- `docs/`  Planning documents, templates, constitution
+- `site/` `â€”` Astro static site (the platform)
+- `CONSTITUTION.md` Governing document (symlink to docs/4-constitution.md)
 
 ## Contributing
 

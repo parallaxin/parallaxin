@@ -20,6 +20,8 @@ Thumbs.db
 # IDE
 .vscode/settings.json
 .idea/
+.vscode/
+
 
 # Logs
 *.log

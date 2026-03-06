@@ -1,9 +1,8 @@
 ﻿import { defineConfig } from 'astro/config';
-import mdx from '@astrojs/mdx';
 
 export default defineConfig({
-  site: 'https://parallaxin.report',
-  integrations: [mdx()],
+  site: 'https://parallaxin.github.io',
+  base: '/parallaxin/',
   output: 'static',
   build: {
     format: 'directory'

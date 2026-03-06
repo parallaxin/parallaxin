@@ -234,6 +234,4 @@ It belongs to anyone who believes that the distance between what power says and 
 
 Parallaxin Constitution v1.0
 Committed to repository: 2026-03-05
-SHA: [first commit hash]
-
-
+SHA: [089a588e148e3cc6deb23518694dfcfff7b3fad7]

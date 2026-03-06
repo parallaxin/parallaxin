@@ -1,17 +1,19 @@
 {
-  "name": "parallaxin-root",
+  "name": "parallaxin",
+  "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    "site"
-  ],
+  "type": "module",
   "scripts": {
-    "dev": "npm run dev --workspace=site",
-    "build": "npm run build --workspace=site",
-    "preview": "npm run preview --workspace=site",
-    "check": "npm run check --workspace=site",
-    "lint:links": "npm run lint:links --workspace=site"
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "lint:links": "node scripts/check-sources.mjs"
+  },
+  "dependencies": {
+    "astro": "^5.18.0"
   },
   "devDependencies": {
-    "rosey": "^2.3.0"
+    "typescript": "^5.0.0"
   }
 }

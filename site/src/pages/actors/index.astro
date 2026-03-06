@@ -1,0 +1,59 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+let actors = [];
+try {
+  actors = await getCollection('actors');
+} catch (e) {
+  // Collection empty — expected during early build
+}
+const base = import.meta.env.BASE_URL;
+---
+
+<Base title="Actor Records">
+  <article style="max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem;">
+
+    <h1>Actor Records</h1>
+    <p style="color: var(--color-text-secondary); margin-bottom: 2rem; line-height: 1.7;">
+      Stated positions. Documented actions. The gap between them.
+      Each record tracks what a powerful actor says publicly against
+      what their documented behavior shows — sourced, timestamped, verifiable.
+    </p>
+
+    {actors.length === 0 ? (
+      <div style="padding: 2rem; border: 1px dashed var(--color-border); text-align: center; color: var(--color-text-muted);">
+        <p>Actor records are being sourced and verified.</p>
+        <p style="font-size: 0.85rem; margin-top: 0.5rem;">
+          Draft records for key actors in the current conflict are in preparation.
+          Each must meet the <a href={base + 'constitution'} style="color: var(--color-documented);">Evidence Standard</a> before publication.
+        </p>
+      </div>
+    ) : (
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        {actors.map((actor) => (
+          <a href={base + 'actors/' + actor.id.replace('.md', '')}
+             style="display: block; padding: 1.25rem; border: 1px solid var(--color-border); background: var(--color-surface); text-decoration: none; color: inherit;"
+             class="card-link">
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-text-muted);">
+              {actor.data.record_id}
+            </span>
+            <h2 style="font-size: 1.1rem; font-weight: 600; margin: 0.4rem 0; color: var(--color-text-primary);">
+              {actor.data.name}
+            </h2>
+            <p style="font-size: 0.85rem; color: var(--color-text-secondary);">
+              {actor.data.role}
+            </p>
+          </a>
+        ))}
+      </div>
+    )}
+
+  </article>
+</Base>
+
+<style>
+  .card-link:hover {
+    border-color: var(--color-documented) !important;
+  }
+</style>

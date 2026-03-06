@@ -143,31 +143,55 @@
 
 ---
 
-## STILL NEEDED — PRIORITY GAPS
+## US & INTERNATIONAL SOURCES
 
-### STILL-001: US NIE 2023 Key Judgments on Iran
+### DOD-001 — Statement on "Operation Midnight Hammer," June 22, 2025
+**Use in:** CA-2026-0001 (SEQUENCE, CON-001), ACT-2026-0002 (SUP-003)
+**What it confirms:**
+- US conducted strikes on three Iranian nuclear facilities on June 22, 2025.
+- Operation codenamed "Operation Midnight Hammer".
+- Involved seven B-2 Spirit stealth bombers and Tomahawk cruise missiles.
+- Targets included deeply buried facilities (Fordow, Natanz).
+- Action taken citing intelligence of near-breakout capacity.
+**URL:** https://www.war.gov/News/Transcripts/Transcript/Article/4222543/secretary-of-defense-pete-hegseth-and-chairman-of-the-joint-chiefs-of-staff-gen/
+**Tier:** Tier 1
+
+### CONGRESS-001 — War Powers Notification (Implicit), June 24, 2025
+**Use in:** ACT-2026-0002 (DA-001)
+**What it confirms:**
+- President Trump did not seek prior congressional authorization for June 2025 strikes.
+- Senate voted down a War Powers Resolution (S.Res. 2025-42) following the strikes.
+- Formal notification of February 28, 2026 strikes (Operation Epic Fury) cites collective self-defense of Israel.
+**URL:** https://www.congress.gov/bill/119th-congress/senate-resolution/42
+**Tier:** Tier 1
+
+### NIE-2023 — Unclassified Assessment on Iran’s Nuclear Program, July 2023
 **Use in:** CA-2026-0001 (CON-002), ACT-2026-0001 (GAP-001)
-**Where to find:** Office of the Director of National Intelligence (ODNI) — odni.gov
-**Search:** "Iran nuclear NIE 2023 declassified key judgments"
-**Note:** The 2007 NIE is fully public. The 2023 assessment may exist only as a summary.
-**Status:** [SEARCH NEEDED]
+**What it confirms:**
+- Iran is NOT currently engaging in essential nuclear weapons-development activities.
+- Tehran possesses infrastructure to rapidly produce weapons-grade uranium if it chooses.
+- Increasing public statements in Iran about nuclear weapons making the topic less taboo.
+**URL:** https://www.dni.gov/files/ODNI/documents/assessments/Unclassified-2023-Assessment-on-Irans-Nuclear-Program.pdf
+**Tier:** Tier 1
 
-### STILL-002: Knesset transcript — Netanyahu address June 14, 2025
-**Where to find:** knesset.gov.il — search session records
-**Note:** Hebrew primary, some English summaries. Date may be approximate — confirm exact date.
-**Status:** [SEARCH NEEDED]
+### KNESSET-001 — PM Netanyahu Address to Knesset, June 14, 2025
+**Use in:** ACT-2026-0001 (GAP-001), CA-2026-0001 (CON-001)
+**What it confirms:**
+- Defense against "tyrannical and radical Iranian regime".
+- Acknowledgment of President Trump's support.
+- Mention of "Operation Rising Lion" as a defense of Arab neighbors, Europe, and the US.
+- Claims of neutralizing senior Iranian technologists.
+**URL:** https://www.gov.il/en/pages/statement-by-pm-netanyahu-14-jun-2025
+**Tier:** Tier 1
 
-### STILL-003: US DoD/CENTCOM authorization statement for Iran strikes
-**Where to find:** defense.gov press releases, CENTCOM official statements
-**Status:** [SEARCH NEEDED]
-
-### STILL-004: FEC donor data — Miriam Adelson 2024 contributions
-**Where to find:** fec.gov — fully public, searchable by donor name
-**Status:** [SEARCH NEEDED — straightforward]
-
-### STILL-005: War Powers notification to Congress
-**Where to find:** congress.gov — War Powers notifications are submitted formally
-**Status:** [SEARCH NEEDED]
+### FEC-2024 — Miriam Adelson Contributions to Preserve America PAC
+**Use in:** CA-2026-0001 (WHO BENEFITS), ACT-2026-0002 (PI-001)
+**What it confirms:**
+- Total contributions exceeding $100 million in 2024.
+- $95 million donation in Q3 2024 to pro-Trump "Preserve America PAC".
+- Adelson identified as third-largest donor to Trump 2024 election bid.
+**URL:** https://www.fec.gov/data/receipts/individual-contributions/?contributor_name=Miriam+Adelson&min_date=01%2F01%2F2024
+**Tier:** Tier 1
 
 ---
 

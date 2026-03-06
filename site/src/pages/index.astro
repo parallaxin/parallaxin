@@ -1,46 +1,459 @@
 ﻿---
-import Base from '@layouts/Base.astro';
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { t, getDirection } from '../i18n/utils';
+
+const locale = 'en';
+const dir = getDirection(locale);
+
+// Load published content
+const allAutopsies = await getCollection('autopsies');
+const allConflicts = await getCollection('conflicts', ({ data }) => data.status === 'active' || data.status === 'published');
+const allActors = await getCollection('actors', ({ data }) => data.status === 'published');
+const base = import.meta.env.BASE_URL;
 ---
 
-<Base title="Home">
-  <h1>Parallaxin</h1>
-  <p class="tagline">What power says. What power does. The distance between.</p>
+<Base title={t(locale, 'site.title')} locale={locale}>
 
-  <section>
-    <h2>What this is</h2>
-    <p>
-      A platform that documents the gap between the stated positions and 
-      the documented actions of powerful actors â€” governments, militaries, 
-      institutions, and the individuals who command them.
-    </p>
-    <p>
-      We are not neutral. We are <strong>objective</strong>. The difference: 
-      neutrality pretends both sides of a fact are equal. Objectivity follows 
-      evidence regardless of who it inconveniences.
-    </p>
-    <p>
-      Every claim is sourced. Every source is linked. Every inference is labeled.
-      <a href="/constitution">Read the Constitution.</a>
-    </p>
-  </section>
+  <main class="site-main" dir={dir}>
 
-  <section>
-    <h2>Active Conflicts</h2>
-    <p><em>Pilot records in development. First conflict record deploying soon.</em></p>
-    <!-- Dynamic listing will go here -->
-  </section>
+    <!-- MISSION STATEMENT -->
+    <section class="mission">
+      <div class="mission-inner">
+        <h1 class="mission-title">
+          What power says.<br/>
+          What power does.<br/>
+          <span class="mission-gap">The distance between them.</span>
+        </h1>
+        <p class="mission-body">
+          Parallaxin documents the gap between the stated positions and
+          documented actions of powerful actors — governments, military forces,
+          and individuals whose decisions affect human life at scale.
+        </p>
+        <p class="mission-body">
+          Every claim is sourced. Every inference is labeled.
+          No editorials. No ads. No accounts required.
+        </p>
+        <a href={base + 'constitution'} class="mission-link">
+          Read the Constitution →
+        </a>
+      </div>
+    </section>
 
-  <section>
-    <h2>How this works</h2>
-    <ul>
-      <li><strong>Conflict Records</strong> â€” the documented timeline and context of active conflicts</li>
-      <li><strong>Actor Records</strong> â€” what powerful actors say vs. what they do</li>
-      <li><strong>Claim Autopsies</strong> â€” official claims dissected against primary evidence</li>
-    </ul>
-    <p>
-      All content is open source. All changes are tracked in Git. 
-      All contributions are reviewed against the 
-      <a href="/constitution">Evidence Standard</a>.
-    </p>
-  </section>
+    <!-- LEGEND -->
+    <section class="legend">
+      <div class="legend-inner">
+        <span class="legend-item legend-documented">
+          <span class="legend-dot"></span>
+          DOCUMENTED — verified, sourced fact
+        </span>
+        <span class="legend-item legend-inference">
+          <span class="legend-dot"></span>
+          INFERENCE — reasoned conclusion from documented facts, labeled as such
+        </span>
+        <span class="legend-item legend-contested">
+          <span class="legend-dot"></span>
+          CONTESTED — single-source or disputed, awaiting corroboration
+        </span>
+      </div>
+    </section>
+
+    <!-- CLAIM AUTOPSIES -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Claim Autopsies</h2>
+        <p class="section-desc">
+          Official claims examined against available evidence.
+          The record that answers: <em>what did the evidence actually show?</em>
+        </p>
+      </div>
+
+      {allAutopsies.length === 0 ? (
+        <div class="empty-state">
+          <p>First autopsies are under review. Check back shortly.</p>
+        </div>
+      ) : (
+        <div class="card-grid">
+          {allAutopsies.map((autopsy) => (
+            <a href={base + `autopsies/${autopsy.id.replace('.md', '')}`} class="card">
+              <div class="card-meta">
+                <span class="card-id">{autopsy.data.record_id}</span>
+                <span class={`card-confidence card-confidence--${autopsy.data.confidence_rating}`}>
+                  {autopsy.data.confidence_rating} confidence
+                </span>
+              </div>
+              <h3 class="card-title">{autopsy.data.title}</h3>
+              <p class="card-speaker">
+                {autopsy.data.the_claim?.speaker}
+              </p>
+              <p class="card-verdict">
+                Evidence: <strong>{autopsy.data.evidence_assessment?.claim_supported_by_evidence}</strong>
+              </p>
+              <span class="card-arrow">Read autopsy →</span>
+            </a>
+          ))}
+        </div>
+      )}
+    </section>
+
+    <!-- ACTIVE CONFLICTS -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Active Conflicts</h2>
+        <p class="section-desc">
+          Documented timelines, actor records, and human cost.
+          Updated when new evidence is verified.
+        </p>
+      </div>
+
+      {allConflicts.length === 0 ? (
+        <div class="empty-state">
+          <p>Conflict records are being sourced and verified.</p>
+        </div>
+      ) : (
+        <div class="card-grid">
+          {allConflicts.map((conflict) => (
+            <a href={base + `conflicts/${conflict.slug}`} class="card">
+              <div class="card-meta">
+                <span class="card-id">{conflict.data.record_id}</span>
+                <span class={`card-status card-status--${conflict.data.status}`}>
+                  {conflict.data.status}
+                </span>
+              </div>
+              <h3 class="card-title">{conflict.data.name}</h3>
+              <p class="card-date">
+                From {conflict.data.start_date}
+                {conflict.data.end_date ? ` to ${conflict.data.end_date}` : ' — ongoing'}
+              </p>
+              <p class="card-geo">
+                {conflict.data.geography?.join(', ')}
+              </p>
+              <span class="card-arrow">View conflict record →</span>
+            </a>
+          ))}
+        </div>
+      )}
+    </section>
+
+    <!-- ACTOR RECORDS -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">Actor Records</h2>
+        <p class="section-desc">
+          Stated positions. Documented actions. The gap between them.
+        </p>
+      </div>
+
+      {allActors.length === 0 ? (
+        <div class="empty-state">
+          <p>Actor records are being verified.</p>
+        </div>
+      ) : (
+        <div class="card-grid">
+          {allActors.map((actor) => (
+            <a href={base + `actors/${actor.slug}`} class="card">
+              <span class="card-id">{actor.data.record_id}</span>
+              <h3 class="card-title">{actor.data.name}</h3>
+              <p class="card-role">{actor.data.role}</p>
+              <p class="card-institution">{actor.data.institution}</p>
+              <span class="card-arrow">View actor record →</span>
+            </a>
+          ))}
+        </div>
+      )}
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section section--about">
+      <div class="about-inner">
+        <h2>What this is. What it is not.</h2>
+        <div class="about-grid">
+          <div class="about-col">
+            <h3>What Parallaxin is</h3>
+            <ul>
+              <li>A lens for examining the gap between stated positions and documented actions</li>
+              <li>Evidence-based — every claim is sourced and verifiable independently</li>
+              <li>Open source — code (MIT) and content (CC-BY 4.0) are fully forkable</li>
+              <li>Ungovernable — no single owner, no capture mechanism</li>
+              <li>Free — no ads, no accounts, no tracking</li>
+            </ul>
+          </div>
+          <div class="about-col">
+            <h3>What Parallaxin is not</h3>
+            <ul>
+              <li>Not a news organization — we document patterns, not breaking stories</li>
+              <li>Not neutral — neutrality between a fact and a lie is not a position we hold</li>
+              <li>Not a judge — we present evidence, readers conclude</li>
+              <li>Not activists — we make no policy recommendations</li>
+              <li>Not anonymous accusers — every claim we publish is independently verifiable</li>
+            </ul>
+          </div>
+        </div>
+        <div class="about-links">
+          <a href={base + 'constitution'}>Constitution</a>
+          <a href="https://github.com/parallaxin/parallaxin" target="_blank" rel="noopener">
+            GitHub — contribute or fork
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
 </Base>
+
+<style>
+  /* MISSION */
+  .mission {
+    padding: 4rem 1.5rem 3rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .mission-inner {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .mission-title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-text-primary);
+    margin-bottom: 1.5rem;
+  }
+  .mission-gap {
+    color: var(--color-gap);
+  }
+  .mission-body {
+    font-size: 1.05rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+  .mission-link {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--color-documented);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+  }
+  .mission-link:hover {
+    text-decoration: underline;
+  }
+
+  /* LEGEND */
+  .legend {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+  .legend-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .legend-documented .legend-dot { background: var(--color-documented); }
+  .legend-documented { color: var(--color-documented); }
+  .legend-inference .legend-dot { background: var(--color-inference); }
+  .legend-inference { color: var(--color-inference); }
+  .legend-contested .legend-dot { background: var(--color-contested); }
+  .legend-contested { color: var(--color-contested); }
+
+  /* SECTIONS */
+  .section {
+    padding: 3rem 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .section-header {
+    margin-bottom: 2rem;
+  }
+  .section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+  }
+  .section-desc {
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  /* CARDS */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1.25rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .card:hover {
+    border-color: var(--color-documented);
+    background: var(--color-surface-hover);
+  }
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+  }
+  .card-id {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    letter-spacing: 0.05em;
+  }
+  .card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    line-height: 1.4;
+  }
+  .card-speaker,
+  .card-date,
+  .card-geo,
+  .card-role,
+  .card-institution {
+    font-size: 0.82rem;
+    color: var(--color-text-secondary);
+  }
+  .card-verdict {
+    font-size: 0.82rem;
+    color: var(--color-text-secondary);
+    margin-top: 0.25rem;
+  }
+  .card-verdict strong {
+    color: var(--color-gap);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+  .card-arrow {
+    margin-top: auto;
+    padding-top: 0.75rem;
+    font-size: 0.8rem;
+    color: var(--color-documented);
+    font-weight: 600;
+  }
+
+  /* CONFIDENCE BADGES */
+  .card-confidence,
+  .card-status {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+    font-weight: 700;
+  }
+  .card-confidence--high { background: var(--color-documented-bg); color: var(--color-documented); }
+  .card-confidence--medium { background: var(--color-inference-bg); color: var(--color-inference); }
+  .card-confidence--low { background: var(--color-contested-bg); color: var(--color-contested); }
+  .card-status--active { background: var(--color-gap-bg); color: var(--color-gap); }
+  .card-status--published { background: var(--color-documented-bg); color: var(--color-documented); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    padding: 2rem;
+    border: 1px dashed var(--color-border);
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+
+  /* ABOUT */
+  .section--about {
+    border-bottom: none;
+  }
+  .about-inner {
+    max-width: 720px;
+  }
+  .about-inner h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 1.5rem;
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 600px) {
+    .about-grid { grid-template-columns: 1fr; }
+  }
+  .about-col h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+  }
+  .about-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .about-col li {
+    font-size: 0.88rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    padding-left: 1rem;
+    position: relative;
+  }
+  .about-col li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--color-text-muted);
+  }
+  .about-links {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .about-links a {
+    font-size: 0.85rem;
+    color: var(--color-documented);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .about-links a:hover {
+    text-decoration: underline;
+  }
+</style>
