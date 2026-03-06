@@ -414,3 +414,49 @@ Implemented `site/src/pages/actors/[id].astro`.
 
 - Follow up on:
  `docs\7-status.md`
+
+### 5. Documentation & Infrastructure (2026-03-07)
+
+#### 5.1 Project Status Update
+- **Updated `docs/7-status.md`**: Refreshed to current state
+  - Timestamp updated to 2026-03-07
+  - Added GitHub Pages deployment status (live at https://parallaxin.github.io/parallaxin/)
+  - Updated pages count: 8 pages live, all listing pages functional
+  - Current content: 2 actor records (draft), 1 claim autopsy (under-review)
+
+#### 5.2 Architecture Documentation
+- **Created `docs/8-architecture.md`**: Comprehensive technical overview for contributors
+  - Technology stack: Astro 5, TypeScript, TailwindCSS, Zod schemas
+  - Project structure and directory layout
+  - Complete content schemas with examples (autopsy, actor, conflict)
+  - Development workflow: setup, content creation, build instructions
+  - Schema enforcement of constitutional principles
+  - Deployment architecture and security considerations
+
+#### 5.3 GitHub Workflow Templates
+- **Created `.github/PULL_REQUEST_TEMPLATE.md`**: Ensures constitutional compliance
+  - Evidence standards checklist (source URLs, tier ratings, inference labeling)
+  - Article 3.1 compliance (no identity labels)
+  - Technical requirements (schema validation, URL accessibility)
+  - Content type categorization and testing verification
+
+- **Created `.github/ISSUE_TEMPLATE/`**: Three standardized templates
+  - `error-report.md`: For factual corrections with supporting sources
+  - `source-suggestion.md`: For evidence strengthening with tier assessment
+  - `claim-autopsy-request.md`: For new claim investigation requests
+
+#### 5.4 Pull Request Workflow
+- **Successfully created PR #1**: "docs: improve README with badges, quick start, and encoding fixes"
+  - Branch: `feature/readme-improvements-2026-03-07`
+  - Target: main repository from fork
+  - Demonstrates end-to-end contribution workflow
+
+#### 5.5 Infrastructure Improvements
+- **GitHub CLI authentication**: Configured for direct PR creation
+- **Fork workflow**: Established proper remote configuration
+- **Template system**: Complete contribution workflow automation
+
+#### 5.6 Next Steps (#TODO)
+- **Content expansion**: Convert CON-2025-0001 conflict record
+- **Source archiving**: Complete URL verification and archival
+- **Community preparation**: Announce platform with contribution guidelines 

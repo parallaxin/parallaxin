@@ -1,5 +1,5 @@
 # PARALLAXIN — Project Status
-## As of 2026-03-05 ~19:00 UTC
+## As of 2026-03-07 ~01:20 UTC
 
 ---
 
@@ -18,10 +18,13 @@
 ### Pages Rendering
 - [x] Homepage (/) — mission, legend, card grid, about section
 - [x] Constitution (/constitution) — all 10 articles, styled
-- [x] Claim Autopsy (/autopsies/ca-2026-0001.md) — full render with evidence
+- [x] Claim Autopsy (/autopsies/ca-2026-0001) — full render with evidence
+- [x] GitHub Pages deployed — live at https://parallaxin.github.io/parallaxin/
+- [x] All listing pages functional — /autopsies, /actors, /conflicts
 
 ### Content
 - [x] CA-2026-0001 — "Was Iran weeks away from a nuclear weapon?" — COMPLETE, under-review
+- [x] 2 actor records (draft) — ACT-2026-0001, ACT-2026-0002
 - [x] Constitution v1.0 — ratified, rendered
 - [x] 6-confirmed-sources.md — research sprint complete
 
