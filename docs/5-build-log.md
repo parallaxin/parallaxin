@@ -717,3 +717,46 @@ Homepage                    → mission, legend, content cards
 - [x] Git status clean
 
 
+### Part 10: Final touches & Publishing 
+
+#### Audit ✅
+##### 🔴 Bug #1: Conflict Card → 404 (Critical)
+Homepage conflict card linked to lowercase `/conflicts/con-2025-0001` but the route generated uppercase `/conflicts/CON-2025-0001`. **Case mismatch = 404 on first click.**
+
+**Fix**: Changed `conflict.slug` → `conflict.id.replace('.md', '')` in [index.astro](file:///e:/co/parallaxin/site/src/pages/index.astro#L114).
+
+##### 🟡 Bug #2: Actor Section Shows Empty (Medium)
+Homepage filtered actors with `status === 'published'`, but both records are `draft`. Result: empty section with "Actor records are being verified" on a site that already has actor pages.
+
+**Fix**: Removed status filter — all actors now appear on the homepage.
+
+##### 🟡 Bug #3: "From 2025-06-21 to null" (Cosmetic)
+Conflict card date line showed `to null` instead of `— ongoing`.
+
+**Fix**: Added `&& conflict.data.end_date !== 'null'` check.
+
+Code Audit Results: `tmp/audit.md`
+
+#### Final checks ✅
+- [ ] A final check of the build log and TODOs (If there is time for that)
+- [~] Prepare for hackernews submission
+
+> New account: parallaxin
+> Post Monday 9-11am Pacific
+**Title:Show HN: Parallaxin – open source platform documenting what power says vs. what power does**
+- Body:
+```
+Not a news site. Not neutral. Objective — there's a difference.
+
+Built this over the past few days. The idea: a structured, ungovernable platform that documents the gap between official claims and verified evidence.
+
+First live record: "Was Iran weeks away from a nuclear weapon?" — the claim that justified Operation Rising Lion. The autopsy walks through the IAEA reports, the ODNI assessment, and the documented gap between the justification and the evidence.
+
+Everything is sourced, tiered, and labeled (DOCUMENTED vs INFERENCE). The schema enforces the constitution at the data level — Tier 4 sources are literally unrepresentable. Every edit is in Git permanently.
+
+Code: MIT. Content: CC-BY 4.0. No accounts. No tracking. No ads. Forkable by anyone if it ever gets captured.
+
+Site: https://parallaxin.github.io/parallaxin/
+Repo: https://github.com/parallaxin/parallaxin
+Constitution (what governs it): https://parallaxin.github.io/parallaxin/constitution
+```
