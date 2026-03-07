@@ -9,7 +9,7 @@ const dir = getDirection(locale);
 // Load published content
 const allAutopsies = await getCollection('autopsies');
 const allConflicts = await getCollection('conflicts', ({ data }) => data.status === 'active' || data.status === 'published');
-const allActors = await getCollection('actors', ({ data }) => data.status === 'published');
+const allActors = await getCollection('actors');
 const base = import.meta.env.BASE_URL;
 ---
 
@@ -111,7 +111,7 @@ const base = import.meta.env.BASE_URL;
       ) : (
         <div class="card-grid">
           {allConflicts.map((conflict) => (
-            <a href={base + `conflicts/${conflict.slug}`} class="card">
+            <a href={base + `conflicts/${conflict.id.replace('.md', '')}`} class="card">
               <div class="card-meta">
                 <span class="card-id">{conflict.data.record_id}</span>
                 <span class={`card-status card-status--${conflict.data.status}`}>
@@ -121,7 +121,7 @@ const base = import.meta.env.BASE_URL;
               <h3 class="card-title">{conflict.data.name}</h3>
               <p class="card-date">
                 From {conflict.data.start_date}
-                {conflict.data.end_date ? ` to ${conflict.data.end_date}` : ' — ongoing'}
+                {(conflict.data.end_date && conflict.data.end_date !== 'null') ? ` to ${conflict.data.end_date}` : ' — ongoing'}
               </p>
               <p class="card-geo">
                 {conflict.data.geography?.join(', ')}
@@ -149,7 +149,7 @@ const base = import.meta.env.BASE_URL;
       ) : (
         <div class="card-grid">
           {allActors.map((actor) => (
-            <a href={base + `actors/${actor.slug}`} class="card">
+            <a href={base + `actors/${actor.id.replace('.md', '')}`} class="card">
               <span class="card-id">{actor.data.record_id}</span>
               <h3 class="card-title">{actor.data.name}</h3>
               <p class="card-role">{actor.data.role}</p>
