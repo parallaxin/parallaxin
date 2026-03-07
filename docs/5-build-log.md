@@ -386,9 +386,9 @@ Replaced .github/workflows/deploy.yml:
 
 ---
 
-### Phase 2: Content Expansion (In Progress)
+## Phase 2: Content Expansion (In Progress)
 
-#### 1. Actor Records Conversion (✅)
+### 1. Actor Records Conversion (✅)
 Converted the raw draft reports from `tmp/raw-reports/` into schema-compliant frontmatter within `site/src/content/actors/`.
 
 - **ACT-2026-0001 (Benjamin Netanyahu)**: Mapped identity, stated positions, documented actions, and gap analysis. Preserved all `[SOURCE NEEDED]` markers.
@@ -403,11 +403,11 @@ Implemented `site/src/pages/actors/[id].astro`.
 - **Personal Interests**: Added sections for documented interests (e.g., Netanyahu's corruption trials, Trump's real estate debt) labeled as `documented` or `inference`.
 - **Status Banners**: Draft records now show a clear banner warning about `[SOURCE NEEDED]` markers.
 
-#### 3. Build Verification (✅)
+### 3. Build Verification (✅)
 - **Astro Build**: Confirmed **8 pages** are now indexed (1 home, 1 constitution, 1 autopsy list, 1 autopsy detail, 1 actor list, 2 actor details, 1 conflict list placeholder).
 - **Listing Page**: Fixed a dev-server sync issue (restarted) to ensure the `/actors` listing correctly enumerates both new records.
 
-#### 4. Next Steps (#TODO)
+### 4. Next Steps (#TODO)
 - **CON-2025-0001**: Convert the primary conflict record. This is a complex mapping (timeline, antecedents, economic/human cost).
 - **Source Archiving**: Run `check-sources.mjs` on the new actor files to verify and archive the few live links we have (e.g., JCPOA memorandum).
 - **Conflict Page**: Build `site/src/pages/conflicts/[id].astro`.
@@ -602,4 +602,103 @@ translation_meta:
 ```
 
 - Critical rule: source URLs are NEVER translated. The source links point to the original language documents. If the IAEA report is in English, the Arabic translation of the autopsy still links to the English IAEA report. What gets translated is the description, the credibility note, the gap analysis — the editorial layer. The evidence layer stays in its original language.
+
+- Update cascade:
+
+```
+English record updated
+    ↓
+All translations automatically marked "stale" 
+(CI compares source_hash against current English file hash)
+    ↓
+GitHub issue auto-created: "Translation update needed: CA-2026-0001 [ar]"
+    ↓
+Translator updates
+    ↓
+Reviewer approves
+    ↓
+Status returns to "translated"
+```
+
+- This can be fully automated with a GitHub Action, but the actual translation and review are always human.
+
+---
+
+### 8. Conflict Record — CON-2025-0001
+
+Date: 2026-03-07
+
+**Schema Evolution — `config.ts`**
+
+The original conflicts schema was too flat for the raw report. Key changes:
+
+| Field | Before | After |
+|---|---|---|
+| `actors` | `z.array(z.string())` | `z.array(conflictActorSchema)` — actor_id, role, entered_date, documentation |
+| `timeline` | Basic event/date/type | `timelineEventSchema` — event_id, date, description, outcome, sources, tier |
+| `antecedents` | Not in schema | `antecedentSchema` — date, description, relevance, sources |
+| `human_cost` | `z.any()` | `humanCostSchema` — typed sub-objects for civilian/combatant deaths, displaced, injured |
+| `economic_cost` | `z.any()` | `z.array(economicIndicatorSchema)` — indicator, value, source |
+
+Design rules followed:
+- `z.coerce.string()` on all dates (YAML date parsing)
+- Every field `.optional()` or `.default([])`
+- Sources as `z.string()` not full source objects — keeps drafts writable
+- `human_cost` is one optional object, not required
+
+**Content Conversion**
+
+`tmp/raw-reports/CON-2025-0001.md` → `site/src/content/conflicts/CON-2025-0001.md`
+
+Sections mapped:
+- ✅ IDENTIFICATION → top-level fields
+- ✅ ACTORS → 5 actor entries with roles and entry documentation 
+- ✅ TIMELINE → 4 events (EVT-001 through EVT-004) with sources
+- ✅ ANTECEDENTS → 3 entries (JCPOA withdrawal, Oct 7, Netanyahu trial)
+- ✅ HUMAN COST → 4 categories, all [SOURCE NEEDED]
+- ✅ ECONOMIC COST → 2 indicators (Brent crude, Hormuz traffic)
+- ✅ CLAIM AUTOPSIES → 3 refs (CA-2026-0001, 0002, 0003)
+
+All [SOURCE NEEDED] markers preserved.
+
+**Detail Page — `conflicts/[id].astro`**
+
+Sections:
+- Header with status badge, date range, geography tags
+- Framing Note with amber inference styling (Article 3.4)
+- Actor grid with cross-link cards to actor detail pages
+- Vertical timeline with event cards, source citations
+- Antecedents with relevance notes and source extraction
+- Human cost grid (4 cards)
+- Economic cost table
+- Related autopsy links (clickable cards)
+- Review notes section
+- Contribute call-to-action
+
+Build: ✅ All pages compile (exit 0)
+Browser: ✅ All sections render, cross-links work
+
+---
+
+### Additional Notes
+- ✅ Added `CHANGELOG.md` for public-facing release notes. Follows [Keep a Changelog](https://keepachangelog.com/) format. The build log is the internal story — the changelog is the external one.
+
+**What's live now:**
+```
+Homepage                    → mission, legend, content cards
+├── /conflicts              → listing with CON-2025-0001
+│   └── /conflicts/CON-2025-0001  → full conflict record
+│       ├── Actor cards → /actors/ACT-2026-0001, ACT-2026-0002
+│       ├── Timeline with sourced events
+│       ├── Antecedents (JCPOA, Oct 7, trial)
+│       ├── Human & economic cost
+│       └── Related autopsies → CA-2026-0001, 0002, 0003
+├── /actors                 → listing with 2 actor records
+│   ├── /actors/ACT-2026-0001  → Netanyahu: stated vs documented
+│   └── /actors/ACT-2026-0002  → Trump: stated vs documented
+├── /autopsies              → listing with CA-2026-0001
+│   └── /autopsies/ca-2026-0001  → full claim autopsy
+├── /constitution           → all 10 articles
+└── CONTRIBUTING.md on GitHub
+```
 

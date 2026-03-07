@@ -99,6 +99,73 @@ const autopsies = defineCollection({
 // CONFLICTS — CON-YYYY-NNNN
 // ════════════════════════════════════════
 
+// Actors in conflict — flexible for drafts
+const conflictActorSchema = z.object({
+  actor_id: z.string(),                    // ACT-YYYY-NNNN
+  role_in_conflict: z.string(),
+  entered_date: z.coerce.string().optional(),
+  documentation: z.string().optional(),
+  source_url: z.string().optional(),
+  source_tier: z.string().optional(),
+});
+
+// Timeline events — sources as strings, not full source objects
+const timelineEventSchema = z.object({
+  event_id: z.string().optional(),
+  date: z.coerce.string(),
+  description: z.string(),
+  type: z.enum(['documented', 'inference']).default('documented'),
+  outcome: z.string().optional(),
+  sources: z.array(z.string()).default([]),  // URLs or descriptions
+  source_tier: z.string().optional(),
+});
+
+// Antecedents — causally connected prior events
+const antecedentSchema = z.object({
+  date: z.coerce.string(),
+  description: z.string(),
+  relevance: z.string().optional(),
+  type: z.enum(['documented', 'inference']).default('documented'),
+  sources: z.array(z.string()).default([]),
+  source_tier: z.string().optional(),
+});
+
+// Human cost — every field optional, every field sourced
+const humanCostSchema = z.object({
+  civilian_deaths: z.object({
+    value: z.string(),
+    source: z.string().optional(),
+    source_url: z.string().optional(),
+    last_updated: z.coerce.string().optional(),
+  }).optional(),
+  combatant_deaths: z.object({
+    value: z.string(),
+    source: z.string().optional(),
+    source_url: z.string().optional(),
+    last_updated: z.coerce.string().optional(),
+  }).optional(),
+  displaced: z.object({
+    value: z.string(),
+    source: z.string().optional(),
+    source_url: z.string().optional(),
+    last_updated: z.coerce.string().optional(),
+  }).optional(),
+  injured: z.object({
+    value: z.string(),
+    source: z.string().optional(),
+    source_url: z.string().optional(),
+    last_updated: z.coerce.string().optional(),
+  }).optional(),
+}).optional();
+
+// Economic cost indicators
+const economicIndicatorSchema = z.object({
+  indicator: z.string(),
+  value: z.string(),
+  source: z.string().optional(),
+  source_url: z.string().optional(),
+});
+
 const conflicts = defineCollection({
   type: 'content',
   schema: z.object({
@@ -113,16 +180,21 @@ const conflicts = defineCollection({
       'The selection of a start date is an editorial act. Events have documented antecedents. See full timeline.'
     ),
     geography: z.array(z.string()).default([]),
-    actors: z.array(z.string()).default([]),
+
+    // Enriched from z.array(z.string())
+    actors: z.array(conflictActorSchema).default([]),
+
+    // Enriched from basic timeline
+    timeline: z.array(timelineEventSchema).default([]),
+
+    // New
+    antecedents: z.array(antecedentSchema).default([]),
+
+    // Typed from z.any()
+    human_cost: humanCostSchema,
+    economic_cost: z.array(economicIndicatorSchema).default([]),
+
     autopsies: z.array(z.string()).default([]),
-    human_cost: z.any().optional(),
-    economic_cost: z.any().optional(),
-    timeline: z.array(z.object({
-      date: z.string(),
-      event: z.string(),
-      type: z.enum(['documented', 'inference']).default('documented'),
-      sources: z.array(z.string()).default([]),
-    })).default([]),
     last_updated: z.coerce.string(),
     review_notes: z.string().optional(),
   }),
