@@ -1,0 +1,109 @@
+---
+import Base from '../layouts/Base.astro';
+import { t } from '../i18n/utils';
+
+const locale = 'en';
+const base = import.meta.env.BASE_URL;
+---
+
+<Base title="About" locale={locale}>
+  <main class="site-main">
+    <section class="section">
+      <div class="section-header">
+        <h1 class="section-title">About Parallaxin</h1>
+        <p class="section-desc">Documentation of the distance between what power says and what power does.</p>
+      </div>
+
+      <div class="about-content">
+        <h3>The Lens Metaphor</h3>
+        <p>
+          Parallax is the displacement or difference in the apparent position of an object viewed 
+          along two different lines of sight. In power dynamics, there is often a massive parallax 
+          between <strong>stated positions</strong> (diplomatic cables, press releases, public speeches) 
+          and <strong>documented actions</strong> (military movements, budget allocations, verified footage).
+        </p>
+        <p>
+          Parallaxin is the lens through which we document that gap.
+        </p>
+
+        <h3>What makes us different?</h3>
+        <ul>
+          <li><strong>Evidence-based, not consensus-based:</strong> We don't wait for "official confirmation" if the verifiable evidence already exists. We don't seek a middle ground between a fact and a lie.</li>
+          <li><strong>The Gap is the Product:</strong> Our primary focus is the actor-behavior gap. We document what changed between the claim and the action.</li>
+          <li><strong>Ungovernable by Design:</strong> Parallaxin is open source and hosted as a static site. It has no centralized database to seize, no accounts to ban, and no single point of failure.</li>
+        </ul>
+
+        <h3>How it's built</h3>
+        <p>
+          Parallaxin is built on openness and auditability.
+        </p>
+        <ul>
+          <li><strong>Open Source:</strong> Everything from the site engine to the data schema is available on GitHub under the MIT license.</li>
+          <li><strong>Static Site:</strong> The site is pre-rendered for speed, security, and permanence.</li>
+          <li><strong>Git as Audit Trail:</strong> Every change to every record is tracked in public Git commits, creating a permanent, immutable record of our own documentation process.</li>
+        </ul>
+
+        <h3>The Constitution</h3>
+        <p>
+          All editorial decisions and operational principles are governed by the 
+          <a href={base + 'constitution'}>Parallaxin Constitution</a>. 
+          It defines our methodology for sourcing, inference, and error correction.
+        </p>
+
+        <h3>How to Contribute</h3>
+        <p>
+          We welcome contributions from researchers, developers, and translators. Please see our 
+          <a href="https://github.com/parallaxin/parallaxin/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a> 
+          on GitHub for guidelines on how to submit evidence, fix bugs, or add new features.
+        </p>
+
+        <h3>Contact</h3>
+        <p>
+          For security vulnerabilities, please email: 
+          <a href="mailto:parallaxin@proton.me">parallaxin@proton.me</a>.
+        </p>
+        <p>
+          For all other communication, including content disputes or feature requests, please 
+          <strong>open an issue on GitHub</strong>. We do not handle editorial or technical 
+          discussions via email to maintain a transparent public record.
+        </p>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .section {
+    padding: 4rem 1.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .about-content {
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+  }
+  .about-content h3 {
+    margin-top: 2.5rem;
+    color: var(--color-text-primary);
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+  .about-content p {
+    margin-bottom: 1.2rem;
+  }
+  .about-content ul {
+    margin-bottom: 1.5rem;
+    padding-left: 1.25rem;
+  }
+  .about-content li {
+    margin-bottom: 0.75rem;
+  }
+  .about-content a {
+    color: var(--color-documented);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .about-content a:hover {
+    text-decoration: underline;
+  }
+</style>

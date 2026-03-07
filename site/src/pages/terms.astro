@@ -1,0 +1,101 @@
+---
+import Base from '../layouts/Base.astro';
+import { t } from '../i18n/utils';
+
+const locale = 'en';
+const base = import.meta.env.BASE_URL;
+---
+
+<Base title="Terms of Use" locale={locale}>
+  <main class="site-main">
+    <section class="section">
+      <div class="section-header">
+        <h1 class="section-title">Terms of Use</h1>
+        <p class="section-desc">Minimal, honest, and legally clear.</p>
+      </div>
+
+      <div class="content-text">
+        <p>By using Parallaxin, you agree to the following terms. We keep this as simple as possible:</p>
+
+        <h3>1. Content & Licensing</h3>
+        <p>
+          All documentation and research content on this site is licensed under 
+          <strong>CC-BY 4.0</strong>. You are free to share and adapt the material for any purpose, 
+          even commercially, provided you give appropriate credit to Parallaxin.
+        </p>
+
+        <h3>2. Code</h3>
+        <p>
+          The source code for the Parallaxin platform is licensed under the 
+          <strong>MIT License</strong>. You are free to use, copy, modify, and distribute the software.
+        </p>
+
+        <h3>3. No Warranty</h3>
+        <p>
+          While we strive for absolute accuracy and evidence-based reporting, we provide this 
+          information "as is" without any legal guarantee. Use of the information is at your own risk.
+        </p>
+
+        <h3>4. No Legal Advice</h3>
+        <p>
+          Parallaxin is a platform for documentation and analysis. Nothing on this site constitutes 
+          legal counsel or professional advice.
+        </p>
+
+        <h3>5. Jurisdiction</h3>
+        <p>
+          This content is hosted on GitHub (US) and is subject to United States law.
+        </p>
+
+        <h3>6. DMCA & Takedowns</h3>
+        <p>
+          We respond to valid DMCA takedown requests. However, please note that journalistic 
+          documentation of public statements and actions by powerful actors is generally 
+          protected use.
+        </p>
+
+        <h3>7. Privacy & Data</h3>
+        <p>
+          Parallaxin is built for privacy. We do not track you, we do not use cookies, and we 
+          collect no personal data. There is no user data to request because none is stored.
+        </p>
+
+        <h3>8. Editorial Governance</h3>
+        <p>
+          Editorial decisions are governed by the 
+          <a href={base + 'constitution'}>Parallaxin Constitution</a>, 
+          not these terms.
+        </p>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .section {
+    padding: 4rem 1.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .content-text {
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+  }
+  .content-text h3 {
+    margin-top: 2rem;
+    color: var(--color-text-primary);
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+  .content-text p {
+    margin-bottom: 1rem;
+  }
+  .content-text a {
+    color: var(--color-documented);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .content-text a:hover {
+    text-decoration: underline;
+  }
+</style>

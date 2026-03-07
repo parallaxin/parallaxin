@@ -1,6 +1,6 @@
 # Build Log
 
-## Phase 1: First Deploy (In progress)
+## Phase 1: First Deploy (DONE)
 
 ### Part 1: Setup (✅)
 
@@ -254,7 +254,7 @@ Will need npm install yaml in site/ first to use the second approach.
 
 The URL is clean: /autopsies/ca-2026-0001 without the .md extension, matching the route parameter expected by the dynamic route.
 
-#### Checklist (#TODO - Confirm)
+#### Checklist (✅)
 
 The sequence block — does each [DOCUMENTED] / [INFERENCE] line get its colored tag? The page splits on \n and checks line.startsWith('[DOCUMENTED]'). If the YAML | scalar adds or strips whitespace differently than expected, the tags won't render.
 
