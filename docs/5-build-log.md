@@ -415,16 +415,16 @@ Implemented `site/src/pages/actors/[id].astro`.
 - Follow up on:
  `docs\7-status.md`
 
-### 5. Documentation & Infrastructure (2026-03-07)
+### 5. Documentation & Infrastructure (2026-03-07) ✅
 
-#### 5.1 Project Status Update
+#### 5.1 Project Status Update ✅
 - **Updated `docs/7-status.md`**: Refreshed to current state
   - Timestamp updated to 2026-03-07
   - Added GitHub Pages deployment status (live at https://parallaxin.github.io/parallaxin/)
   - Updated pages count: 8 pages live, all listing pages functional
   - Current content: 2 actor records (draft), 1 claim autopsy (under-review)
 
-#### 5.2 Architecture Documentation
+#### 5.2 Architecture Documentation ✅
 - **Created `docs/8-architecture.md`**: Comprehensive technical overview for contributors
   - Technology stack: Astro 5, TypeScript, TailwindCSS, Zod schemas
   - Project structure and directory layout
@@ -433,7 +433,7 @@ Implemented `site/src/pages/actors/[id].astro`.
   - Schema enforcement of constitutional principles
   - Deployment architecture and security considerations
 
-#### 5.3 GitHub Workflow Templates
+#### 5.3 GitHub Workflow Templates ✅
 - **Created `.github/PULL_REQUEST_TEMPLATE.md`**: Ensures constitutional compliance
   - Evidence standards checklist (source URLs, tier ratings, inference labeling)
   - Article 3.1 compliance (no identity labels)
@@ -445,7 +445,7 @@ Implemented `site/src/pages/actors/[id].astro`.
   - `source-suggestion.md`: For evidence strengthening with tier assessment
   - `claim-autopsy-request.md`: For new claim investigation requests
 
-#### 5.4 Pull Request Workflow
+#### 5.4 Pull Request Workflow ✅
 - **Successfully created PR #1**: "docs: improve README with badges, quick start, and encoding fixes"
   - Branch: `feature/readme-improvements-2026-03-07`
   - Target: main repository from fork
@@ -461,15 +461,15 @@ Implemented `site/src/pages/actors/[id].astro`.
 - **Source archiving**: Complete URL verification and archival
 - **Community preparation**: Announce platform with contribution guidelines 
 
-### 6. Repo Sync & Legal Infrastructure (2026-03-07)
+### 6. Repo Sync & Legal Infrastructure (2026-03-07) ✅
 
-#### 6.1 Repository Synchronization
+#### 6.1 Repository Synchronization ✅
 - **Synced with `origin/main`**: Pulled latest changes from the upstream repository.
   - Stashed local modifications in `docs/5-build-log.md`.
   - Rebased/Pulled from `origin/main`.
   - Restored local changes via `git stash pop`.
 
-#### 6.2 Security Policy Implementation
+#### 6.2 Security Policy Implementation ✅
 - **Created `SECURITY.md`**: Established a formal security policy at the root.
   - Defined vulnerability reporting process via `parallaxin@proton.me`.
   - Specified scope (code, infra, content integrity).
@@ -490,3 +490,116 @@ Implemented `site/src/pages/actors/[id].astro`.
 
 #### 6.4 Next Steps (#TODO)
 - **Content expansion**: Convert CON-2025-0001 (Conflict record mapping).
+
+---
+
+### 7. The Three Translation Layers
+
+`docs\9-translation-guide.md`
+
+Layer 1: UI strings        — nav, labels, footer, badges
+Layer 2: Structural pages  — constitution, about, terms, contributing
+Layer 3: Content records   — autopsies, actor records, conflict records
+
+#### 7.1 Layer 1: UI Strings (Implemented) ✅
+
+- **Standardized UI Translations**:
+  - Created `site/src/i18n/fr.json` for French.
+  - Created `site/src/i18n/es.json` for Spanish.
+  - Values translated; keys maintained.
+- **Enhanced i18n Logic (`utils.ts`)**:
+  - Implemented explicit fallback to `defaultLocale` (English) for missing keys.
+  - Logic: (Try Requested) -> (If not found, Try English) -> (If not found, key-as-string).
+- **Component Global t() Integration**:
+  - Refactored `Base.astro` (navigation, footer).
+  - Refactored `index.astro` (tagline, section headers).
+- **Responsive Header Fixes (`global.css`)**:
+  - Implemented `@media` queries for `< 640px` and `< 400px`.
+  - Allowed header to wrap on mobile (320px) to handle long translated labels like "Autopsias de Reclamaciones".
+  - Verified no horizontal overflow in French/Spanish mock-ups.
+
+  #### 7.2 Layer 2: Structural Pages (In Progress)
+
+- Constitution, About, Terms — these are important but they change infrequently. The process:
+```
+site/src/pages/ar/
+├── constitution.astro    ← Arabic constitution
+├── about.astro           ← Arabic about
+└── terms.astro           ← Arabic terms
+
+site/src/pages/fa/
+├── constitution.astro
+├── about.astro
+└── terms.astro
+```
+
+- Each is a standalone .astro file that imports Base.astro with locale="ar". The content is human-translated, not pulled from a JSON file — these documents are too important for key-value translation.
+
+##### Update process:
+
+- When the English version changes, the translated version needs manual update
+- Add a frontmatter field to track sync state:
+
+```yaml
+---
+translation_source: "constitution.astro"
+translation_source_hash: "abc123"  # git hash of the English version this was translated from
+translation_date: "2026-03-06"
+translator: "github-username"
+---
+```
+
+- When someone updates the English constitution, a CI check can flag that the translation_source_hash no longer matches HEAD, meaning the translation is potentially stale. Simple, no infrastructure needed:
+
+- Add to .github/workflows/ later — translation staleness check:
+
+```yaml
+# Pseudocode for the check
+# For each translated page:
+#   Read translation_source_hash from frontmatter
+#   Compare against current git hash of the English source
+#   If different → warning in PR check: "Arabic constitution may be stale"
+```
+- Don't build this now. Documented only as the intended mechanism.
+
+#### Layer 3: Content Records — HOLD
+
+- This is the hard one. A Claim Autopsy is not translatable by a language speaker alone — it requires understanding the evidence structure, the tier system, and the editorial voice. A mistranslation of a credibility note changes the meaning of the evidence assessment.
+
+- The right process for content translation:
+Step 1: English record is published (status: published)
+Step 2: Translation request opened as GitHub issue
+Step 3: Translator produces a draft in a parallel content directory
+Step 4: A reviewer who speaks both languages AND understands 
+        the evidence standard reviews it
+Step 5: Published with translation metadata
+
+- Content directory structure when translations exist:
+
+```
+site/src/content/autopsies/
+├── ca-2026-0001.md              ← English (canonical)
+├── ca-2026-0001.ar.md           ← Arabic translation
+└── ca-2026-0001.fa.md           ← Farsi translation
+```
+
+- Each translated content file includes:
+
+```yaml
+---
+# All the same frontmatter as the English version, translated
+# Plus:
+translation_meta:
+  source_locale: "en"
+  source_file: "ca-2026-0001.md"
+  source_hash: "abc123def"  # git hash of English version translated from
+  translated_by: "github-username"
+  reviewed_by: "github-username"
+  translation_date: "2026-03-15"
+  review_date: "2026-03-16"
+  status: "translated"  # translated | review-needed | stale
+---
+```
+
+- Critical rule: source URLs are NEVER translated. The source links point to the original language documents. If the IAEA report is in English, the Arabic translation of the autopsy still links to the English IAEA report. What gets translated is the description, the credibility note, the gap analysis — the editorial layer. The evidence layer stays in its original language.
+

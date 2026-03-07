@@ -21,9 +21,7 @@ const base = import.meta.env.BASE_URL;
     <section class="mission">
       <div class="mission-inner">
         <h1 class="mission-title">
-          What power says.<br/>
-          What power does.<br/>
-          <span class="mission-gap">The distance between them.</span>
+          {t(locale, 'site.tagline').split('.').map((s, i) => i < 2 ? <>{s}.<br/></> : <span class="mission-gap">{s}.</span>)}
         </h1>
         <p class="mission-body">
           Parallaxin documents the gap between the stated positions and
@@ -45,11 +43,11 @@ const base = import.meta.env.BASE_URL;
       <div class="legend-inner">
         <span class="legend-item legend-documented">
           <span class="legend-dot"></span>
-          DOCUMENTED — verified, sourced fact
+          {t(locale, 'content.documented')} — verified, sourced fact
         </span>
         <span class="legend-item legend-inference">
           <span class="legend-dot"></span>
-          INFERENCE — reasoned conclusion from documented facts, labeled as such
+          {t(locale, 'content.inference')} — reasoned conclusion from documented facts, labeled as such
         </span>
         <span class="legend-item legend-contested">
           <span class="legend-dot"></span>
@@ -61,7 +59,7 @@ const base = import.meta.env.BASE_URL;
     <!-- CLAIM AUTOPSIES -->
     <section class="section">
       <div class="section-header">
-        <h2 class="section-title">Claim Autopsies</h2>
+        <h2 class="section-title">{t(locale, 'site.nav.autopsies')}</h2>
         <p class="section-desc">
           Official claims examined against available evidence.
           The record that answers: <em>what did the evidence actually show?</em>
@@ -99,7 +97,7 @@ const base = import.meta.env.BASE_URL;
     <!-- ACTIVE CONFLICTS -->
     <section class="section">
       <div class="section-header">
-        <h2 class="section-title">Active Conflicts</h2>
+        <h2 class="section-title">{t(locale, 'site.nav.conflicts')}</h2>
         <p class="section-desc">
           Documented timelines, actor records, and human cost.
           Updated when new evidence is verified.
@@ -138,7 +136,7 @@ const base = import.meta.env.BASE_URL;
     <!-- ACTOR RECORDS -->
     <section class="section">
       <div class="section-header">
-        <h2 class="section-title">Actor Records</h2>
+        <h2 class="section-title">{t(locale, 'site.nav.actors')}</h2>
         <p class="section-desc">
           Stated positions. Documented actions. The gap between them.
         </p>
@@ -190,7 +188,7 @@ const base = import.meta.env.BASE_URL;
           </div>
         </div>
         <div class="about-links">
-          <a href={base + 'constitution'}>Constitution</a>
+          <a href={base + 'constitution'}>{t(locale, 'site.nav.constitution')}</a>
           <a href="https://github.com/parallaxin/parallaxin" target="_blank" rel="noopener">
             GitHub — contribute or fork
           </a>

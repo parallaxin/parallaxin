@@ -197,6 +197,55 @@ pre {
   padding-bottom: 2px;
 }
 
+@media (max-width: 800px) {
+  .site-nav {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .site-header-inner {
+    height: auto;
+    min-height: 52px;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .site-nav {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+  }
+
+  .site-nav a {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .site-header-inner {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    gap: 0.75rem;
+  }
+
+  .site-nav {
+    gap: 0.5rem 0.75rem;
+  }
+
+  .site-nav a {
+    font-size: 0.7rem;
+    letter-spacing: 0.02em;
+  }
+
+  .site-nav-github {
+    display: none;
+  }
+}
+
 /* ============================================================
    SITE FOOTER
    ============================================================ */

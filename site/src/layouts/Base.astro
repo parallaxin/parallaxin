@@ -35,16 +35,16 @@ const base = import.meta.env.BASE_URL;
       </a>
       <nav class="site-nav">
         <a href={base + 'conflicts'} class:list={[{ active: currentPath.startsWith(base + 'conflicts') }]}>
-          Conflicts
+          {t(locale, 'site.nav.conflicts')}
         </a>
         <a href={base + 'actors'} class:list={[{ active: currentPath.startsWith(base + 'actors') }]}>
-          Actors
+          {t(locale, 'site.nav.actors')}
         </a>
         <a href={base + 'autopsies'} class:list={[{ active: currentPath.startsWith(base + 'autopsies') }]}>
-          Autopsies
+          {t(locale, 'site.nav.autopsies')}
         </a>
         <a href={base + 'constitution'} class:list={[{ active: currentPath === base + 'constitution' }]}>
-          Constitution
+          {t(locale, 'site.nav.constitution')}
         </a>
         <a href="https://github.com/parallaxin/parallaxin"
            target="_blank" rel="noopener"
@@ -61,14 +61,14 @@ const base = import.meta.env.BASE_URL;
 
   <footer class="site-footer">
     <div class="site-footer-inner">
-      <p>Governed by the <a href={base + 'constitution'}>Parallaxin Constitution</a></p>
+      <p>{t(locale, 'footer.constitution_link')}</p>
       <p>
-        <a href={base + 'about'}>About</a> · 
+        <a href={base + 'about'}>{t(locale, 'site.nav.about')}</a> · 
         <a href={base + 'terms'}>Terms</a> · 
         <a href="https://github.com/parallaxin/parallaxin">GitHub</a>
       </p>
       <p>Code: MIT · Content: CC-BY 4.0</p>
-      <p>No tracking. No accounts. No data collected.</p>
+      <p>{t(locale, 'footer.no_tracking')}</p>
     </div>
   </footer>
 </body>

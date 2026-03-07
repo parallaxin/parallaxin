@@ -1,0 +1,41 @@
+{
+    "site": {
+        "title": "Parallaxin",
+        "tagline": "Ce que dit le pouvoir. Ce que fait le pouvoir. La distance entre les deux.",
+        "nav": {
+            "conflicts": "Conflits",
+            "actors": "Acteurs",
+            "autopsies": "Autopsies de Revendications",
+            "about": "À propos",
+            "constitution": "Constitution"
+        }
+    },
+    "content": {
+        "documented": "DOCUMENTÉ",
+        "inference": "INFERENCE",
+        "source_needed": "SOURCE REQUISE",
+        "last_updated": "Dernière mise à jour",
+        "confidence": "Confiance",
+        "sources": "Sources",
+        "stated": "Position déclarée",
+        "documented_action": "Action documentée",
+        "the_gap": "L'écart",
+        "who_benefits": "Qui bénéficie de cette revendication",
+        "draft_notice": "BROUILLON — Ce dossier n'a pas terminé l'examen de la Norme de Preuve. Les sources marquées [SOURCE REQUISE] nécessitent une vérification avant publication.",
+        "framing_notice": "Le choix d'une date de début est un acte éditorial. Les événements ont des antécédents documentés. Voir la chronologie complète."
+    },
+    "evidence": {
+        "tier1": "Source primaire",
+        "tier2": "Corroboré",
+        "tier3": "Source unique — en attente de corroboration",
+        "high": "Haute confiance",
+        "medium": "Confiance moyenne",
+        "low": "Faible confiance"
+    },
+    "footer": {
+        "license_code": "Code : Licence MIT",
+        "license_content": "Contenu : CC-BY 4.0",
+        "constitution_link": "Régit par la Constitution de Parallaxin",
+        "no_tracking": "Pas de suivi. Pas de comptes. Aucune donnée collectée."
+    }
+}
