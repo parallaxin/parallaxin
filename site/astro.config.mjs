@@ -1,9 +1,11 @@
 ﻿import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://parallaxin.github.io',
   base: '/parallaxin/',
   output: 'static',
+  integrations: [sitemap()],
   build: {
     format: 'directory'
   },

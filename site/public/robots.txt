@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://parallaxin.github.io/parallaxin/sitemap-index.xml
