@@ -1,8 +1,13 @@
 ﻿# PARALLAXIN
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE-CODE)
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](LICENSE-CONTENT)
+[![Community Standard: Parallaxin](https://img.shields.io/badge/Community%20Standard-Parallaxin-green.svg)](docs/4-constitution.md)
 [![Deploy to GitHub Pages](https://github.com/parallaxin/parallaxin/actions/workflows/deploy.yml/badge.svg)](https://github.com/parallaxin/parallaxin/actions/workflows/deploy.yml)
 [![Last Commit](https://img.shields.io/github/last-commit/parallaxin/parallaxin)](https://github.com/parallaxin/parallaxin/commits/main)
+[![Changelog](https://img.shields.io/badge/Changelog-Keep%20a%20Changelog-blue.svg)](CHANGELOG.md)
+[![Security Policy](https://img.shields.io/badge/Security-Policy-red.svg)](SECURITY.md)
+
 
 A lens for documenting the gap between what powerful actors say and what they do.
 
@@ -12,14 +17,20 @@ A lens for documenting the gap between what powerful actors say and what they do
 
 ## Current Status
 
-- **Live:** Landing page and initial actor reports.
-- **In Progress:** Expanding actor database and refining evidence standards.
+- **Live:** Landing page, 2 actor records, 1 claim autopsy, and 1 conflict record.
+- **Infrastructure:** Astro 5 SSG, i18n support, automated source validation and archival.
+- **Documentation:** Full constitution, architecture overview, and contribution guidelines in place.
+
 
 ## Structure
 
-- `docs/` — Planning documents, templates, constitution
-- `site/` — Astro static site (the platform)
-- `CONSTITUTION.md` — Governing document (symlink to docs/4-constitution.md)
+- `docs/` — Planning documents, templates, constitution, and architecture notes.
+- `site/` — Astro static site (the platform).
+- `CHANGELOG.md` — Public-facing release notes.
+- `CONTRIBUTING.md` — Guidelines for evidence standards and code contributions.
+- `SECURITY.md` — Vulnerability reporting and scope.
+- `LICENSE-CODE` / `LICENSE-CONTENT` — MIT and CC-BY 4.0 respectively.
+
 
 ## Quick Start for Contributors
 
@@ -36,9 +47,14 @@ A lens for documenting the gap between what powerful actors say and what they do
 
 ## Contributing
 
-All contributions via pull request. All contributions subject to the Evidence Standard (Constitution, Article 2).
+We welcome contributions that strengthen the evidence landscape. All contributions via pull request must adhere to the **Evidence Standard (Constitution, Article 2)**.
 
-No accounts needed to read. No data collected from readers.
+- **Factual Corrections:** Open an issue using the "Error Report" template.
+- **Source Suggestions:** Help us fill `[SOURCE NEEDED]` gaps.
+- **Code:** See `site/` for the Astro implementation.
+
+No accounts needed to read. No data collected from readers. Zero tracking.
+
 
 ## Licenses
 
