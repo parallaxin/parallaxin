@@ -460,3 +460,33 @@ Implemented `site/src/pages/actors/[id].astro`.
 - **Content expansion**: Convert CON-2025-0001 conflict record
 - **Source archiving**: Complete URL verification and archival
 - **Community preparation**: Announce platform with contribution guidelines 
+
+### 6. Repo Sync & Legal Infrastructure (2026-03-07)
+
+#### 6.1 Repository Synchronization
+- **Synced with `origin/main`**: Pulled latest changes from the upstream repository.
+  - Stashed local modifications in `docs/5-build-log.md`.
+  - Rebased/Pulled from `origin/main`.
+  - Restored local changes via `git stash pop`.
+
+#### 6.2 Security Policy Implementation
+- **Created `SECURITY.md`**: Established a formal security policy at the root.
+  - Defined vulnerability reporting process via `parallaxin@proton.me`.
+  - Specified scope (code, infra, content integrity).
+  - Clarified "no bounty" status for the zero-budget project.
+
+#### 6.3 Site Pages & Navigation
+- **Created `site/src/pages/terms.astro`**: Minimalist Terms of Use.
+  - Explicit licensing: **CC-BY 4.0** for content, **MIT** for code.
+  - Jurisdiction: Set to **Netherlands** server/law.
+  - Privacy: Reaffirmed "No data collection" policy.
+- **Created `site/src/pages/about.astro`**: Expanded project identity.
+  - Detailed the **Parallax** lens metaphor.
+  - Highlighted "Ungovernable by Design" and "Git as Audit Trail" principles.
+  - Linked to `CONTRIBUTING.md` and the Constitution.
+- **Updated `site/src/layouts/Base.astro`**: Footer redesign.
+  - Added structured links: **About**, **Terms**, and **GitHub**.
+  - Cleaned up footer text for better readability.
+
+#### 6.4 Next Steps (#TODO)
+- **Content expansion**: Convert CON-2025-0001 (Conflict record mapping).
