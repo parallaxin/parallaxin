@@ -702,3 +702,18 @@ Homepage                    → mission, legend, content cards
 └── CONTRIBUTING.md on GitHub
 ```
 
+---
+
+### Part 9: Infrastructure & SEO (2026-03-07) ✅
+
+- **Robots & Sitemap**: Implemented `@astrojs/sitemap` integration and created `public/robots.txt`. The site is now fully crawlable and indexed, ensuring maximum visibility for the reports.
+- **README Refresh**: Added health and community badges (License, Constitution, Changelog, Security). Refreshed the project status and structure to reflect the live status of listing pages and conflict records.
+- **Repository Sync**: All work synchronized and pushed to `origin main` on GitHub.
+
+**Final checks before handoff:**
+- [x] Sitemap-index.xml verified in build
+- [x] Robots.txt verified in build
+- [x] README links verified
+- [x] Git status clean
+
+
