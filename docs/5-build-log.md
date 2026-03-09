@@ -717,7 +717,7 @@ Homepage                    → mission, legend, content cards
 - [x] Git status clean
 
 
-### Part 10: Final touches & Publishing 
+### Part 10: Final touche 
 
 #### Audit ✅
 ##### 🔴 Bug #1: Conflict Card → 404 (Critical)
@@ -737,18 +737,115 @@ Conflict card date line showed `to null` instead of `— ongoing`.
 
 Code Audit Results: `tmp/audit.md`
 
-#### Final checks ✅
+---
+
+### Part 11: Full Arabic version
+
+- `docs\10-full-arabic-version.md`
+
+#### Community Translation Precedent
+
+This Arabic version serves as the template for future community translations:
+- File naming: `{id}.{locale}.md`
+- Frontmatter: full `translation_meta` block
+- Review process: translator produces draft, reviewer validates evidence terminology
+- The PR for this work becomes the reference contribution for `docs/9-translation-guide.md`
+
+#### Page Templates (Arabic variants)
+
+| Route | Source to mirror |
+|-------|-----------------|
+| `/ar/` | `index.astro` |
+| `/ar/constitution` | `constitution.astro` |
+| `/ar/about` | `about.astro` |
+| `/ar/terms` | `terms.astro` |
+| `/ar/autopsies` | `autopsies/index.astro` |
+| `/ar/autopsies/[id]` | `autopsies/[id].astro` |
+| `/ar/actors` + `/ar/actors/[id]` | `actors/index.astro`, `actors/[id].astro` |
+| `/ar/conflicts` + `/ar/conflicts/[id]` | `conflicts/index.astro`, `conflicts/[id].astro` |
+
+#### Content Files (Arabic translations)
+
+| File | Source |
+|------|--------|
+| `ca-2026-0001.ar.md` | `ca-2026-0001.md` |
+| `ACT-2026-0001.ar.md` | `ACT-2026-0001.md` |
+| `ACT-2026-0002.ar.md` | `ACT-2026-0002.md` |
+| `CON-2025-0001.ar.md` | `CON-2025-0001.md` |
+
+#### Language Switcher
+
+Header component: `EN | عربي` — links to the equivalent page in the other language.
+
+#### RTL CSS Fixes
+
+- Grid layouts (`.about-grid`, `.card-grid`) — logical properties or RTL overrides
+- Table `text-align: left` → `[dir="rtl"] th { text-align: right }`
+- Any remaining `margin-left`/`padding-left` that should flip
+
+#### Translation Rules
+
+1. **Source URLs are NEVER translated.** Links point to original-language documents.
+2. **Evidence tags rendered in Arabic.** `[DOCUMENTED]` → `[موثّق]`, `[INFERENCE]` → `[استنتاج]`
+3. **Record IDs stay unchanged.** `CA-2026-0001`, not Arabic equivalents.
+4. **MSA with project tone.** Formal but direct. No flowery rhetoric.
+5. **`translation_meta` frontmatter** on every `.ar.md` file:
+   ```yaml
+   translation_meta:
+     source_locale: "en"
+     source_file: "ca-2026-0001.md"
+     source_hash: "<git-hash>"
+     translated_by: "parallaxin"
+     translation_date: "2026-03-09"
+     status: "translated"
+   ```
+
+#### What Stays English
+
+- Record IDs (CA-, ACT-, CON-)
+- Source URLs and archive URLs
+- Git metadata and filenames
+- File naming convention (`.ar.md` suffix)
+
+---
+
+### Part 12: Implementing the Full Test Suite
+
+To ensure long-term stability and correct multi-language behavior, a foundational test suite was implemented.
+
+#### Unit Testing (Vitest)
+- **Scope**: Core logic and utilities.
+- **Implementation**: Verified `src/i18n/utils.ts` for translation retrieval, English fallback, and RTL detection.
+- **Verification**: `npm run test` executes 10 tests across `en` and `ar` logic.
+
+#### E2E Testing (Playwright)
+- **Infrastructure**: Configured Playwright with `playwright.config.ts`.
+- **Test Specs**: 
+    - `tests/home.spec.ts`: Home page loading and language verify.
+    - `tests/routing.spec.ts`: Cross-locale routing and configuration access.
+- **Local Setup**: Infrastructure is ready; requires `npx playwright install` for local browser binaries.
+
+#### Data Integrity
+- **Astro Check**: Continued use of `astro check` for schema validation of content collections (`autopsies`, `actors`, `conflicts`).
+- **CI Readiness**: GitHub Actions are configured to build the site, which implicitly runs schema validation.
+
+---
+
+### Final checks
 - [ ] A final check of the build log and TODOs (If there is time for that)
 - [~] Prepare for hackernews submission
 
+
+### Publshing
+
 > New account: parallaxin
-> Post Monday 9-11am Pacific
-**Title:Show HN: Parallaxin – open source platform documenting what power says vs. what power does**
+> Post 
+**Title: Parallaxin – open source platform documenting what power says vs. what power does**
 - Body:
 ```
-Not a news site. Not neutral. Objective — there's a difference.
-
 Built this over the past few days. The idea: a structured, ungovernable platform that documents the gap between official claims and verified evidence.
+
+Not a news site. Not neutral. Objective — there's a difference.
 
 First live record: "Was Iran weeks away from a nuclear weapon?" — the claim that justified Operation Rising Lion. The autopsy walks through the IAEA reports, the ODNI assessment, and the documented gap between the justification and the evidence.
 

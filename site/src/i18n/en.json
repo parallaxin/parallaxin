@@ -37,5 +37,8 @@
     "license_content": "Content: CC-BY 4.0",
     "constitution_link": "Governed by the Parallaxin Constitution",
     "no_tracking": "No tracking. No accounts. No data collected."
+  },
+  "test": {
+    "fallback": "This is a fallback"
   }
 }

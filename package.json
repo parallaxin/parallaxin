@@ -4,11 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "check": "astro check",
-    "lint:links": "node scripts/check-sources.mjs"
+    "dev": "npm run --prefix site dev",
+    "build": "npm run --prefix site build",
+    "preview": "npm run --prefix site preview",
+    "check": "npm run --prefix site check",
+    "lint:links": "npm run --prefix site lint:links"
   },
   "dependencies": {
     "astro": "^5.18.0"
