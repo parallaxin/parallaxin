@@ -14,6 +14,15 @@ const pageTitle = title ? (title + ' | ' + siteTitle) : siteTitle;
 
 const currentPath = Astro.url.pathname;
 const base = import.meta.env.BASE_URL;
+
+// Language switcher: compute alternate locale path
+const isArabic = locale === 'ar';
+const pathWithoutBase = currentPath.replace(base, '');
+const altLocalePath = isArabic
+  ? base + pathWithoutBase.replace(/^ar\/?/, '')  // Strip /ar/ prefix for English
+  : base + 'ar/' + pathWithoutBase;               // Add /ar/ prefix for Arabic
+const altLocaleLabel = isArabic ? 'EN' : 'عربي';
+const localePrefix = isArabic ? 'ar/' : '';
 ---
 
 <!DOCTYPE html>
@@ -29,27 +38,30 @@ const base = import.meta.env.BASE_URL;
 <body>
   <header class="site-header">
     <div class="site-header-inner">
-      <a href={base} class="site-logo">
+      <a href={base + (isArabic ? 'ar/' : '')} class="site-logo">
         <span class="site-logo-dot"></span>
         Parallaxin
       </a>
       <nav class="site-nav">
-        <a href={base + 'conflicts'} class:list={[{ active: currentPath.startsWith(base + 'conflicts') }]}>
+        <a href={base + localePrefix + 'conflicts'} class:list={[{ active: currentPath.startsWith(base + localePrefix + 'conflicts') }]}>
           {t(locale, 'site.nav.conflicts')}
         </a>
-        <a href={base + 'actors'} class:list={[{ active: currentPath.startsWith(base + 'actors') }]}>
+        <a href={base + localePrefix + 'actors'} class:list={[{ active: currentPath.startsWith(base + localePrefix + 'actors') }]}>
           {t(locale, 'site.nav.actors')}
         </a>
-        <a href={base + 'autopsies'} class:list={[{ active: currentPath.startsWith(base + 'autopsies') }]}>
+        <a href={base + localePrefix + 'autopsies'} class:list={[{ active: currentPath.startsWith(base + localePrefix + 'autopsies') }]}>
           {t(locale, 'site.nav.autopsies')}
         </a>
-        <a href={base + 'constitution'} class:list={[{ active: currentPath === base + 'constitution' }]}>
+        <a href={base + localePrefix + 'constitution'} class:list={[{ active: currentPath === base + localePrefix + 'constitution' }]}>
           {t(locale, 'site.nav.constitution')}
         </a>
         <a href="https://github.com/parallaxin/parallaxin"
            target="_blank" rel="noopener"
            class="site-nav-github">
           GitHub
+        </a>
+        <a href={altLocalePath} class="site-nav-lang">
+          {altLocaleLabel}
         </a>
       </nav>
     </div>
@@ -63,8 +75,8 @@ const base = import.meta.env.BASE_URL;
     <div class="site-footer-inner">
       <p>{t(locale, 'footer.constitution_link')}</p>
       <p>
-        <a href={base + 'about'}>{t(locale, 'site.nav.about')}</a> · 
-        <a href={base + 'terms'}>Terms</a> · 
+        <a href={base + localePrefix + 'about'}>{t(locale, 'site.nav.about')}</a> ·
+        <a href={base + localePrefix + 'terms'}>{t(locale, 'footer.terms') || 'Terms'}</a> ·
         <a href="https://github.com/parallaxin/parallaxin">GitHub</a>
       </p>
       <p>Code: MIT · Content: CC-BY 4.0</p>

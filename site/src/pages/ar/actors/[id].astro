@@ -1,0 +1,659 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { t, getDirection } from '../../../i18n/utils';
+
+export async function getStaticPaths() {
+  const allActors = await getCollection('actors');
+  // Get base entries (English — no .ar suffix)
+  const englishEntries = allActors.filter(a => {
+    const cleanId = a.id.replace('.md', '');
+    return !cleanId.endsWith('.ar');
+  });
+
+  return englishEntries.map((entry) => {
+    const baseId = entry.id.replace('.md', '');
+    // Look for Arabic version
+    const arabicEntry = allActors.find(a =>
+      a.id.replace('.md', '') === baseId + '.ar'
+    );
+    return {
+      params: { id: baseId },
+      props: {
+        entry: arabicEntry || entry,
+        isTranslated: !!arabicEntry
+      },
+    };
+  });
+}
+
+const { entry, isTranslated } = Astro.props;
+const { data } = entry;
+const locale = 'ar';
+const dir = getDirection(locale);
+const base = import.meta.env.BASE_URL;
+
+const confidenceColors = {
+  high: { border: 'var(--color-gap)', bg: 'var(--color-gap-bg)' },
+  medium: { border: 'var(--color-inference)', bg: 'var(--color-inference-bg)' },
+  low: { border: 'var(--color-contested)', bg: 'var(--color-contested-bg)' },
+};
+---
+
+<Base title={data.name} locale="ar">
+  <main class="actor-main" dir={dir}>
+
+    <!-- HEADER -->
+    <header class="actor-header">
+      <div class="actor-breadcrumb">
+        <a href={base + 'ar'}>بارالاكسين</a>
+        <span>→</span>
+        <a href={base + 'ar/actors'}>سجلات الأطراف</a>
+        <span>→</span>
+        <span class="actor-record-id">{data.record_id}</span>
+      </div>
+
+      <h1 class="actor-name">{data.name}</h1>
+
+      <div class="actor-meta">
+        <span>{data.role}</span>
+        {data.institution && <span>· {data.institution}</span>}
+        {data.in_power_since && <span>· في السلطة منذ {data.in_power_since}</span>}
+      </div>
+
+      <div class="actor-status-bar">
+        <span class={`actor-status actor-status--${data.status}`}>
+          {data.status.toUpperCase()}
+        </span>
+        <span class="actor-updated">آخر تحديث: {data.last_updated}</span>
+        {data.conflicts?.length > 0 && (
+          <span class="actor-conflicts">
+            النزاع:
+            {data.conflicts.map((c: string) => (
+              <a href={base + 'ar/conflicts/' + c}>{c}</a>
+            ))}
+          </span>
+        )}
+      </div>
+
+      {data.status === 'draft' && (
+        <div class="draft-banner">
+          <strong>مسودة</strong> — هذا السجل يحتوي على علامات [مصدر مطلوب]. لم يجتز المراجعة التحريرية بعد. المصادر قيد التحقق.
+        </div>
+      )}
+    </header>
+
+    <div class="actor-body">
+
+      <!-- STATED POSITIONS -->
+      {data.stated_positions?.length > 0 && (
+        <section class="actor-section">
+          <h2 class="section-title">المواقف المُعلنة</h2>
+          <p class="section-intro">
+            ما صرّح به هذا الطرف علناً. كل ادعاء مُسنَد بمصدر.
+          </p>
+          {data.stated_positions.map((sp: any, i: number) => (
+            <div class="stated-item">
+              <div class="stated-header">
+                <span class="stated-id">SP-{String(i + 1).padStart(3, '0')}</span>
+                <span class="stated-date">{sp.date}</span>
+              </div>
+              <blockquote class="stated-claim">"{sp.claim}"</blockquote>
+              {sp.context && <p class="stated-context">{sp.context}</p>}
+              <div class="source-row">
+                {sp.source_tier && (
+                  <span class={`source-tier source-tier--${sp.source_tier?.toLowerCase().replace(' ', '-')}`}>
+                    {sp.source_tier}
+                  </span>
+                )}
+                {sp.source_url && !sp.source_url.includes('SOURCE NEEDED') ? (
+                  <a href={sp.source_url} target="_blank" rel="noopener" class="source-link">
+                    {sp.source_description || 'المصدر'} ↗
+                  </a>
+                ) : (
+                  <span class="source-needed">{sp.source_description || '[مصدر مطلوب]'}</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
+
+      <!-- DOCUMENTED ACTIONS -->
+      {data.documented_actions?.length > 0 && (
+        <section class="actor-section">
+          <h2 class="section-title">الأفعال الموثّقة</h2>
+          <p class="section-intro">
+            ما فعله هذا الطرف. كل فعل مُسنَد ومؤرَّخ.
+          </p>
+          {data.documented_actions.map((da: any, i: number) => (
+            <div class="action-item">
+              <div class="action-header">
+                <span class="action-id">DA-{String(i + 1).padStart(3, '0')}</span>
+                <span class="action-date">{da.date}</span>
+              </div>
+              <p class="action-description">{da.action}</p>
+              {da.impact && (
+                <p class="action-impact">
+                  <span class="impact-label">الأثر:</span> {da.impact}
+                </p>
+              )}
+              <div class="source-row">
+                {da.source_tier && (
+                  <span class={`source-tier source-tier--${da.source_tier?.toLowerCase().replace(' ', '-')}`}>
+                    {da.source_tier}
+                  </span>
+                )}
+                {da.source_url && !da.source_url.includes('SOURCE NEEDED') ? (
+                  <a href={da.source_url} target="_blank" rel="noopener" class="source-link">
+                    {da.source_description || 'المصدر'} ↗
+                  </a>
+                ) : (
+                  <span class="source-needed">{da.source_description || '[مصدر مطلوب]'}</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
+
+      <!-- GAP ANALYSIS -->
+      {data.gap_analysis?.length > 0 && (
+        <section class="actor-section">
+          <h2 class="section-title">تحليل الفجوة</h2>
+          <p class="section-intro">
+            المسافة بين ما أُعلن وما وُثّق.
+            <span class="tag tag--documented">DOCUMENTED</span> = verified fact.
+            <span class="tag tag--inference">INFERENCE</span> = reasoned conclusion, labeled.
+          </p>
+          {data.gap_analysis.map((gap: any, i: number) => {
+            const colors = confidenceColors[gap.confidence as keyof typeof confidenceColors] || confidenceColors.medium;
+            return (
+              <div class="gap-item" style={`border-left-color: ${colors.border};`}>
+                <div class="gap-header">
+                  <span class="gap-id">GAP-{String(i + 1).padStart(3, '0')}</span>
+                  <span class={`gap-type tag tag--${gap.type}`}>{gap.type.toUpperCase()}</span>
+                  <span class={`gap-confidence gap-confidence--${gap.confidence}`}>
+                    {gap.confidence} ثقة
+                  </span>
+                </div>
+                <div class="gap-comparison">
+                  <div class="gap-stated-block">
+                    <span class="gap-block-label">المُعلَن</span>
+                    <p>{gap.stated}</p>
+                  </div>
+                  <div class="gap-documented-block">
+                    <span class="gap-block-label">الموثّق</span>
+                    <p>{gap.documented}</p>
+                  </div>
+                </div>
+                <div class="gap-summary-block" style={`background: ${colors.bg};`}>
+                  <span class="gap-block-label">الفجوة</span>
+                  <p>{gap.gap}</p>
+                </div>
+                {gap.sources?.length > 0 && (
+                  <div class="gap-sources">
+                    <span class="gap-sources-label">المصادر:</span>
+                    {gap.sources.map((s: string) => (
+                      <span class="gap-source-item">{s}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </section>
+      )}
+
+      <!-- PERSONAL INTERESTS -->
+      {data.personal_interests?.length > 0 && (
+        <section class="actor-section">
+          <h2 class="section-title">المصالح الشخصية</h2>
+          <p class="section-intro">
+            مصالح موثّقة توفر سياقاً لقرارات هذا الطرف.
+            هذا سياق، لا اتهام. القارئ يقيّم.
+          </p>
+          {data.personal_interests.map((pi: any) => (
+            <div class={`interest-item interest-item--${pi.type}`}>
+              <div class="interest-header">
+                {pi.id && <span class="interest-id">{pi.id}</span>}
+                <span class={`tag tag--${pi.type}`}>{pi.type.toUpperCase()}</span>
+              </div>
+              <p class="interest-text">{pi.interest}</p>
+              <p class="interest-relevance">{pi.relevance}</p>
+              {pi.source_description && (
+                <div class="source-row">
+                  {pi.source_url && !pi.source_url.includes('SOURCE NEEDED') ? (
+                    <a href={pi.source_url} target="_blank" rel="noopener" class="source-link">
+                      {pi.source_description} ↗
+                    </a>
+                  ) : (
+                    <span class="source-needed">{pi.source_description}</span>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+        </section>
+      )}
+
+      <!-- REVIEW NOTES -->
+      {data.review_notes && (
+        <section class="actor-section actor-section--review">
+          <h2 class="section-title">ملاحظات المراجعة</h2>
+          <p class="review-notes-text">{data.review_notes}</p>
+        </section>
+      )}
+
+      <!-- CONTRIBUTE -->
+      <section class="actor-section actor-section--contribute">
+        <p>
+          هل هناك أدلة ناقصة أو غير صحيحة؟
+          <a href="https://github.com/parallaxin/parallaxin" target="_blank" rel="noopener">
+            ← أرسل تصحيحاً عبر GitHub
+          </a>
+        </p>
+        <p class="contribute-note">
+          تُراجع جميع التصحيحات وفق معيار الأدلة (الدستور، المادة 2). كل تغيير يُسجَّل بشكل دائم في سجل Git.
+        </p>
+      </section>
+
+    </div>
+  </main>
+</Base>
+
+<style>
+  .actor-main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem;
+  }
+
+  /* HEADER */
+  .actor-header {
+    padding: 2rem 0 0;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 1.5rem;
+  }
+  .actor-breadcrumb {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .actor-breadcrumb a {
+    color: var(--color-documented);
+    text-decoration: none;
+  }
+  .actor-record-id {
+    font-family: var(--font-mono);
+  }
+  .actor-name {
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+  .actor-meta {
+    font-size: 0.88rem;
+    color: var(--color-text-secondary);
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .actor-status-bar {
+    display: flex;
+    gap: 1.25rem;
+    font-size: 0.78rem;
+    color: var(--color-text-muted);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .actor-status {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+  }
+  .actor-status--draft {
+    background: var(--color-inference-bg);
+    color: var(--color-inference);
+  }
+  .actor-status--under-review {
+    background: var(--color-contested-bg);
+    color: var(--color-contested);
+  }
+  .actor-status--published {
+    background: var(--color-documented-bg);
+    color: var(--color-documented);
+  }
+  .actor-conflicts a {
+    color: var(--color-documented);
+    text-decoration: none;
+  }
+  .draft-banner {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-left: 4px solid var(--color-inference);
+    background: var(--color-inference-bg);
+    font-size: 0.82rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+  .draft-banner strong {
+    color: var(--color-inference);
+  }
+
+  /* SECTIONS */
+  .actor-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .actor-section:last-child { border-bottom: none; }
+  .section-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    margin-bottom: 1rem;
+  }
+  .section-intro {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+
+  /* STATED POSITIONS */
+  .stated-item {
+    padding: 1rem 1rem 1rem 1.25rem;
+    border-left: 3px solid var(--color-text-muted);
+    margin-bottom: 0.75rem;
+    background: var(--color-surface);
+  }
+  .stated-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .stated-id {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--color-text-muted);
+  }
+  .stated-date {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+  }
+  .stated-claim {
+    font-size: 0.95rem;
+    color: var(--color-text-primary);
+    font-style: italic;
+    line-height: 1.6;
+    margin: 0 0 0.5rem;
+    border: none;
+    padding: 0;
+  }
+  .stated-context {
+    font-size: 0.82rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+  }
+
+  /* DOCUMENTED ACTIONS */
+  .action-item {
+    padding: 1rem 1rem 1rem 1.25rem;
+    border-left: 3px solid var(--color-documented);
+    margin-bottom: 0.75rem;
+    background: var(--color-surface);
+  }
+  .action-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .action-id {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--color-text-muted);
+  }
+  .action-date {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+  }
+  .action-description {
+    font-size: 0.9rem;
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+  }
+  .action-impact {
+    font-size: 0.82rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+  }
+  .impact-label {
+    font-weight: 700;
+    color: var(--color-text-muted);
+  }
+
+  /* SOURCES */
+  .source-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+  .source-link {
+    font-size: 0.8rem;
+    color: var(--color-documented);
+    text-decoration: none;
+  }
+  .source-link:hover { text-decoration: underline; }
+  .source-needed {
+    font-size: 0.78rem;
+    color: var(--color-inference);
+    font-style: italic;
+    font-family: var(--font-mono);
+  }
+
+  /* TAGS */
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .tag--documented { background: var(--color-documented); color: var(--color-bg); }
+  .tag--inference { background: var(--color-inference); color: var(--color-bg); }
+
+  /* GAP ANALYSIS */
+  .gap-item {
+    border-left: 4px solid;
+    margin-bottom: 1.5rem;
+    padding: 0;
+  }
+  .gap-header {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .gap-id {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--color-text-muted);
+  }
+  .gap-confidence {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 600;
+    margin-left: auto;
+  }
+  .gap-confidence--high { color: var(--color-gap); }
+  .gap-confidence--medium { color: var(--color-inference); }
+  .gap-confidence--low { color: var(--color-contested); }
+
+  .gap-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .gap-stated-block, .gap-documented-block {
+    padding: 1rem;
+  }
+  .gap-stated-block {
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+  }
+  .gap-documented-block {
+    background: var(--color-documented-bg);
+  }
+  .gap-block-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .gap-stated-block p, .gap-documented-block p, .gap-summary-block p {
+    font-size: 0.85rem;
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    margin: 0;
+  }
+  .gap-summary-block {
+    padding: 1rem;
+    border-top: 1px solid var(--color-border);
+  }
+  .gap-summary-block .gap-block-label {
+    color: var(--color-gap);
+  }
+  .gap-sources {
+    padding: 0.75rem 1rem;
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .gap-sources-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+  }
+  .gap-source-item {
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    color: var(--color-text-secondary);
+    padding: 0.15rem 0.4rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+  }
+
+  /* PERSONAL INTERESTS */
+  .interest-item {
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    margin-bottom: 0.75rem;
+  }
+  .interest-item--documented {
+    border-left: 3px solid var(--color-documented);
+  }
+  .interest-item--inference {
+    border-left: 3px solid var(--color-inference);
+  }
+  .interest-header {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .interest-id {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--color-text-muted);
+  }
+  .interest-text {
+    font-size: 0.88rem;
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    margin-bottom: 0.4rem;
+  }
+  .interest-relevance {
+    font-size: 0.82rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    font-style: italic;
+    margin-bottom: 0.5rem;
+  }
+
+  /* REVIEW NOTES */
+  .actor-section--review {
+    background: var(--color-inference-bg);
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-border);
+  }
+  .review-notes-text {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* CONTRIBUTE */
+  .actor-section--contribute {
+    background: var(--color-surface);
+    padding: 1.25rem;
+    border: 1px solid var(--color-border);
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+  .actor-section--contribute p {
+    font-size: 0.88rem;
+    color: var(--color-text-secondary);
+    margin: 0 0 0.4rem;
+  }
+  .actor-section--contribute a {
+    color: var(--color-documented);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .contribute-note {
+    color: var(--color-text-muted) !important;
+    font-size: 0.78rem !important;
+  }
+
+  @media (max-width: 600px) {
+    .gap-comparison { grid-template-columns: 1fr; }
+    .gap-stated-block { border-right: none; border-bottom: 1px solid var(--color-border); }
+  }
+</style>

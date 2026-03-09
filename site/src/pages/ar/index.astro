@@ -1,19 +1,32 @@
-﻿---
-import Base from '../layouts/Base.astro';
+---
+import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
-import { t, getDirection } from '../i18n/utils';
+import { t, getDirection } from '../../i18n/utils';
 
-const locale = 'en';
+const locale = 'ar';
 const dir = getDirection(locale);
 
-// Load published content
-const allAutopsies = (await getCollection('autopsies')).filter(a => !a.id.replace('.md', '').endsWith('.ar'));
-const allConflicts = (await getCollection('conflicts', ({ data }) => data.status === 'active' || data.status === 'published')).filter(a => !a.id.replace('.md', '').endsWith('.ar'));
-const allActors = (await getCollection('actors')).filter(a => !a.id.replace('.md', '').endsWith('.ar'));
+// Load published content — prefer Arabic translations, fall back to English
+const rawAutopsies = await getCollection('autopsies');
+const rawConflicts = await getCollection('conflicts', ({ data }) => data.status === 'active' || data.status === 'published');
+const rawActors = await getCollection('actors');
+
+function preferArabic(items) {
+  const english = items.filter(a => !a.id.replace('.md', '').endsWith('.ar'));
+  return english.map(entry => {
+    const baseId = entry.id.replace('.md', '');
+    const arEntry = items.find(a => a.id.replace('.md', '') === baseId + '.ar');
+    return arEntry || entry;
+  });
+}
+
+const allAutopsies = preferArabic(rawAutopsies);
+const allConflicts = preferArabic(rawConflicts);
+const allActors = preferArabic(rawActors);
 const base = import.meta.env.BASE_URL;
 ---
 
-<Base title={t(locale, 'site.title')} locale={locale}>
+<Base title={t(locale, 'site.title')} locale="ar">
 
   <main class="site-main" dir={dir}>
 
@@ -24,16 +37,13 @@ const base = import.meta.env.BASE_URL;
           {t(locale, 'site.tagline').split('.').map((s, i) => i < 2 ? <>{s}.<br/></> : <span class="mission-gap">{s}.</span>)}
         </h1>
         <p class="mission-body">
-          Parallaxin documents the gap between the stated positions and
-          documented actions of powerful actors — governments, military forces,
-          and individuals whose decisions affect human life at scale.
+          يوثّق بارالاكسين المسافة بين المواقف المُعلنة والأفعال الموثّقة لأصحاب السلطة — حكومات، قوى عسكرية، وأفراد تؤثر قراراتهم في حياة البشر على نطاق واسع.
         </p>
         <p class="mission-body">
-          Every claim is sourced. Every inference is labeled.
-          No editorials. No ads. No accounts required.
+          كل ادعاء موثّق بمصدر. كل استنتاج مُعلَّم. بلا افتتاحيات. بلا إعلانات. بلا حسابات مطلوبة.
         </p>
-        <a href={base + 'constitution'} class="mission-link">
-          Read the Constitution →
+        <a href={base + 'ar/constitution'} class="mission-link">
+          ← اقرأ الدستور
         </a>
       </div>
     </section>
@@ -43,15 +53,15 @@ const base = import.meta.env.BASE_URL;
       <div class="legend-inner">
         <span class="legend-item legend-documented">
           <span class="legend-dot"></span>
-          {t(locale, 'content.documented')} — verified, sourced fact
+          {t(locale, 'content.documented')} — حقيقة موثّقة ومُسنَدة بمصدر
         </span>
         <span class="legend-item legend-inference">
           <span class="legend-dot"></span>
-          {t(locale, 'content.inference')} — reasoned conclusion from documented facts, labeled as such
+          {t(locale, 'content.inference')} — استنتاج مبني على وقائع موثّقة، مُعلَّم كذلك
         </span>
         <span class="legend-item legend-contested">
           <span class="legend-dot"></span>
-          CONTESTED — single-source or disputed, awaiting corroboration
+          مُتنازَع عليه — مصدر واحد أو محل خلاف، بانتظار التأكيد
         </span>
       </div>
     </section>
@@ -61,23 +71,23 @@ const base = import.meta.env.BASE_URL;
       <div class="section-header">
         <h2 class="section-title">{t(locale, 'site.nav.autopsies')}</h2>
         <p class="section-desc">
-          Official claims examined against available evidence.
-          The record that answers: <em>what did the evidence actually show?</em>
+          ادعاءات رسمية تُفحص في ضوء الأدلة المتاحة.
+          السجل الذي يجيب: <em>ماذا أظهرت الأدلة فعلاً؟</em>
         </p>
       </div>
 
       {allAutopsies.length === 0 ? (
         <div class="empty-state">
-          <p>First autopsies are under review. Check back shortly.</p>
+          <p>التشريحات الأولى قيد المراجعة. عُد قريباً.</p>
         </div>
       ) : (
         <div class="card-grid">
           {allAutopsies.map((autopsy) => (
-            <a href={base + `autopsies/${autopsy.id.replace('.md', '')}`} class="card">
+            <a href={base + `ar/autopsies/${autopsy.id.replace('.md', '').replace('.ar', '')}`} class="card">
               <div class="card-meta">
                 <span class="card-id">{autopsy.data.record_id}</span>
                 <span class={`card-confidence card-confidence--${autopsy.data.confidence_rating}`}>
-                  {autopsy.data.confidence_rating} confidence
+                  {autopsy.data.confidence_rating} ثقة
                 </span>
               </div>
               <h3 class="card-title">{autopsy.data.title}</h3>
@@ -85,9 +95,9 @@ const base = import.meta.env.BASE_URL;
                 {autopsy.data.the_claim?.speaker}
               </p>
               <p class="card-verdict">
-                Evidence: <strong>{autopsy.data.evidence_assessment?.claim_supported_by_evidence}</strong>
+                الأدلة: <strong>{autopsy.data.evidence_assessment?.claim_supported_by_evidence}</strong>
               </p>
-              <span class="card-arrow">Read autopsy →</span>
+              <span class="card-arrow">← اقرأ التشريح</span>
             </a>
           ))}
         </div>
@@ -99,19 +109,19 @@ const base = import.meta.env.BASE_URL;
       <div class="section-header">
         <h2 class="section-title">{t(locale, 'site.nav.conflicts')}</h2>
         <p class="section-desc">
-          Documented timelines, actor records, and human cost.
-          Updated when new evidence is verified.
+          جداول زمنية موثّقة، سجلات أطراف، وتكلفة بشرية.
+          يُحدَّث عند التحقق من أدلة جديدة.
         </p>
       </div>
 
       {allConflicts.length === 0 ? (
         <div class="empty-state">
-          <p>Conflict records are being sourced and verified.</p>
+          <p>سجلات النزاعات قيد التوثيق والتحقق.</p>
         </div>
       ) : (
         <div class="card-grid">
           {allConflicts.map((conflict) => (
-            <a href={base + `conflicts/${conflict.id.replace('.md', '')}`} class="card">
+            <a href={base + `ar/conflicts/${conflict.id.replace('.md', '').replace('.ar', '')}`} class="card">
               <div class="card-meta">
                 <span class="card-id">{conflict.data.record_id}</span>
                 <span class={`card-status card-status--${conflict.data.status}`}>
@@ -120,13 +130,13 @@ const base = import.meta.env.BASE_URL;
               </div>
               <h3 class="card-title">{conflict.data.name}</h3>
               <p class="card-date">
-                From {conflict.data.start_date}
-                {(conflict.data.end_date && conflict.data.end_date !== 'null') ? ` to ${conflict.data.end_date}` : ' — ongoing'}
+                من {conflict.data.start_date}
+                {(conflict.data.end_date && conflict.data.end_date !== 'null') ? ` إلى ${conflict.data.end_date}` : ' — مستمر'}
               </p>
               <p class="card-geo">
                 {conflict.data.geography?.join(', ')}
               </p>
-              <span class="card-arrow">View conflict record →</span>
+              <span class="card-arrow">← عرض سجل النزاع</span>
             </a>
           ))}
         </div>
@@ -138,23 +148,23 @@ const base = import.meta.env.BASE_URL;
       <div class="section-header">
         <h2 class="section-title">{t(locale, 'site.nav.actors')}</h2>
         <p class="section-desc">
-          Stated positions. Documented actions. The gap between them.
+          مواقف مُعلنة. أفعال موثّقة. المسافة بينهما.
         </p>
       </div>
 
       {allActors.length === 0 ? (
         <div class="empty-state">
-          <p>Actor records are being verified.</p>
+          <p>سجلات الأطراف قيد التحقق.</p>
         </div>
       ) : (
         <div class="card-grid">
           {allActors.map((actor) => (
-            <a href={base + `actors/${actor.id.replace('.md', '')}`} class="card">
+            <a href={base + `ar/actors/${actor.id.replace('.md', '').replace('.ar', '')}`} class="card">
               <span class="card-id">{actor.data.record_id}</span>
               <h3 class="card-title">{actor.data.name}</h3>
               <p class="card-role">{actor.data.role}</p>
               <p class="card-institution">{actor.data.institution}</p>
-              <span class="card-arrow">View actor record →</span>
+              <span class="card-arrow">← عرض سجل الطرف</span>
             </a>
           ))}
         </div>
@@ -164,33 +174,33 @@ const base = import.meta.env.BASE_URL;
     <!-- ABOUT -->
     <section class="section section--about">
       <div class="about-inner">
-        <h2>What this is. What it is not.</h2>
+        <h2>ما هو هذا. وما هو ليس .</h2>
         <div class="about-grid">
           <div class="about-col">
-            <h3>What Parallaxin is</h3>
+            <h3>ما هو بارالاكسين</h3>
             <ul>
-              <li>A lens for examining the gap between stated positions and documented actions</li>
-              <li>Evidence-based — every claim is sourced and verifiable independently</li>
-              <li>Open source — code (MIT) and content (CC-BY 4.0) are fully forkable</li>
-              <li>Ungovernable — no single owner, no capture mechanism</li>
-              <li>Free — no ads, no accounts, no tracking</li>
+              <li>عدسة لفحص المسافة بين المواقف المُعلنة والأفعال الموثّقة</li>
+              <li>قائم على الأدلة — كل ادعاء مُسنَد ويمكن التحقق منه بشكل مستقل</li>
+              <li>مفتوح المصدر — الكود (MIT) والمحتوى (CC-BY 4.0) قابلان للنسخ بالكامل</li>
+              <li>خارج السيطرة — لا مالك واحد، ولا آلية للاستحواذ</li>
+              <li>مجاني — بلا إعلانات، بلا حسابات، بلا تتبع</li>
             </ul>
           </div>
           <div class="about-col">
-            <h3>What Parallaxin is not</h3>
+            <h3>ما ليس بارالاكسين</h3>
             <ul>
-              <li>Not a news organization — we document patterns, not breaking stories</li>
-              <li>Not neutral — neutrality between a fact and a lie is not a position we hold</li>
-              <li>Not a judge — we present evidence, readers conclude</li>
-              <li>Not activists — we make no policy recommendations</li>
-              <li>Not anonymous accusers — every claim we publish is independently verifiable</li>
+              <li>ليس مؤسسة إخبارية — نوثّق الأنماط، لا الأخبار العاجلة</li>
+              <li>ليس محايداً — الحياد بين حقيقة وكذبة ليس موقفاً نتبناه</li>
+              <li>ليس قاضياً — نعرض الأدلة، والقارئ يستنتج</li>
+              <li>ليس ناشطين — لا نقدّم توصيات سياسية</li>
+              <li>ليس منصة للاتّهامات المجهولة — كل ادعاء ننشره قابل للتحقق المستقل</li>
             </ul>
           </div>
         </div>
         <div class="about-links">
-          <a href={base + 'constitution'}>{t(locale, 'site.nav.constitution')}</a>
+          <a href={base + 'ar/constitution'}>{t(locale, 'site.nav.constitution')}</a>
           <a href="https://github.com/parallaxin/parallaxin" target="_blank" rel="noopener">
-            GitHub — contribute or fork
+            GitHub — ساهم أو انسخ المشروع
           </a>
         </div>
       </div>

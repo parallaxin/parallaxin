@@ -1,29 +1,35 @@
 ---
 import { getCollection } from 'astro:content';
-import Base from '../../layouts/Base.astro';
+import Base from '../../../layouts/Base.astro';
 
-const autopsies = (await getCollection('autopsies')).filter(a => !a.id.replace('.md', '').endsWith('.ar'));
+const allAutopsies = await getCollection('autopsies');
+// Prefer Arabic content, fall back to English
+const englishEntries = allAutopsies.filter(a => !a.id.replace('.md', '').endsWith('.ar'));
+const autopsies = englishEntries.map(entry => {
+  const baseId = entry.id.replace('.md', '');
+  const arabicEntry = allAutopsies.find(a => a.id.replace('.md', '') === baseId + '.ar');
+  return arabicEntry || entry;
+});
+const locale = 'ar';
 const base = import.meta.env.BASE_URL;
 ---
 
-<Base title="Claim Autopsies">
+<Base title="تشريح الادعاءات" locale={locale}>
   <article style="max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem;">
 
-    <h1>Claim Autopsies</h1>
+    <h1>تشريح الادعاءات</h1>
     <p style="color: var(--color-text-secondary); margin-bottom: 2rem; line-height: 1.7;">
-      Official claims examined against available evidence. Each autopsy takes a specific
-      statement by a powerful actor, documents what evidence exists for and against it,
-      identifies the gap, and asks who benefits from the claim being believed.
+      ادعاءات رسمية تُفحص في ضوء الأدلة المتاحة. كل تشريح يأخذ ادعاءً محدداً من طرف فاعل قوي، ويوثّق الأدلة المؤيدة والمناقضة، ويحدد الفجوة، ويسأل من يستفيد من تصديق هذا الادعاء.
     </p>
 
     {autopsies.length === 0 ? (
       <div style="padding: 2rem; border: 1px dashed var(--color-border); text-align: center; color: var(--color-text-muted);">
-        <p>Autopsies are being sourced and verified. Check back shortly.</p>
+        <p>التشريحات قيد التوثيق والتحقق. عُد قريباً.</p>
       </div>
     ) : (
       <div style="display: flex; flex-direction: column; gap: 1rem;">
         {autopsies.map((autopsy) => (
-          <a href={base + 'autopsies/' + autopsy.id.replace('.md', '')}
+          <a href={base + 'ar/autopsies/' + autopsy.id.replace('.md', '').replace('.ar', '')}
              style="display: block; padding: 1.25rem; border: 1px solid var(--color-border); background: var(--color-surface); text-decoration: none; color: inherit; transition: border-color 0.15s;"
              class="card-link">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
@@ -37,7 +43,7 @@ const base = import.meta.env.BASE_URL;
                   ? 'background: var(--color-inference-bg); color: var(--color-inference);'
                   : 'background: var(--color-contested-bg); color: var(--color-contested);'
               }`}>
-                {autopsy.data.confidence_rating} confidence
+                {autopsy.data.confidence_rating} ثقة
               </span>
             </div>
             <h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--color-text-primary);">
@@ -48,12 +54,12 @@ const base = import.meta.env.BASE_URL;
             </p>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem;">
               <span style="font-size: 0.82rem; color: var(--color-text-secondary);">
-                Evidence: <strong style="color: var(--color-gap); text-transform: uppercase; font-size: 0.75rem;">
+                الأدلة: <strong style="color: var(--color-gap); text-transform: uppercase; font-size: 0.75rem;">
                   {autopsy.data.evidence_assessment?.claim_supported_by_evidence}
                 </strong>
               </span>
               <span style="font-size: 0.8rem; color: var(--color-documented); font-weight: 600;">
-                Read autopsy →
+                ← اقرأ التشريح
               </span>
             </div>
           </a>

@@ -1,0 +1,108 @@
+---
+import Base from '../../layouts/Base.astro';
+import { t } from '../../i18n/utils';
+
+const locale = 'ar';
+const base = import.meta.env.BASE_URL;
+---
+
+<Base title="عن بارالاكسين" locale={locale}>
+  <main class="site-main">
+    <section class="section">
+      <div class="section-header">
+        <h1 class="section-title">عن بارالاكسين</h1>
+        <p class="section-desc">توثيق المسافة بين ما تقوله السلطة وما تفعله.</p>
+      </div>
+
+      <div class="about-content">
+        <h3>استعارة العدسة</h3>
+        <p>
+          المنظر المختلف (Parallax) هو الانزياح أو الفرق في الموضع الظاهري لجسم عند النظر إليه من خطي رؤية مختلفين. في ديناميكيات السلطة، غالباً ما توجد مسافة هائلة بين
+          <strong>المواقف المُعلنة</strong> (البرقيات الدبلوماسية، البيانات الصحفية، الخطابات العامة)
+          و<strong>الأفعال الموثّقة</strong> (التحركات العسكرية، مخصصات الميزانية، اللقطات المُتحقق منها).
+        </p>
+        <p>
+          بارالاكسين هو العدسة التي نوثّق من خلالها تلك الفجوة.
+        </p>
+
+        <h3>ما الذي يميّزنا؟</h3>
+        <ul>
+          <li><strong>قائم على الأدلة، لا على الإجماع:</strong> لا ننتظر «التأكيد الرسمي» إذا كانت الأدلة القابلة للتحقق موجودة بالفعل. لا نبحث عن أرضية وسطى بين حقيقة وكذبة.</li>
+          <li><strong>الفجوة هي المنتج:</strong> تركيزنا الأساسي هو فجوة السلوك بين الفاعل وأفعاله. نوثّق ما تغيّر بين الادعاء والفعل.</li>
+          <li><strong>مُصمَّم ليكون خارج السيطرة:</strong> بارالاكسين مفتوح المصدر ومستضاف كموقع ثابت. لا يملك قاعدة بيانات مركزية يمكن مصادرتها، ولا حسابات يمكن حظرها، ولا نقطة فشل واحدة.</li>
+        </ul>
+
+        <h3>كيف بُني</h3>
+        <p>
+          بارالاكسين مبني على الانفتاح وقابلية المراجعة.
+        </p>
+        <ul>
+          <li><strong>مفتوح المصدر:</strong> كل شيء من محرك الموقع إلى مخطط البيانات متاح على GitHub تحت رخصة MIT.</li>
+          <li><strong>موقع ثابت:</strong> الموقع مُصيَّر مسبقاً من أجل السرعة والأمان والديمومة.</li>
+          <li><strong>Git كسجل مراجعة دائم:</strong> كل تغيير في كل سجل يُتتبّع في التزامات Git العلنية، مما يخلق سجلاً دائماً وغير قابل للتغيير لعملية التوثيق ذاتها.</li>
+        </ul>
+
+        <h3>الدستور</h3>
+        <p>
+          جميع القرارات التحريرية والمبادئ التشغيلية يحكمها
+          <a href={base + 'ar/constitution'}>دستور بارالاكسين</a>.
+          يحدّد منهجيتنا في التوثيق والاستنتاج وتصحيح الأخطاء.
+        </p>
+
+        <h3>كيف تساهم</h3>
+        <p>
+          نرحب بمساهمات الباحثين والمطورين والمترجمين. يرجى الاطلاع على
+          <a href="https://github.com/parallaxin/parallaxin/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a>
+          على GitHub للحصول على إرشادات حول كيفية تقديم الأدلة أو إصلاح الأخطاء أو إضافة ميزات جديدة.
+        </p>
+
+        <h3>التواصل</h3>
+        <p>
+          للثغرات الأمنية، يرجى مراسلتنا عبر البريد الإلكتروني:
+          <a href="mailto:parallaxin@proton.me">parallaxin@proton.me</a>.
+        </p>
+        <p>
+          لجميع الاتصالات الأخرى، بما في ذلك النزاعات حول المحتوى أو طلبات الميزات، يرجى
+          <strong>فتح قضية على GitHub</strong>. لا نتعامل مع المناقشات التحريرية أو التقنية
+          عبر البريد الإلكتروني للحفاظ على سجل عام شفاف.
+        </p>
+      </div>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .section {
+    padding: 4rem 1.5rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .about-content {
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+  }
+  .about-content h3 {
+    margin-top: 2.5rem;
+    color: var(--color-text-primary);
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+  .about-content p {
+    margin-bottom: 1.2rem;
+  }
+  .about-content ul {
+    margin-bottom: 1.5rem;
+    padding-left: 1.25rem;
+  }
+  .about-content li {
+    margin-bottom: 0.75rem;
+  }
+  .about-content a {
+    color: var(--color-documented);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .about-content a:hover {
+    text-decoration: underline;
+  }
+</style>

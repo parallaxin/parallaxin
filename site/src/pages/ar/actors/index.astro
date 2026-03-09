@@ -1,38 +1,45 @@
 ---
 import { getCollection } from 'astro:content';
-import Base from '../../layouts/Base.astro';
+import Base from '../../../layouts/Base.astro';
 
-let actors = [];
+let allActors = [];
 try {
-  actors = (await getCollection('actors')).filter(a => !a.id.replace('.md', '').endsWith('.ar'));
+  allActors = await getCollection('actors');
 } catch (e) {
   // Collection empty — expected during early build
 }
+// Prefer Arabic content, fall back to English
+const englishEntries = allActors.filter(a => !a.id.replace('.md', '').endsWith('.ar'));
+const actors = englishEntries.map(entry => {
+  const baseId = entry.id.replace('.md', '');
+  const arabicEntry = allActors.find(a => a.id.replace('.md', '') === baseId + '.ar');
+  return arabicEntry || entry;
+});
+const locale = 'ar';
 const base = import.meta.env.BASE_URL;
 ---
 
-<Base title="Actor Records">
+<Base title="سجلات الأطراف" locale={locale}>
   <article style="max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem;">
 
-    <h1>Actor Records</h1>
+    <h1>سجلات الأطراف</h1>
     <p style="color: var(--color-text-secondary); margin-bottom: 2rem; line-height: 1.7;">
-      Stated positions. Documented actions. The gap between them.
-      Each record tracks what a powerful actor says publicly against
-      what their documented behavior shows — sourced, timestamped, verifiable.
+      مواقف مُعلنة. أفعال موثّقة. المسافة بينهما.
+      كل سجل يتتبع ما يقوله طرف فاعل قوي علناً مقابل ما تُظهره أفعاله الموثّقة — مُسنَد، مؤرَّخ، قابل للتحقق.
     </p>
 
     {actors.length === 0 ? (
       <div style="padding: 2rem; border: 1px dashed var(--color-border); text-align: center; color: var(--color-text-muted);">
-        <p>Actor records are being sourced and verified.</p>
+        <p>سجلات الأطراف قيد التوثيق والتحقق.</p>
         <p style="font-size: 0.85rem; margin-top: 0.5rem;">
-          Draft records for key actors in the current conflict are in preparation.
-          Each must meet the <a href={base + 'constitution'} style="color: var(--color-documented);">Evidence Standard</a> before publication.
+          مسودات السجلات للأطراف الرئيسيين في النزاع الحالي قيد الإعداد. يجب أن يستوفي كل سجل معيار الأدلة قبل النشر.
+          <a href={base + 'ar/constitution'} style="color: var(--color-documented);">معيار الأدلة</a>
         </p>
       </div>
     ) : (
       <div style="display: flex; flex-direction: column; gap: 1rem;">
         {actors.map((actor) => (
-          <a href={base + 'actors/' + actor.id.replace('.md', '')}
+          <a href={base + 'ar/actors/' + actor.id.replace('.md', '').replace('.ar', '')}
              style="display: block; padding: 1.25rem; border: 1px solid var(--color-border); background: var(--color-surface); text-decoration: none; color: inherit;"
              class="card-link">
             <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-text-muted);">

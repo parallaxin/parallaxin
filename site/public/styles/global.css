@@ -442,3 +442,127 @@ blockquote cite {
   padding-top: 2rem;
   border-top: 1px solid var(--color-border);
 }
+
+/* ═══ RTL SUPPORT — Arabic/Farsi ═══ */
+
+/* Tables: flip text alignment */
+[dir="rtl"] th,
+[dir="rtl"] td {
+  text-align: right;
+}
+
+/* Timeline: flip track to right side */
+[dir="rtl"] .timeline-track {
+  padding-left: 0;
+  padding-right: 2rem;
+}
+[dir="rtl"] .timeline-track::before {
+  left: auto;
+  right: 0.5rem;
+}
+[dir="rtl"] .timeline-marker {
+  left: auto;
+  right: -1.75rem;
+}
+
+/* Border-left items: flip to border-right */
+[dir="rtl"] .stated-item,
+[dir="rtl"] .action-item,
+[dir="rtl"] .antecedent-item,
+[dir="rtl"] .evidence-item {
+  padding-left: 1rem;
+  padding-right: 1.25rem;
+  border-left: none;
+  border-right-width: 3px;
+  border-right-style: solid;
+}
+[dir="rtl"] .stated-item { border-right-color: var(--color-text-muted); }
+[dir="rtl"] .action-item { border-right-color: var(--color-documented); }
+[dir="rtl"] .antecedent-item { border-right-color: var(--color-documented); }
+[dir="rtl"] .antecedent-item--inference { border-right-color: var(--color-inference); }
+[dir="rtl"] .evidence-item--supporting { border-right-color: var(--color-documented); }
+[dir="rtl"] .evidence-item--contradicting { border-right-color: var(--color-gap); }
+
+/* Gap analysis: flip border-left */
+[dir="rtl"] .gap-item {
+  border-left: none;
+  border-right: 4px solid;
+}
+
+/* Verdict banner: flip border-left */
+[dir="rtl"] .verdict-banner {
+  border-left: none;
+  border-right: 4px solid;
+}
+[dir="rtl"] .verdict--no { border-right-color: var(--color-gap); }
+[dir="rtl"] .verdict--yes { border-right-color: var(--color-documented); }
+[dir="rtl"] .verdict--partial { border-right-color: var(--color-inference); }
+[dir="rtl"] .verdict--insufficient { border-right-color: var(--color-contested); }
+
+/* Framing note: flip border */
+[dir="rtl"] .framing-note {
+  border-left: none;
+  border-right: 4px solid var(--color-inference);
+}
+
+/* Gap block: flip border */
+[dir="rtl"] .gap-block {
+  border-left: none;
+  border-right: 4px solid var(--color-gap);
+}
+
+/* Gap comparison: flip stated/documented border */
+[dir="rtl"] .gap-stated-block {
+  border-right: none;
+  border-left: 1px solid var(--color-border);
+}
+
+/* Draft banner: flip border */
+[dir="rtl"] .draft-banner {
+  border-left: none;
+  border-right: 4px solid var(--color-inference);
+}
+
+/* Personal interests: flip border */
+[dir="rtl"] .interest-item--documented {
+  border-left: none;
+  border-right: 3px solid var(--color-documented);
+}
+[dir="rtl"] .interest-item--inference {
+  border-left: none;
+  border-right: 3px solid var(--color-inference);
+}
+
+/* About section list items: flip dash position */
+[dir="rtl"] .about-col li {
+  padding-left: 0;
+  padding-right: 1rem;
+}
+[dir="rtl"] .about-col li::before {
+  left: auto;
+  right: 0;
+}
+
+/* Confidence margin flip */
+[dir="rtl"] .gap-confidence {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+/* Language switcher */
+.site-nav-lang {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s;
+}
+.site-nav-lang:hover {
+  border-color: var(--color-documented);
+  color: var(--color-documented);
+}

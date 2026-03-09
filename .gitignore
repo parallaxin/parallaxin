@@ -34,6 +34,8 @@ tmp/
 .temp/
 *.tmp
 *.temp
+site/playwright-report
+site/test-results
 
 # Node
 node_modules/
