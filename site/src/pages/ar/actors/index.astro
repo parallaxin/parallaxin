@@ -1,0 +1,59 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+
+let actors = [];
+try {
+  actors = await getCollection('actors');
+} catch (e) {
+  // Collection empty — expected during early build
+}
+const locale = 'ar';
+const base = import.meta.env.BASE_URL;
+---
+
+<Base title="سجلات الأطراف" locale={locale}>
+  <article style="max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem;">
+
+    <h1>سجلات الأطراف</h1>
+    <p style="color: var(--color-text-secondary); margin-bottom: 2rem; line-height: 1.7;">
+      مواقف مُعلنة. أفعال موثّقة. المسافة بينهما.
+      كل سجل يتتبع ما يقوله طرف فاعل قوي علناً مقابل ما تُظهره أفعاله الموثّقة — مُسنَد، مؤرَّخ، قابل للتحقق.
+    </p>
+
+    {actors.length === 0 ? (
+      <div style="padding: 2rem; border: 1px dashed var(--color-border); text-align: center; color: var(--color-text-muted);">
+        <p>سجلات الأطراف قيد التوثيق والتحقق.</p>
+        <p style="font-size: 0.85rem; margin-top: 0.5rem;">
+          مسودات السجلات للأطراف الرئيسيين في النزاع الحالي قيد الإعداد. يجب أن يستوفي كل سجل معيار الأدلة قبل النشر.
+          <a href={base + 'ar/constitution'} style="color: var(--color-documented);">معيار الأدلة</a>
+        </p>
+      </div>
+    ) : (
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        {actors.map((actor) => (
+          <a href={base + 'ar/actors/' + actor.id.replace('.md', '')}
+             style="display: block; padding: 1.25rem; border: 1px solid var(--color-border); background: var(--color-surface); text-decoration: none; color: inherit;"
+             class="card-link">
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-text-muted);">
+              {actor.data.record_id}
+            </span>
+            <h2 style="font-size: 1.1rem; font-weight: 600; margin: 0.4rem 0; color: var(--color-text-primary);">
+              {actor.data.name}
+            </h2>
+            <p style="font-size: 0.85rem; color: var(--color-text-secondary);">
+              {actor.data.role}
+            </p>
+          </a>
+        ))}
+      </div>
+    )}
+
+  </article>
+</Base>
+
+<style>
+  .card-link:hover {
+    border-color: var(--color-documented) !important;
+  }
+</style>

@@ -1,0 +1,197 @@
+---
+import Base from '../../layouts/Base.astro';
+import { t } from '../../i18n/utils';
+
+const locale = 'ar';
+const base = import.meta.env.BASE_URL;
+---
+
+<Base title="الدستور" locale={locale}>
+  <article class="constitution" style="max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem;">
+
+    <h1>دستور بارالاكسين</h1>
+    <p class="meta" style="color: var(--color-text-muted); margin-bottom: 2rem;">
+      الإصدار 1.0 — أُقِرّ قبل كتابة أول سطر برمجي
+    </p>
+
+    <section class="preamble" style="border-left: 4px solid var(--color-inference); padding: 1rem 1.5rem; margin-bottom: 2.5rem; background: var(--color-inference-bg);">
+      <p>
+        السلطة تتحدث باستمرار. تتحدث عبر المؤتمرات الصحفية، والبيانات الرسمية، والعقوبات، والمعاهدات، والقنابل. تتحدث عبر الصمت — ما تختار ألا تقوله.
+      </p>
+      <p style="margin-top: 1rem;">
+        بارالاكسين موجود لأن هناك مسافة قابلة للقياس والتوثيق بين ما تقوله السلطة وما تفعله. تلك المسافة ليست رأياً. ليست أيديولوجيا. إنها هندسة — يمكن رصدها من زوايا كافية، بأدلة كافية، لأي شخص مستعد للنظر.
+      </p>
+      <p style="margin-top: 1rem;">
+        هذه المنصة لا تحتكر الحقيقة. تحتفظ بالأدلة. لا تصدر أحكاماً. تقدّم المادة الخام التي يمكن لأي شخص نزيه أن يصل منها إلى استنتاجاته.
+      </p>
+      <p style="margin-top: 1rem;">
+        نحن لسنا محايدين. الحياد موقف سياسي يدّعي المسافة المتساوية بين حقيقة موثّقة وكذبة مريحة. نحن
+        <strong>موضوعيون</strong> — نتبع الأدلة أينما قادت، بصرف النظر عمّن تخدم أو تضر.
+      </p>
+      <p style="margin-top: 1rem;">
+        نحن عدسة. لسنا وحياً. لسنا قضاة. لسنا ناشطين. عدسة.
+      </p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>المادة 1: الغرض</h2>
+      <p><strong>1.1</strong> بارالاكسين موجود لتوثيق الفجوة بين المواقف المُعلنة والأفعال الموثّقة للفاعلين الأقوياء — الحكومات، والمؤسسات، والقوات العسكرية، والأفراد الذين يتحكمون بموارد تؤثر في حياة البشر على نطاق واسع — بلغة واضحة ومصادر قابلة للتحقق.</p>
+      <p style="margin-top: 0.75rem;"><strong>1.2</strong> بارالاكسين ليس مؤسسة إخبارية. لا ينافس على السرعة. ينافس على الدقة والشمول.</p>
+      <p style="margin-top: 0.75rem;"><strong>1.3</strong> بارالاكسين ليس مشروعاً سياسياً. ليس لديه موقف حول كيفية حكم العالم، أو أي الدول ينبغي أن توجد، أو أي الأيديولوجيات صحيحة. لديه موقف واحد فقط: أن الأفعال الموثّقة يجب أن تُقارن بالادعاءات المُعلنة، وأن تكون النتيجة متاحة لكل إنسان على وجه الأرض، مجاناً، بلغته.</p>
+      <p style="margin-top: 0.75rem;"><strong>1.4</strong> الجمهور الأساسي هو المواطن — الشخص الذي تتأثر حياته بقرارات الفاعلين الأقوياء والذي يستحق الوصول إلى السجل الموثّق لما يقوله هؤلاء الفاعلون مقابل ما يفعلونه.</p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>المادة 2: معيار الأدلة</h2>
+      <p style="font-style: italic; color: var(--color-text-secondary); margin-bottom: 1rem;">هذا هو العمود الفقري للمنصة. كل شيء آخر هو سقالات حوله.</p>
+
+      <h3 style="margin-top: 1.5rem;">2.1 — تسلسل المصادر</h3>
+      <table class="tiers-table">
+        <thead>
+          <tr>
+            <th style="width: 100px;">المستوى</th>
+            <th>الوصف</th>
+            <th>الاستخدام</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="source-tier source-tier--tier-1">Tier 1</span></td>
+            <td>وثائق رسمية، نصوص محاضر، سجلات محاكم، تقارير هيئات دولية (الأمم المتحدة، الوكالة الدولية للطاقة الذرية، المحكمة الجنائية الدولية، محكمة العدل الدولية)، صور أقمار اصطناعية موثّقة، فيديو/صور مع تحديد موقع جغرافي وطابع زمني مؤكد، إفصاحات مالية</td>
+            <td>أساس جميع الادعاءات</td>
+          </tr>
+          <tr>
+            <td><span class="source-tier source-tier--tier-2">Tier 2</span></td>
+            <td>عدة منافذ إعلامية مستقلة تنقل نفس الحقيقة بمصادر مسماة؛ تحليل استخبارات مفتوحة المصدر بمنهجية موثّقة؛ بحث أكاديمي محكّم؛ وثائق مسرّبة تحقق منها منفذان إعلاميان أو أكثر</td>
+            <td>كافٍ للنشر</td>
+          </tr>
+          <tr>
+            <td><span class="source-tier source-tier--tier-3">Tier 3</span></td>
+            <td>منفذ إعلامي واحد، أو مصدر مسمى واحد، أو مصدر مجهول مع أدلة ظرفية مساندة</td>
+            <td>يُنشر <strong>فقط</strong> مع تعليم: <em>«مصدر واحد — بانتظار التأكيد»</em></td>
+          </tr>
+          <tr>
+            <td><span class="source-tier source-tier--tier-4">Tier 4</span></td>
+            <td>ادعاءات مجهولة المصدر بلا أدلة مساندة، منشورات وسائل تواصل اجتماعي غير موثّقة، عبارة «مصادر تقول» بلا إسناد</td>
+            <td><strong>مستبعد من كل المحتوى</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="margin-top: 1rem;"><strong>2.2</strong> لا يدخل أي ادعاء واقعي إلى المنصة بدون توثيق من المستوى الثاني كحد أدنى.</p>
+      <p style="margin-top: 0.75rem;"><strong>2.3</strong> قد تظهر مواد المستوى الثالث في تشريحات الادعاءات باعتبارها <em>الادعاء قيد الفحص</em>، وليس كحقيقة مثبتة أبداً.</p>
+      <p style="margin-top: 0.75rem;"><strong>2.4</strong> لا تظهر مواد المستوى الرابع على المنصة في أي سياق.</p>
+      <p style="margin-top: 0.75rem;"><strong>2.5</strong> كل مصدر مربوط برابط. كل رابط مؤرشف. إذا اختفى مصدر، يُستشهد بالنسخة المؤرشفة.</p>
+      <p style="margin-top: 0.75rem;"><strong>2.6</strong> ينطبق هذا المعيار بالتساوي على جميع الفاعلين — حلفاء أو خصوم أو غير منحازين لأي موقف.</p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>المادة 3: مبادئ المحتوى</h2>
+
+      <p><strong>3.1 — وصف الأفعال، لا الهويات.</strong></p>
+      <ul style="margin: 0.75rem 0 0.75rem 1.5rem; color: var(--color-text-secondary);">
+        <li>ممنوع: «إرهابي»، «مقاتل حرية»، «نظام»، «معتدل»، «متطرف»</li>
+        <li>دائماً: أوصاف محددة لأفعال محددة بتواريخ محددة ومصادر محددة</li>
+      </ul>
+
+      <p><strong>3.2 — الفصل بين الحقيقة والاستنتاج. دائماً. بشكل مرئي.</strong></p>
+      <div style="margin: 0.75rem 0; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <span class="tag tag--documented" style="font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.4rem; border-radius: 2px; background: var(--color-documented); color: var(--color-bg);">موثّق</span>
+        <span style="color: var(--color-text-secondary); font-size: 0.9rem;">= حقيقة قابلة للتحقق مع مصدر مُستشهد به</span>
+      </div>
+      <div style="margin: 0.5rem 0; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <span class="tag tag--inference" style="font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.4rem; border-radius: 2px; background: var(--color-inference); color: var(--color-bg);">استنتاج</span>
+        <span style="color: var(--color-text-secondary); font-size: 0.9rem;">= استنتاج مبني على حقائق موثّقة، مُعلَّم على هذا النحو</span>
+      </div>
+
+      <p style="margin-top: 1rem;"><strong>3.3 — صوت قوي، لا صوت تحريري.</strong></p>
+      <p style="color: var(--color-text-secondary);">لا نُملي على القارئ ما يفكر فيه. نرتّب الحقائق الموثّقة بتسلسل يُشعر بالثقل دون توجيه.</p>
+
+      <p style="margin-top: 1rem;"><strong>3.4 — لا تأطير بالإغفال.</strong></p>
+      <p style="color: var(--color-text-secondary);">اختيار أين «تبدأ» القصة هو فعل تحريري. بارالاكسين يوثّق سلسلة السببية الموثّقة كاملة، لا نقطة بداية ملائمة سياسياً.</p>
+
+      <p style="margin-top: 1rem;"><strong>3.5 — «تعليقات برمجية» للسياق.</strong></p>
+      <p style="color: var(--color-text-secondary);">حيثما يُحتاج سياق، يكون متمايزاً بصرياً عن التوثيق الواقعي — كتعليق مطوّر في الكود المصدري.</p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>المادة 4: الحوكمة</h2>
+      <p><strong>4.1 — الدليل فوق السلطة.</strong> لا يجوز لأي فرد — بمن فيهم المؤسس — تجاوز معيار الأدلة.</p>
+      <p style="margin-top: 0.75rem;"><strong>4.2 — تُحسم النزاعات بالأدلة، لا بالإجماع.</strong></p>
+      <div style="background: var(--color-surface); border: 1px solid var(--color-border); padding: 1rem; margin: 0.75rem 0; font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.8;">
+        الخطوة 1: يُطعن في الادعاء ← يقدم الطاعن أدلة مضادة<br/>
+        الخطوة 2: يُراجع كلا الادعاءين مقابل المصادر الأولية<br/>
+        الخطوة 3: إذا تعارضت المصادر ← يُوثّق كلاهما مع تقييم الجودة<br/>
+        الخطوة 4: إذا كان أحد المصادر أقوى بوضوح ← يسود المصدر الأقوى<br/>
+        الخطوة 5: إذا كان الأمر غامضاً حقاً ← يُعلَّم «متنازع عليه — انظر المصادر.» لا يُحسم أبداً بالتصويت.
+      </div>
+      <p style="margin-top: 0.75rem;"><strong>4.3</strong> جميع القرارات التحريرية علنية. لا قنوات خاصة.</p>
+      <p style="margin-top: 0.75rem;"><strong>4.4</strong> أدلة المساهم الجديد تُوزن بنفس ثقل أدلة المؤسس.</p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>المادة 5: منع الاستحواذ</h2>
+      <table>
+        <thead><tr><th>مقبول</th><th>غير مقبول</th></tr></thead>
+        <tbody>
+          <tr><td>تمويل جماعي موزّع (لا مصدر واحد يتجاوز 5%)</td><td>منح مؤسسات بمتطلبات تقارير</td></tr>
+          <tr><td>تبرعات بنية تحتية بدون أي شروط تحريرية</td><td>رعاية شركات من أي نوع</td></tr>
+          <tr><td>عمل تطوعي</td><td>تمويل حكومي من أي حكومة</td></tr>
+          <tr><td>خدمات استضافة مجانية</td><td>إعلانات من أي نوع</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top: 0.75rem;"><strong>5.5 — كشف الاستحواذ.</strong> مستودع Git هو جهاز المناعة. كل تعديل يُسجّل بشكل دائم. لا يمكن للاستحواذ أن يختبئ في سجل Git.</p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>المادة 6: بند المؤسس</h2>
+      <p><strong>6.1</strong> الفرد الذي أطلق هذا المشروع لا يحتفظ بأي سلطة دائمة عليه.</p>
+      <p style="margin-top: 0.75rem;"><strong>6.2</strong> عند أول مساهمة خارجية، يصبح المؤسس مساهماً واحداً بين متساوين.</p>
+      <p style="margin-top: 0.75rem;"><strong>6.3</strong> لا يملك المؤسس حق نقض، ولا حقوق تحرير خاصة، ولا وصول مميز.</p>
+      <p style="margin-top: 0.75rem;"><strong>6.5</strong> إذا حاول المؤسس تجاوز هذا الدستور، فاستجابة المجتمع هي الانقسام (fork)، لا الامتثال.</p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>المادة 7: الانفتاح والمتانة</h2>
+      <p><strong>7.1</strong> كل الكود مفتوح المصدر (رخصة MIT). كل المحتوى مفتوح الوصول (CC-BY 4.0).</p>
+      <p style="margin-top: 0.75rem;"><strong>7.2</strong> المنصة بالكامل قابلة للنسخ (fork) في أي وقت من قبل أي شخص. لا توجد آلية لمنع النسخ. هذا بالتصميم.</p>
+      <p style="margin-top: 0.75rem;"><strong>7.3</strong> إذا تم الاستحواذ على النسخة الأساسية، فأي نسخة منقسمة تلتزم بهذا الدستور هي استمرار شرعي.</p>
+      <p style="margin-top: 0.75rem;"><strong>7.4</strong> لا حسابات مستخدمين مطلوبة للقراءة. لا بيانات شخصية تُجمع. لا تحليلات.</p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>المادة 8: اللغة والوصول</h2>
+      <p><strong>8.1</strong> كل إنسان يتأثر بأفعال الفاعلين الأقوياء يستحق الوصول إلى السجل الموثّق بلغته.</p>
+      <p style="margin-top: 0.75rem;"><strong>8.2</strong> الإنجليزية هي لغة العمل الأولية. العربية والفارسية أولويات فورية.</p>
+      <p style="margin-top: 0.75rem;"><strong>8.4</strong> البنية التقنية تدعم التدويل منذ اليوم الأول.</p>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>المادة 9: ما لسنا عليه</h2>
+      <ul style="margin: 0.75rem 0 0 1.5rem; line-height: 2;">
+        <li>لسنا وكالة أنباء. نوثّق الأنماط، لا الأخبار العاجلة.</li>
+        <li>لسنا ناشطين. لا ندعو لتغيير سياسات أو أنظمة حكم.</li>
+        <li>لسنا قضاة. نقدّم الأدلة وندع السجل يتحدث.</li>
+        <li>لسنا متّهمين مجهولين. كل ادعاء مُسنَد وقابل للتحقق.</li>
+        <li>لسنا مقاتلين. توثيق نزاع ليس مشاركة فيه.</li>
+      </ul>
+    </section>
+
+    <section style="margin-bottom: 2rem;">
+      <h2>المادة 10: التعديل</h2>
+      <p><strong>10.1</strong> يجوز تعديل هذا الدستور بحجة قائمة على الأدلة وموثّقة علنياً.</p>
+      <p style="margin-top: 0.75rem;"><strong>10.2</strong> لا يجوز لأي تعديل إضعاف معيار الأدلة (المادة 2)، أو أحكام منع الاستحواذ (المادة 5)، أو بند المؤسس (المادة 6). هذه غير قابلة للتغيير.</p>
+      <p style="margin-top: 0.75rem;"><strong>10.3</strong> تتطلب التعديلات المقترحة فترة تعليق عام مدتها 30 يوماً.</p>
+    </section>
+
+    <section style="border-top: 1px solid var(--color-border); padding-top: 2rem; margin-top: 3rem;">
+      <p style="color: var(--color-text-muted); font-style: italic;">
+        كُتبت هذه الوثيقة قبل أول سطر برمجي، قبل أول سجل محتوى. المنصة تنتمي لهذه الوثيقة. لا لمؤسسها. لا لأغزر المساهمين فيها. لا لأي حكومة، لأن أياً منها غير مرحب بها على الطاولة.
+      </p>
+      <p style="margin-top: 1rem; color: var(--color-text-muted); font-family: var(--font-mono); font-size: 0.85rem;">
+        دستور بارالاكسين الإصدار 1.0 · أُودِع 2026-03-05
+      </p>
+    </section>
+
+  </article>
+</Base>

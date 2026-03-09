@@ -1,0 +1,70 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+
+const autopsies = await getCollection('autopsies');
+const locale = 'ar';
+const base = import.meta.env.BASE_URL;
+---
+
+<Base title="تشريح الادعاءات" locale={locale}>
+  <article style="max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem;">
+
+    <h1>تشريح الادعاءات</h1>
+    <p style="color: var(--color-text-secondary); margin-bottom: 2rem; line-height: 1.7;">
+      ادعاءات رسمية تُفحص في ضوء الأدلة المتاحة. كل تشريح يأخذ ادعاءً محدداً من طرف فاعل قوي، ويوثّق الأدلة المؤيدة والمناقضة، ويحدد الفجوة، ويسأل من يستفيد من تصديق هذا الادعاء.
+    </p>
+
+    {autopsies.length === 0 ? (
+      <div style="padding: 2rem; border: 1px dashed var(--color-border); text-align: center; color: var(--color-text-muted);">
+        <p>التشريحات قيد التوثيق والتحقق. عُد قريباً.</p>
+      </div>
+    ) : (
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        {autopsies.map((autopsy) => (
+          <a href={base + 'ar/autopsies/' + autopsy.id.replace('.md', '')}
+             style="display: block; padding: 1.25rem; border: 1px solid var(--color-border); background: var(--color-surface); text-decoration: none; color: inherit; transition: border-color 0.15s;"
+             class="card-link">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-text-muted);">
+                {autopsy.data.record_id}
+              </span>
+              <span style={`font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.4rem; border-radius: 2px; text-transform: uppercase; ${
+                autopsy.data.confidence_rating === 'high'
+                  ? 'background: var(--color-documented-bg); color: var(--color-documented);'
+                  : autopsy.data.confidence_rating === 'medium'
+                  ? 'background: var(--color-inference-bg); color: var(--color-inference);'
+                  : 'background: var(--color-contested-bg); color: var(--color-contested);'
+              }`}>
+                {autopsy.data.confidence_rating} ثقة
+              </span>
+            </div>
+            <h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--color-text-primary);">
+              {autopsy.data.title}
+            </h2>
+            <p style="font-size: 0.85rem; color: var(--color-text-secondary); margin-bottom: 0.3rem;">
+              {autopsy.data.the_claim?.speaker}
+            </p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem;">
+              <span style="font-size: 0.82rem; color: var(--color-text-secondary);">
+                الأدلة: <strong style="color: var(--color-gap); text-transform: uppercase; font-size: 0.75rem;">
+                  {autopsy.data.evidence_assessment?.claim_supported_by_evidence}
+                </strong>
+              </span>
+              <span style="font-size: 0.8rem; color: var(--color-documented); font-weight: 600;">
+                ← اقرأ التشريح
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+
+  </article>
+</Base>
+
+<style>
+  .card-link:hover {
+    border-color: var(--color-documented) !important;
+  }
+</style>

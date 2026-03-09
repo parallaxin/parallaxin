@@ -1,0 +1,454 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { t, getDirection } from '../../i18n/utils';
+
+const locale = 'ar';
+const dir = getDirection(locale);
+
+// Load published content
+const allAutopsies = await getCollection('autopsies');
+const allConflicts = await getCollection('conflicts', ({ data }) => data.status === 'active' || data.status === 'published');
+const allActors = await getCollection('actors');
+const base = import.meta.env.BASE_URL;
+---
+
+<Base title={t(locale, 'site.title')} locale="ar">
+
+  <main class="site-main" dir={dir}>
+
+    <!-- MISSION STATEMENT -->
+    <section class="mission">
+      <div class="mission-inner">
+        <h1 class="mission-title">
+          {t(locale, 'site.tagline').split('.').map((s, i) => i < 2 ? <>{s}.<br/></> : <span class="mission-gap">{s}.</span>)}
+        </h1>
+        <p class="mission-body">
+          يوثّق بارالاكسين المسافة بين المواقف المُعلنة والأفعال الموثّقة لأصحاب السلطة — حكومات، قوى عسكرية، وأفراد تؤثر قراراتهم في حياة البشر على نطاق واسع.
+        </p>
+        <p class="mission-body">
+          كل ادعاء موثّق بمصدر. كل استنتاج مُعلَّم. بلا افتتاحيات. بلا إعلانات. بلا حسابات مطلوبة.
+        </p>
+        <a href={base + 'ar/constitution'} class="mission-link">
+          ← اقرأ الدستور
+        </a>
+      </div>
+    </section>
+
+    <!-- LEGEND -->
+    <section class="legend">
+      <div class="legend-inner">
+        <span class="legend-item legend-documented">
+          <span class="legend-dot"></span>
+          {t(locale, 'content.documented')} — حقيقة موثّقة ومُسنَدة بمصدر
+        </span>
+        <span class="legend-item legend-inference">
+          <span class="legend-dot"></span>
+          {t(locale, 'content.inference')} — استنتاج مبني على وقائع موثّقة، مُعلَّم كذلك
+        </span>
+        <span class="legend-item legend-contested">
+          <span class="legend-dot"></span>
+          مُتنازَع عليه — مصدر واحد أو محل خلاف، بانتظار التأكيد
+        </span>
+      </div>
+    </section>
+
+    <!-- CLAIM AUTOPSIES -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">{t(locale, 'site.nav.autopsies')}</h2>
+        <p class="section-desc">
+          ادعاءات رسمية تُفحص في ضوء الأدلة المتاحة.
+          السجل الذي يجيب: <em>ماذا أظهرت الأدلة فعلاً؟</em>
+        </p>
+      </div>
+
+      {allAutopsies.length === 0 ? (
+        <div class="empty-state">
+          <p>التشريحات الأولى قيد المراجعة. عُد قريباً.</p>
+        </div>
+      ) : (
+        <div class="card-grid">
+          {allAutopsies.map((autopsy) => (
+            <a href={base + `ar/autopsies/${autopsy.id.replace('.md', '')}`} class="card">
+              <div class="card-meta">
+                <span class="card-id">{autopsy.data.record_id}</span>
+                <span class={`card-confidence card-confidence--${autopsy.data.confidence_rating}`}>
+                  {autopsy.data.confidence_rating} ثقة
+                </span>
+              </div>
+              <h3 class="card-title">{autopsy.data.title}</h3>
+              <p class="card-speaker">
+                {autopsy.data.the_claim?.speaker}
+              </p>
+              <p class="card-verdict">
+                الأدلة: <strong>{autopsy.data.evidence_assessment?.claim_supported_by_evidence}</strong>
+              </p>
+              <span class="card-arrow">← اقرأ التشريح</span>
+            </a>
+          ))}
+        </div>
+      )}
+    </section>
+
+    <!-- ACTIVE CONFLICTS -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">{t(locale, 'site.nav.conflicts')}</h2>
+        <p class="section-desc">
+          جداول زمنية موثّقة، سجلات أطراف، وتكلفة بشرية.
+          يُحدَّث عند التحقق من أدلة جديدة.
+        </p>
+      </div>
+
+      {allConflicts.length === 0 ? (
+        <div class="empty-state">
+          <p>سجلات النزاعات قيد التوثيق والتحقق.</p>
+        </div>
+      ) : (
+        <div class="card-grid">
+          {allConflicts.map((conflict) => (
+            <a href={base + `ar/conflicts/${conflict.id.replace('.md', '')}`} class="card">
+              <div class="card-meta">
+                <span class="card-id">{conflict.data.record_id}</span>
+                <span class={`card-status card-status--${conflict.data.status}`}>
+                  {conflict.data.status}
+                </span>
+              </div>
+              <h3 class="card-title">{conflict.data.name}</h3>
+              <p class="card-date">
+                من {conflict.data.start_date}
+                {(conflict.data.end_date && conflict.data.end_date !== 'null') ? ` إلى ${conflict.data.end_date}` : ' — مستمر'}
+              </p>
+              <p class="card-geo">
+                {conflict.data.geography?.join(', ')}
+              </p>
+              <span class="card-arrow">← عرض سجل النزاع</span>
+            </a>
+          ))}
+        </div>
+      )}
+    </section>
+
+    <!-- ACTOR RECORDS -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">{t(locale, 'site.nav.actors')}</h2>
+        <p class="section-desc">
+          مواقف مُعلنة. أفعال موثّقة. المسافة بينهما.
+        </p>
+      </div>
+
+      {allActors.length === 0 ? (
+        <div class="empty-state">
+          <p>سجلات الأطراف قيد التحقق.</p>
+        </div>
+      ) : (
+        <div class="card-grid">
+          {allActors.map((actor) => (
+            <a href={base + `ar/actors/${actor.id.replace('.md', '')}`} class="card">
+              <span class="card-id">{actor.data.record_id}</span>
+              <h3 class="card-title">{actor.data.name}</h3>
+              <p class="card-role">{actor.data.role}</p>
+              <p class="card-institution">{actor.data.institution}</p>
+              <span class="card-arrow">← عرض سجل الطرف</span>
+            </a>
+          ))}
+        </div>
+      )}
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section section--about">
+      <div class="about-inner">
+        <h2>ما هو هذا. وما ليس كذلك.</h2>
+        <div class="about-grid">
+          <div class="about-col">
+            <h3>ما هو بارالاكسين</h3>
+            <ul>
+              <li>عدسة لفحص المسافة بين المواقف المُعلنة والأفعال الموثّقة</li>
+              <li>قائم على الأدلة — كل ادعاء مُسنَد ويمكن التحقق منه بشكل مستقل</li>
+              <li>مفتوح المصدر — الكود (MIT) والمحتوى (CC-BY 4.0) قابلان للنسخ بالكامل</li>
+              <li>خارج السيطرة — لا مالك واحد، ولا آلية للاستحواذ</li>
+              <li>مجاني — بلا إعلانات، بلا حسابات، بلا تتبع</li>
+            </ul>
+          </div>
+          <div class="about-col">
+            <h3>ما ليس بارالاكسين</h3>
+            <ul>
+              <li>ليس مؤسسة إخبارية — نوثّق الأنماط، لا الأخبار العاجلة</li>
+              <li>ليس محايداً — الحياد بين حقيقة وكذبة ليس موقفاً نتبناه</li>
+              <li>ليس قاضياً — نعرض الأدلة، والقارئ يستنتج</li>
+              <li>ليس ناشطين — لا نقدّم توصيات سياسية</li>
+              <li>ليس متهمين مجهولين — كل ادعاء ننشره قابل للتحقق المستقل</li>
+            </ul>
+          </div>
+        </div>
+        <div class="about-links">
+          <a href={base + 'ar/constitution'}>{t(locale, 'site.nav.constitution')}</a>
+          <a href="https://github.com/parallaxin/parallaxin" target="_blank" rel="noopener">
+            GitHub — ساهم أو انسخ المشروع
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+</Base>
+
+<style>
+  /* MISSION */
+  .mission {
+    padding: 4rem 1.5rem 3rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .mission-inner {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .mission-title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-text-primary);
+    margin-bottom: 1.5rem;
+  }
+  .mission-gap {
+    color: var(--color-gap);
+  }
+  .mission-body {
+    font-size: 1.05rem;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+  .mission-link {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--color-documented);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
+  }
+  .mission-link:hover {
+    text-decoration: underline;
+  }
+
+  /* LEGEND */
+  .legend {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+  .legend-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .legend-documented .legend-dot { background: var(--color-documented); }
+  .legend-documented { color: var(--color-documented); }
+  .legend-inference .legend-dot { background: var(--color-inference); }
+  .legend-inference { color: var(--color-inference); }
+  .legend-contested .legend-dot { background: var(--color-contested); }
+  .legend-contested { color: var(--color-contested); }
+
+  /* SECTIONS */
+  .section {
+    padding: 3rem 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .section-header {
+    margin-bottom: 2rem;
+  }
+  .section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+  }
+  .section-desc {
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  /* CARDS */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 1.25rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .card:hover {
+    border-color: var(--color-documented);
+    background: var(--color-surface-hover);
+  }
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+  }
+  .card-id {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    letter-spacing: 0.05em;
+  }
+  .card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    line-height: 1.4;
+  }
+  .card-speaker,
+  .card-date,
+  .card-geo,
+  .card-role,
+  .card-institution {
+    font-size: 0.82rem;
+    color: var(--color-text-secondary);
+  }
+  .card-verdict {
+    font-size: 0.82rem;
+    color: var(--color-text-secondary);
+    margin-top: 0.25rem;
+  }
+  .card-verdict strong {
+    color: var(--color-gap);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+  .card-arrow {
+    margin-top: auto;
+    padding-top: 0.75rem;
+    font-size: 0.8rem;
+    color: var(--color-documented);
+    font-weight: 600;
+  }
+
+  /* CONFIDENCE BADGES */
+  .card-confidence,
+  .card-status {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+    font-weight: 700;
+  }
+  .card-confidence--high { background: var(--color-documented-bg); color: var(--color-documented); }
+  .card-confidence--medium { background: var(--color-inference-bg); color: var(--color-inference); }
+  .card-confidence--low { background: var(--color-contested-bg); color: var(--color-contested); }
+  .card-status--active { background: var(--color-gap-bg); color: var(--color-gap); }
+  .card-status--published { background: var(--color-documented-bg); color: var(--color-documented); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    padding: 2rem;
+    border: 1px dashed var(--color-border);
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+
+  /* ABOUT */
+  .section--about {
+    border-bottom: none;
+  }
+  .about-inner {
+    max-width: 720px;
+  }
+  .about-inner h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 1.5rem;
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 600px) {
+    .about-grid { grid-template-columns: 1fr; }
+  }
+  .about-col h3 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+  }
+  .about-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .about-col li {
+    font-size: 0.88rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    padding-left: 1rem;
+    position: relative;
+  }
+  .about-col li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--color-text-muted);
+  }
+  .about-links {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .about-links a {
+    font-size: 0.85rem;
+    color: var(--color-documented);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .about-links a:hover {
+    text-decoration: underline;
+  }
+</style>
