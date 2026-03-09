@@ -62,24 +62,24 @@ Flag — anything returning non-200, [SOURCE NEEDED], or [ARCHIVE NEEDED]
 Archive — auto-submit valid URLs to archive.ph and write the archive URL back to the file 
 
 `tmp\links.md`
-- [ ] **Revist design & content:**
+- [x] **Revist design & content:**
   - Content workflow
   - Frontpage revist (menus, colors, buttons, etc)
   - Visual ID - final (logo, favicon, etc)
 
 ### P2 (Before community launch)  
-- [ ] `/autopsies` listing page (currently 404)
-- [ ] `/conflicts` listing page (currently 404)
-- [ ] `/actors` listing page (currently 404)
-- [ ] Navigation links to non-existent pages should be conditional or lead to "coming soon"
+- [x] `/autopsies` listing page (currently 404)
+- [x] `/conflicts` listing page (currently 404)
+- [x] `/actors` listing page (currently 404)
+- [x] Navigation links to non-existent pages should be conditional or lead to "coming soon"
 
 ---
 
 ## CONTENT — DRAFTED BUT NOT IN REPO YET `tmp\raw-reports`
 
-- [ ] ACT-2026-0001 — Netanyahu actor record (drafted, needs source URLs)
-- [ ] ACT-2026-0002 — Trump actor record (drafted, needs source URLs)  
-- [ ] CON-2025-0001 — Conflict record (drafted, needs source URLs)
+- [x] ACT-2026-0001 — Netanyahu actor record (drafted, needs source URLs)
+- [x] ACT-2026-0002 — Trump actor record (drafted, needs source URLs)  
+- [x] CON-2025-0001 — Conflict record (drafted, needs source URLs)
 - Approximately 40 [SOURCE NEEDED] flags across all draft files
 - Priority sources identified in 6-confirmed-sources.md
 
@@ -89,7 +89,7 @@ Archive — auto-submit valid URLs to archive.ph and write the archive URL back 
 
 - [x] ProtonMail: parallaxin@proton.me — created
 - [x] GitHub account & Repo
-- [ ] Domain: parallaxin.report — identified, \$6.98/yr, not purchased
+- [x] Domain: parallaxin.report — identified, \$6.98/yr, not purchased
 - [x] GitHub token (fine-grained, repo-scoped) — after account setup
 - [ ] Consider third email provider as backup
 
@@ -111,24 +111,24 @@ Archive — auto-submit valid URLs to archive.ph and write the archive URL back 
 
 ## PHASE ROADMAP
 
-### Phase 1: First Deploy (CURRENT)
+### Phase 1: First Deploy 
 - Fix P0 URL issue (x)
-- Archive all source URLs ( )
-- Push to GitHub ( )
+- Archive all source URLs (x)
+- Push to GitHub (x)
 - Deploy to free hosting
 - One complete Claim Autopsy live
 
-### Phase 2: Content Expansion  
-- Actor records (Netanyahu, Trump) published
-- Conflict record published
-- Listing pages for /conflicts, /actors, /autopsies
-- Additional Claim Autopsies
+### Phase 2: Content Expansion
+- Actor records (Netanyahu, Trump) published (x)
+- Conflict record published (X)
+- Listing pages for /conflicts, /actors, /autopsies (X)
+- Additional Claim Autopsies (X)
 
-### Phase 3: Community
+### Phase 3: Community (CURRENT)
 - Announce on r/opensource, Hacker News, OSINT communities
-- Contribution guide published
-- First external PR accepted
-- Arabic translation begins
+- Contribution guide published (X)
+- First external PR accepted (x)
+- Arabic translation begins (x)
 
 ### Phase 4: Resilience
 - Mirror documentation
