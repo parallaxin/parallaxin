@@ -4,7 +4,7 @@ import Base from '../../layouts/Base.astro';
 
 let actors = [];
 try {
-  actors = await getCollection('actors');
+  actors = (await getCollection('actors')).filter(a => !a.id.replace('.md', '').endsWith('.ar'));
 } catch (e) {
   // Collection empty — expected during early build
 }

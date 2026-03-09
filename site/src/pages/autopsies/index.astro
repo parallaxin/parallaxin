@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 
-const autopsies = await getCollection('autopsies');
+const autopsies = (await getCollection('autopsies')).filter(a => !a.id.replace('.md', '').endsWith('.ar'));
 const base = import.meta.env.BASE_URL;
 ---
 

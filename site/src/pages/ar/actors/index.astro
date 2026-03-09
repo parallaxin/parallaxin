@@ -2,12 +2,19 @@
 import { getCollection } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
 
-let actors = [];
+let allActors = [];
 try {
-  actors = await getCollection('actors');
+  allActors = await getCollection('actors');
 } catch (e) {
   // Collection empty — expected during early build
 }
+// Prefer Arabic content, fall back to English
+const englishEntries = allActors.filter(a => !a.id.replace('.md', '').endsWith('.ar'));
+const actors = englishEntries.map(entry => {
+  const baseId = entry.id.replace('.md', '');
+  const arabicEntry = allActors.find(a => a.id.replace('.md', '') === baseId + '.ar');
+  return arabicEntry || entry;
+});
 const locale = 'ar';
 const base = import.meta.env.BASE_URL;
 ---
@@ -32,7 +39,7 @@ const base = import.meta.env.BASE_URL;
     ) : (
       <div style="display: flex; flex-direction: column; gap: 1rem;">
         {actors.map((actor) => (
-          <a href={base + 'ar/actors/' + actor.id.replace('.md', '')}
+          <a href={base + 'ar/actors/' + actor.id.replace('.md', '').replace('.ar', '')}
              style="display: block; padding: 1.25rem; border: 1px solid var(--color-border); background: var(--color-surface); text-decoration: none; color: inherit;"
              class="card-link">
             <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-text-muted);">

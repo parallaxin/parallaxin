@@ -4,7 +4,7 @@ import Base from '../../layouts/Base.astro';
 
 let conflicts = [];
 try {
-  conflicts = await getCollection('conflicts');
+  conflicts = (await getCollection('conflicts')).filter(a => !a.id.replace('.md', '').endsWith('.ar'));
 } catch (e) {
   // Collection empty — expected during early build
 }

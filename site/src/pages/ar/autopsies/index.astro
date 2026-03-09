@@ -2,7 +2,14 @@
 import { getCollection } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
 
-const autopsies = await getCollection('autopsies');
+const allAutopsies = await getCollection('autopsies');
+// Prefer Arabic content, fall back to English
+const englishEntries = allAutopsies.filter(a => !a.id.replace('.md', '').endsWith('.ar'));
+const autopsies = englishEntries.map(entry => {
+  const baseId = entry.id.replace('.md', '');
+  const arabicEntry = allAutopsies.find(a => a.id.replace('.md', '') === baseId + '.ar');
+  return arabicEntry || entry;
+});
 const locale = 'ar';
 const base = import.meta.env.BASE_URL;
 ---
@@ -22,7 +29,7 @@ const base = import.meta.env.BASE_URL;
     ) : (
       <div style="display: flex; flex-direction: column; gap: 1rem;">
         {autopsies.map((autopsy) => (
-          <a href={base + 'ar/autopsies/' + autopsy.id.replace('.md', '')}
+          <a href={base + 'ar/autopsies/' + autopsy.id.replace('.md', '').replace('.ar', '')}
              style="display: block; padding: 1.25rem; border: 1px solid var(--color-border); background: var(--color-surface); text-decoration: none; color: inherit; transition: border-color 0.15s;"
              class="card-link">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
