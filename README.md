@@ -18,7 +18,8 @@ A lens for documenting the gap between what powerful actors say and what they do
 ## Current Status
 
 - **Live:** Landing page, 2 actor records, 1 claim autopsy, and 1 conflict record.
-- **Infrastructure:** Astro 5 SSG, i18n support, automated source validation and archival.
+- **Languages:** Full parallel mirror in **Arabic** (`/ar/`) with RTL support. UI support for French and Spanish.
+- **Infrastructure:** Astro 5 SSG, i18n fallback logic, automated source validation, and **Vitest/Playwright test suite**.
 - **Documentation:** Full constitution, architecture overview, and contribution guidelines in place.
 
 
@@ -43,7 +44,12 @@ A lens for documenting the gap between what powerful actors say and what they do
    npm install
    npm run dev
    ```
-5. **Submit** a Pull Request with your changes.
+5. **Run Tests**:
+   ```bash
+   npm run test      # Vitest unit tests
+   npm run test:e2e  # Playwright E2E tests
+   ```
+6. **Submit** a Pull Request with your changes.
 
 ## Contributing
 

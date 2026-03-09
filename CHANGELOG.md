@@ -8,13 +8,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+---
+
+## [0.3.0] — 2026-03-10
+
+### Phase 3: Full Arabic Implementation & Test Suite
+
+This phase marks the completion of the first full parallel localization (Arabic) and the introduction of automated verification to ensure long-term stability.
+
 ### Added
-- **Conflict Record — CON-2025-0001**: Full conflict detail page with timeline, actor grid, antecedents, human/economic cost sections, and related autopsy cross-links.
-- **Conflicts schema evolution**: Expanded `config.ts` with typed schemas for actors, timeline events, antecedents, human cost, and economic indicators.
-- **i18n improvements**: Explicit fallback logic — missing keys now fall back to English before showing raw key strings. French (`fr.json`) and Spanish (`es.json`) UI string files added.
-- **Responsive header**: Media queries for mobile viewports to handle long translated navigation labels without horizontal overflow.
+- **Full Arabic Version (Phase 2.5/3)**:
+  - 8 mirror pages in `src/pages/ar/` covering all core routes (Constitution, About, Terms, Listings, Details).
+  - Parallel Arabic content records (`.ar.md`) for all flagship autopsies, actors, and conflicts.
+  - Interactive language switcher (EN | عربي) in the header with intelligent route mapping.
+  - Comprehensive RTL CSS system with logical property mapping and specific overrides for timelines and gap analysis grids.
+- **Automated Test Suite**:
+  - **Vitest** for unit testing i18n logic, fallback mechanisms, and directionality detection.
+  - **Playwright** for E2E verification of RTL layouts, cross-language routing, and homepage integrity.
+  - Standardized `test`, `test:ui`, and `test:e2e` scripts.
+- **Conflict Record — CON-2025-0001**: Full conflict detail page with expanded schemas for timeline, human cost, and economic indicators.
+- **i18n Fallback Logic**: Explicit fallback to English for missing keys/content to ensure no raw keys are ever shown to the user.
 
 ### Changed
+- **Arabic Localization Polish**: Refined homepage phrasing and corrected sensitive terminology (e.g., using «مناضل» in the Constitution).
 - Refactored `Base.astro` and `index.astro` to use the global `t()` translation function for all UI strings.
 
 ---
