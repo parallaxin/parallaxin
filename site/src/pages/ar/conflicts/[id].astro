@@ -1,0 +1,734 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { t, getDirection } from '../../../i18n/utils';
+
+export async function getStaticPaths() {
+  const allConflicts = await getCollection('conflicts');
+  // Get base entries (English — no .ar suffix)
+  const englishEntries = allConflicts.filter(a => {
+    const cleanId = a.id.replace('.md', '');
+    return !cleanId.endsWith('.ar');
+  });
+
+  return englishEntries.map((entry) => {
+    const baseId = entry.id.replace('.md', '');
+    // Look for Arabic version
+    const arabicEntry = allConflicts.find(a =>
+      a.id.replace('.md', '') === baseId + '.ar'
+    );
+    return {
+      params: { id: baseId },
+      props: {
+        entry: arabicEntry || entry,
+        isTranslated: !!arabicEntry
+      },
+    };
+  });
+}
+
+const { entry, isTranslated } = Astro.props;
+const { data } = entry;
+const locale = 'ar';
+const dir = getDirection(locale);
+const base = import.meta.env.BASE_URL;
+
+const statusColors: Record<string, { border: string; bg: string; text: string }> = {
+  active: { border: 'var(--color-gap)', bg: 'var(--color-gap-bg)', text: 'var(--color-gap)' },
+  ceasefire: { border: 'var(--color-inference)', bg: 'var(--color-inference-bg)', text: 'var(--color-inference)' },
+  ended: { border: 'var(--color-documented)', bg: 'var(--color-documented-bg)', text: 'var(--color-documented)' },
+  frozen: { border: 'var(--color-contested)', bg: 'var(--color-contested-bg)', text: 'var(--color-contested)' },
+};
+const sc = statusColors[data.status] || statusColors.active;
+---
+
+<Base title={data.name} locale="ar">
+  <main class="conflict-main" dir={dir}>
+
+    <!-- HEADER -->
+    <header class="conflict-header">
+      <div class="conflict-breadcrumb">
+        <a href={base + 'ar'}>بارالاكسين</a>
+        <span>→</span>
+        <a href={base + 'ar/conflicts'}>سجلات النزاعات</a>
+        <span>→</span>
+        <span class="conflict-record-id">{data.record_id}</span>
+      </div>
+
+      <h1 class="conflict-name">{data.name}</h1>
+
+      <div class="conflict-meta-bar">
+        <span class="conflict-status" style={`background:${sc.bg};color:${sc.text};border:1px solid ${sc.border};`}>
+          {data.status.toUpperCase()}
+        </span>
+        <span class="conflict-dates">
+          {data.start_date} — {(!data.end_date || data.end_date === 'null') ? 'الآن' : data.end_date}
+        </span>
+        <span class="conflict-updated">آخر تحديث: {data.last_updated}</span>
+      </div>
+
+      {data.geography?.length > 0 && (
+        <div class="geography-tags">
+          {data.geography.map((g: string) => (
+            <span class="geo-tag">{g}</span>
+          ))}
+        </div>
+      )}
+    </header>
+
+    <div class="conflict-body">
+
+      <!-- FRAMING NOTE -->
+      <section class="framing-note">
+        <span class="framing-label">ملاحظة تأطير — المادة 3.4</span>
+        <p>{data.framing_note}</p>
+      </section>
+
+      <!-- ACTORS -->
+      {data.actors?.length > 0 && (
+        <section class="conflict-section">
+          <h2 class="section-title">الأطراف</h2>
+          <div class="actor-grid">
+            {data.actors.map((a: any) => (
+              <a href={base + 'ar/actors/' + a.actor_id} class="actor-card">
+                <div class="actor-card-id">{a.actor_id}</div>
+                <div class="actor-card-role">{a.role_in_conflict}</div>
+                <div class="actor-card-meta">
+                  {a.entered_date && <span>دخل النزاع: {a.entered_date}</span>}
+                </div>
+                {a.documentation && (
+                  <p class="actor-card-doc">{a.documentation}</p>
+                )}
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- TIMELINE -->
+      {data.timeline?.length > 0 && (
+        <section class="conflict-section">
+          <h2 class="section-title">الجدول الزمني</h2>
+          <div class="timeline-track">
+            {data.timeline.map((evt: any) => (
+              <div class={`timeline-event timeline-event--${evt.type}`}>
+                <div class="timeline-marker"></div>
+                <div class="timeline-content">
+                  <div class="timeline-header">
+                    {evt.event_id && <span class="timeline-id">{evt.event_id}</span>}
+                    <span class="timeline-date">{evt.date}</span>
+                    <span class={`tag tag--${evt.type}`}>{evt.type.toUpperCase()}</span>
+                  </div>
+                  <p class="timeline-desc">{evt.description}</p>
+                  {evt.outcome && (
+                    <p class="timeline-outcome">
+                      <span class="outcome-label">النتيجة:</span> {evt.outcome}
+                    </p>
+                  )}
+                  {evt.sources?.length > 0 && (
+                    <div class="timeline-sources">
+                      {evt.sources.map((s: string) => (
+                        <span class="timeline-source">{s}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- ANTECEDENTS -->
+      {data.antecedents?.length > 0 && (
+        <section class="conflict-section">
+          <h2 class="section-title">السوابق</h2>
+          <p class="section-intro">
+            سوابق موثّقة. ليست خلفية تزيينية. أحداث مرتبطة سببياً.
+          </p>
+          {data.antecedents.map((ant: any) => (
+            <div class={`antecedent-item antecedent-item--${ant.type}`}>
+              <div class="antecedent-header">
+                <span class="antecedent-date">{ant.date}</span>
+                <span class={`tag tag--${ant.type}`}>{ant.type.toUpperCase()}</span>
+              </div>
+              <p class="antecedent-desc">{ant.description}</p>
+              {ant.relevance && (
+                <p class="antecedent-relevance">
+                  <span class="relevance-label">الصلة:</span> {ant.relevance}
+                </p>
+              )}
+              {ant.sources?.length > 0 && (
+                <div class="antecedent-sources">
+                  {ant.sources.map((s: string) => {
+                    const urlMatch = s.match(/\((https?:\/\/[^\)]+)\)/);
+                    return urlMatch ? (
+                      <a href={urlMatch[1]} target="_blank" rel="noopener" class="source-link">
+                        {s.replace(`(${urlMatch[1]})`, '').trim()} ↗
+                      </a>
+                    ) : (
+                      <span class="source-needed-inline">{s}</span>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          ))}
+        </section>
+      )}
+
+      <!-- HUMAN COST -->
+      {data.human_cost && (
+        <section class="conflict-section">
+          <h2 class="section-title">التكلفة البشرية</h2>
+          <div class="cost-grid">
+            {data.human_cost.civilian_deaths && (
+              <div class="cost-card">
+                <div class="cost-label">وفيات مدنيين</div>
+                <div class="cost-value">{data.human_cost.civilian_deaths.value}</div>
+                {data.human_cost.civilian_deaths.source && (
+                  <div class="cost-source">{data.human_cost.civilian_deaths.source}</div>
+                )}
+              </div>
+            )}
+            {data.human_cost.combatant_deaths && (
+              <div class="cost-card">
+                <div class="cost-label">وفيات مقاتلين</div>
+                <div class="cost-value">{data.human_cost.combatant_deaths.value}</div>
+                {data.human_cost.combatant_deaths.source && (
+                  <div class="cost-source">{data.human_cost.combatant_deaths.source}</div>
+                )}
+              </div>
+            )}
+            {data.human_cost.displaced && (
+              <div class="cost-card">
+                <div class="cost-label">نازحون</div>
+                <div class="cost-value">{data.human_cost.displaced.value}</div>
+                {data.human_cost.displaced.source && (
+                  <div class="cost-source">{data.human_cost.displaced.source}</div>
+                )}
+              </div>
+            )}
+            {data.human_cost.injured && (
+              <div class="cost-card">
+                <div class="cost-label">مصابون</div>
+                <div class="cost-value">{data.human_cost.injured.value}</div>
+                {data.human_cost.injured.source && (
+                  <div class="cost-source">{data.human_cost.injured.source}</div>
+                )}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      <!-- ECONOMIC COST -->
+      {data.economic_cost?.length > 0 && (
+        <section class="conflict-section">
+          <h2 class="section-title">التكلفة الاقتصادية</h2>
+          <div class="econ-table">
+            {data.economic_cost.map((ec: any) => (
+              <div class="econ-row">
+                <div class="econ-indicator">{ec.indicator}</div>
+                <div class="econ-value">{ec.value}</div>
+                {ec.source && <div class="econ-source">{ec.source}</div>}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- RELATED AUTOPSIES -->
+      {data.autopsies?.length > 0 && (
+        <section class="conflict-section">
+          <h2 class="section-title">تشريحات الادعاءات ذات الصلة</h2>
+          <div class="autopsy-links">
+            {data.autopsies.map((ref: string) => (
+              <a href={base + 'ar/autopsies/' + ref.toLowerCase()} class="autopsy-link-card">
+                <span class="autopsy-link-id">{ref}</span>
+                <span class="autopsy-link-arrow">←</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- REVIEW NOTES -->
+      {data.review_notes && (
+        <section class="conflict-section conflict-section--review">
+          <h2 class="section-title">ملاحظات المراجعة</h2>
+          <p class="review-text">{data.review_notes}</p>
+        </section>
+      )}
+
+      <!-- CONTRIBUTE -->
+      <section class="conflict-section conflict-section--contribute">
+        <p>
+          هل هناك أدلة ناقصة أو غير صحيحة؟
+          <a href="https://github.com/parallaxin/parallaxin" target="_blank" rel="noopener">
+            ← أرسل تصحيحاً عبر GitHub
+          </a>
+        </p>
+        <p class="contribute-note">
+          تُراجع جميع التصحيحات وفق معيار الأدلة (الدستور، المادة 2). كل تغيير يُسجَّل بشكل دائم في سجل Git.
+        </p>
+      </section>
+
+    </div>
+  </main>
+</Base>
+
+<style>
+  .conflict-main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem;
+  }
+
+  /* HEADER */
+  .conflict-header {
+    padding: 2rem 0 0;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 1.5rem;
+  }
+  .conflict-breadcrumb {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .conflict-breadcrumb a {
+    color: var(--color-documented);
+    text-decoration: none;
+  }
+  .conflict-record-id {
+    font-family: var(--font-mono);
+  }
+  .conflict-name {
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+  }
+  .conflict-meta-bar {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    font-size: 0.78rem;
+    color: var(--color-text-muted);
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .conflict-status {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+  }
+  .conflict-dates {
+    font-family: var(--font-mono);
+  }
+  .geography-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .geo-tag {
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    padding: 0.15rem 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+    color: var(--color-text-secondary);
+    background: var(--color-surface);
+  }
+
+  /* FRAMING NOTE */
+  .framing-note {
+    border-left: 4px solid var(--color-inference);
+    background: var(--color-inference-bg);
+    padding: 1rem 1.25rem;
+    margin-bottom: 2.5rem;
+  }
+  .framing-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--color-inference);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .framing-note p {
+    font-size: 0.88rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* SECTIONS */
+  .conflict-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .conflict-section:last-child { border-bottom: none; }
+  .section-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    margin-bottom: 1rem;
+  }
+  .section-intro {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+
+  /* ACTOR GRID */
+  .actor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+  }
+  .actor-card {
+    display: block;
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    text-decoration: none;
+    transition: border-color 0.15s;
+  }
+  .actor-card:hover {
+    border-color: var(--color-documented);
+  }
+  .actor-card-id {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--color-documented);
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  .actor-card-role {
+    font-size: 0.85rem;
+    color: var(--color-text-primary);
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    line-height: 1.4;
+  }
+  .actor-card-meta {
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    margin-bottom: 0.4rem;
+  }
+  .actor-card-doc {
+    font-size: 0.78rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* TAGS */
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0.15rem 0.4rem;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .tag--documented { background: var(--color-documented); color: var(--color-bg); }
+  .tag--inference { background: var(--color-inference); color: var(--color-bg); }
+
+  /* TIMELINE */
+  .timeline-track {
+    position: relative;
+    padding-left: 2rem;
+  }
+  .timeline-track::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-border);
+  }
+  .timeline-event {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  .timeline-marker {
+    position: absolute;
+    left: -1.75rem;
+    top: 0.4rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--color-documented);
+    background: var(--color-bg);
+  }
+  .timeline-event--inference .timeline-marker {
+    border-color: var(--color-inference);
+  }
+  .timeline-content {
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+  .timeline-header {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .timeline-id {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--color-text-muted);
+  }
+  .timeline-date {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-text-muted);
+    font-weight: 600;
+  }
+  .timeline-desc {
+    font-size: 0.9rem;
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+  }
+  .timeline-outcome {
+    font-size: 0.82rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+  }
+  .outcome-label {
+    font-weight: 700;
+    color: var(--color-text-muted);
+  }
+  .timeline-sources {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .timeline-source {
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    padding: 0.2rem 0.5rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+  }
+
+  /* ANTECEDENTS */
+  .antecedent-item {
+    padding: 1rem 1rem 1rem 1.25rem;
+    border-left: 3px solid var(--color-documented);
+    margin-bottom: 0.75rem;
+    background: var(--color-surface);
+  }
+  .antecedent-item--inference {
+    border-left-color: var(--color-inference);
+  }
+  .antecedent-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .antecedent-date {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-text-muted);
+    font-weight: 600;
+  }
+  .antecedent-desc {
+    font-size: 0.9rem;
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+  }
+  .antecedent-relevance {
+    font-size: 0.82rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    font-style: italic;
+    margin-bottom: 0.5rem;
+  }
+  .relevance-label {
+    font-weight: 700;
+    font-style: normal;
+    color: var(--color-text-muted);
+  }
+  .antecedent-sources {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-top: 0.5rem;
+  }
+  .source-link {
+    font-size: 0.8rem;
+    color: var(--color-documented);
+    text-decoration: none;
+  }
+  .source-link:hover { text-decoration: underline; }
+  .source-needed-inline {
+    font-size: 0.78rem;
+    color: var(--color-inference);
+    font-style: italic;
+    font-family: var(--font-mono);
+  }
+
+  /* COST GRID */
+  .cost-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.75rem;
+  }
+  .cost-card {
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    text-align: center;
+  }
+  .cost-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+  }
+  .cost-value {
+    font-size: 0.85rem;
+    color: var(--color-text-primary);
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 0.4rem;
+  }
+  .cost-source {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  /* ECONOMIC TABLE */
+  .econ-table {
+    border: 1px solid var(--color-border);
+  }
+  .econ-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .econ-row:last-child { border-bottom: none; }
+  .econ-indicator {
+    font-size: 0.85rem;
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+  .econ-value {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono);
+  }
+  .econ-source {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    grid-column: 1 / -1;
+    font-style: italic;
+  }
+
+  /* AUTOPSY LINKS */
+  .autopsy-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .autopsy-link-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    text-decoration: none;
+    transition: border-color 0.15s;
+  }
+  .autopsy-link-card:hover {
+    border-color: var(--color-documented);
+  }
+  .autopsy-link-id {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-documented);
+    font-weight: 700;
+  }
+  .autopsy-link-arrow {
+    color: var(--color-text-muted);
+    font-size: 1.2rem;
+  }
+
+  /* REVIEW NOTES */
+  .conflict-section--review {
+    background: var(--color-inference-bg);
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-border);
+  }
+  .review-text {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* CONTRIBUTE */
+  .conflict-section--contribute {
+    background: var(--color-surface);
+    padding: 1.25rem;
+    border: 1px solid var(--color-border);
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+  .conflict-section--contribute p {
+    font-size: 0.88rem;
+    color: var(--color-text-secondary);
+    margin: 0 0 0.4rem;
+  }
+  .conflict-section--contribute a {
+    color: var(--color-documented);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .contribute-note {
+    color: var(--color-text-muted) !important;
+    font-size: 0.78rem !important;
+  }
+
+  @media (max-width: 600px) {
+    .actor-grid { grid-template-columns: 1fr; }
+    .cost-grid { grid-template-columns: 1fr 1fr; }
+    .econ-row { grid-template-columns: 1fr; gap: 0.25rem; }
+  }
+</style>

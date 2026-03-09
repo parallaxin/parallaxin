@@ -1,0 +1,624 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { t, getDirection } from '../../../i18n/utils';
+
+export async function getStaticPaths() {
+  const allAutopsies = await getCollection('autopsies');
+  // Get base entries (English — no .ar suffix)
+  const englishEntries = allAutopsies.filter(a => {
+    const cleanId = a.id.replace('.md', '');
+    return !cleanId.endsWith('.ar');
+  });
+
+  return englishEntries.map((entry) => {
+    const baseId = entry.id.replace('.md', '');
+    // Look for Arabic version
+    const arabicEntry = allAutopsies.find(a =>
+      a.id.replace('.md', '') === baseId + '.ar'
+    );
+    return {
+      params: { id: baseId },
+      props: {
+        entry: arabicEntry || entry,
+        isTranslated: !!arabicEntry
+      },
+    };
+  });
+}
+
+const { entry, isTranslated } = Astro.props;
+const { data } = entry;
+const locale = 'ar';
+const dir = getDirection(locale);
+const base = import.meta.env.BASE_URL;
+
+// Evidence verdict → display class
+const verdictClass = {
+  'no': 'verdict--no',
+  'yes': 'verdict--yes',
+  'partially': 'verdict--partial',
+  'insufficient evidence': 'verdict--insufficient',
+}[data.evidence_assessment?.claim_supported_by_evidence] ?? 'verdict--unknown';
+
+const confidenceClass = {
+  'high': 'confidence--high',
+  'medium': 'confidence--medium',
+  'low': 'confidence--low',
+}[data.confidence_rating] ?? '';
+---
+
+<Base title={data.title} locale="ar">
+  <main class="autopsy-main" dir={dir}>
+
+    <!-- HEADER -->
+    <header class="autopsy-header">
+      <div class="autopsy-header-inner">
+        <div class="autopsy-breadcrumb">
+          <a href={base + 'ar'}>بارالاكسين</a>
+          <span>→</span>
+          <a href={base + 'ar/autopsies'}>تشريح الادعاءات</a>
+          <span>→</span>
+          <span class="autopsy-id">{data.record_id}</span>
+        </div>
+
+        <h1 class="autopsy-title">{data.title}</h1>
+
+        <div class="autopsy-meta">
+          <span class="autopsy-conflict">
+            النزاع: <a href={base + `ar/conflicts/${data.conflict_ref}`}>{data.conflict_ref}</a>
+          </span>
+          <span class="autopsy-updated">
+            آخر تحديث: {data.last_updated}
+          </span>
+        </div>
+
+        <!-- VERDICT BANNER -->
+        <div class={`verdict-banner ${verdictClass}`}>
+          <div class="verdict-label">تقييم الأدلة</div>
+          <div class="verdict-value">
+            هل يدعم الدليل الادعاء:
+            <strong>{data.evidence_assessment?.claim_supported_by_evidence?.toUpperCase()}</strong>
+          </div>
+          <div class={`verdict-confidence ${confidenceClass}`}>
+            الثقة: {data.confidence_rating}
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="autopsy-body">
+
+      <!-- THE CLAIM -->
+      <section class="autopsy-section">
+        <h2 class="autopsy-section-title">الادعاء</h2>
+        <div class="claim-block">
+          <blockquote class="claim-text">
+            "{data.the_claim?.text}"
+          </blockquote>
+          <div class="claim-meta">
+            <span class="claim-speaker">{data.the_claim?.speaker}</span>
+            <span class="claim-date">{data.the_claim?.date}</span>
+            <span class="claim-context">{data.the_claim?.context}</span>
+          </div>
+          <div class="claim-source">
+            <span class="source-tier source-tier--{data.the_claim?.source_tier?.toLowerCase().replace(' ', '-')}">
+              {data.the_claim?.source_tier}
+            </span>
+            <a href={data.the_claim?.source_url} target="_blank" rel="noopener" class="source-link">
+              {data.the_claim?.source_description} ↗
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- THE EVIDENCE -->
+      <section class="autopsy-section">
+        <h2 class="autopsy-section-title">الأدلة</h2>
+
+        {data.the_evidence?.supporting?.length > 0 && (
+          <div class="evidence-group">
+            <h3 class="evidence-group-label evidence-group-label--supporting">
+              أدلة مؤيدة للادعاء
+            </h3>
+            {data.the_evidence.supporting.map((ev) => (
+              <div class="evidence-item evidence-item--supporting">
+                <div class="evidence-id">{ev.evidence_id}</div>
+                <p class="evidence-description">{ev.description}</p>
+                <div class="evidence-source">
+                  <span class={`source-tier source-tier--${ev.source_tier?.toLowerCase().replace(' ', '-')}`}>
+                    {ev.source_tier}
+                  </span>
+                  <a href={ev.source_url} target="_blank" rel="noopener" class="source-link">
+                    {ev.source_description} ↗
+                  </a>
+                </div>
+                {ev.credibility_note && (
+                  <p class="evidence-credibility">
+                    <span class="credibility-label">ملاحظة المصداقية:</span> {ev.credibility_note}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {data.the_evidence?.contradicting?.length > 0 && (
+          <div class="evidence-group">
+            <h3 class="evidence-group-label evidence-group-label--contradicting">
+              أدلة مناقضة للادعاء
+            </h3>
+            {data.the_evidence.contradicting.map((ev) => (
+              <div class="evidence-item evidence-item--contradicting">
+                <div class="evidence-id">{ev.evidence_id}</div>
+                <p class="evidence-description">{ev.description}</p>
+                <div class="evidence-source">
+                  <span class={`source-tier source-tier--${ev.source_tier?.toLowerCase().replace(' ', '-')}`}>
+                    {ev.source_tier}
+                  </span>
+                  <a href={ev.source_url} target="_blank" rel="noopener" class="source-link">
+                    {ev.source_description} ↗
+                  </a>
+                </div>
+                {ev.credibility_note && (
+                  <p class="evidence-credibility">
+                    <span class="credibility-label">ملاحظة المصداقية:</span> {ev.credibility_note}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <!-- THE SEQUENCE -->
+      <section class="autopsy-section">
+        <h2 class="autopsy-section-title">التسلسل الزمني</h2>
+        <p class="sequence-intro">
+          وقائع موثّقة مرتّبة زمنياً.
+          <span class="tag tag--documented">موثّق</span> = حقيقة مُتحقق منها مع مصدر.
+          <span class="tag tag--inference">استنتاج</span> = استنتاج مبني على وقائع، مُعلَّم كذلك.
+        </p>
+        <div class="sequence-block">
+          {data.sequence?.split('\n').filter(Boolean).map((line) => {
+            const isDocumented = line.startsWith('[DOCUMENTED]') || line.startsWith('[موثّق]');
+            const isInference = line.startsWith('[INFERENCE]') || line.startsWith('[استنتاج]');
+            const text = line.replace('[DOCUMENTED]', '').replace('[INFERENCE]', '')
+              .replace('[موثّق]', '').replace('[استنتاج]', '').trim();
+            if (!text) return null;
+            return (
+              <div class={`sequence-line ${isDocumented ? 'sequence-line--documented' : ''} ${isInference ? 'sequence-line--inference' : ''}`}>
+                {isDocumented && <span class="sequence-tag tag--documented">موثّق</span>}
+                {isInference && <span class="sequence-tag tag--inference">استنتاج</span>}
+                <span class="sequence-text">{text}</span>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <!-- THE GAP -->
+      <section class="autopsy-section">
+        <h2 class="autopsy-section-title">الفجوة</h2>
+        <div class="gap-block">
+          <p class="gap-text">{data.gap_summary}</p>
+        </div>
+      </section>
+
+      <!-- WHO BENEFITS -->
+      <section class="autopsy-section">
+        <h2 class="autopsy-section-title">من يستفيد</h2>
+        <p class="who-benefits-intro">
+          مصالح موثّقة قد تفسّر سبب هذا الادعاء.
+          هذا سياق موثّق، لا اتهام. القارئ يقيّم.
+        </p>
+        {data.who_benefits?.map((wb) => (
+          <div class="who-benefits-item">
+            <div class="who-benefits-actor">
+              <a href={base + `ar/actors/${wb.actor_ref}`}>{wb.actor_ref}</a>
+            </div>
+            <p class="who-benefits-interest">{wb.documented_interest}</p>
+            <p class="who-benefits-relevance">{wb.relevance}</p>
+            <div class="evidence-source">
+              <span class={`source-tier source-tier--${wb.source_tier?.toLowerCase().replace(' ', '-')}`}>
+                {wb.source_tier}
+              </span>
+              <a href={wb.source_url} target="_blank" rel="noopener" class="source-link">
+                {wb.source_description} ↗
+              </a>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <!-- VERDICT -->
+      <section class="autopsy-section">
+        <h2 class="autopsy-section-title">تقييم الأدلة</h2>
+        <div class="verdict-detail">
+          <div class="verdict-row">
+            <span class="verdict-row-label">هل يدعم الدليل الادعاء</span>
+            <span class={`verdict-row-value ${verdictClass}`}>
+              {data.evidence_assessment?.claim_supported_by_evidence?.toUpperCase()}
+            </span>
+          </div>
+          <div class="verdict-row">
+            <span class="verdict-row-label">أقوى مصدر مناقض</span>
+            <span class="verdict-row-value">{data.evidence_assessment?.strongest_contradicting_source}</span>
+          </div>
+          {data.evidence_assessment?.strongest_supporting_source && (
+            <div class="verdict-row">
+              <span class="verdict-row-label">أقوى مصدر مؤيد</span>
+              <span class="verdict-row-value">{data.evidence_assessment.strongest_supporting_source}</span>
+            </div>
+          )}
+          <div class="verdict-row">
+            <span class="verdict-row-label">ما لا يزال مجهولاً</span>
+            <span class="verdict-row-value verdict-unknown">{data.evidence_assessment?.what_remains_unknown}</span>
+          </div>
+          <div class="verdict-row">
+            <span class="verdict-row-label">تقييم الثقة</span>
+            <span class={`verdict-row-value ${confidenceClass}`}>
+              {data.confidence_rating?.toUpperCase()} — {data.confidence_rationale}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- FORK / CONTRIBUTE -->
+      <section class="autopsy-section autopsy-section--contribute">
+        <p>
+          هل هناك أدلة ناقصة أو غير صحيحة؟
+          <a href="https://github.com/parallaxin/parallaxin" target="_blank" rel="noopener">
+            ← أرسل تصحيحاً عبر GitHub
+          </a>
+        </p>
+        <p class="contribute-note">
+          تُراجع جميع التصحيحات وفق معيار الأدلة (الدستور، المادة 2). كل تغيير يُسجَّل بشكل دائم في سجل Git.
+        </p>
+      </section>
+
+    </div>
+  </main>
+</Base>
+
+<style>
+  .autopsy-main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem;
+  }
+
+  /* HEADER */
+  .autopsy-header {
+    padding: 2rem 0 0;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 1.5rem;
+  }
+  .autopsy-breadcrumb {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .autopsy-breadcrumb a {
+    color: var(--color-documented);
+    text-decoration: none;
+  }
+  .autopsy-id {
+    font-family: var(--font-mono);
+  }
+  .autopsy-title {
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    line-height: 1.3;
+    margin-bottom: 1rem;
+  }
+  .autopsy-meta {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .autopsy-meta a {
+    color: var(--color-documented);
+    text-decoration: none;
+  }
+
+  /* VERDICT BANNER */
+  .verdict-banner {
+    padding: 1rem 1.25rem;
+    border-left: 4px solid;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .verdict--no { border-color: var(--color-gap); background: var(--color-gap-bg); }
+  .verdict--yes { border-color: var(--color-documented); background: var(--color-documented-bg); }
+  .verdict--partial { border-color: var(--color-inference); background: var(--color-inference-bg); }
+  .verdict--insufficient { border-color: var(--color-contested); background: var(--color-contested-bg); }
+  .verdict-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+  .verdict-value {
+    font-size: 0.95rem;
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+  .verdict-value strong {
+    color: var(--color-gap);
+  }
+  .verdict--yes .verdict-value strong { color: var(--color-documented); }
+  .verdict--partial .verdict-value strong { color: var(--color-inference); }
+  .verdict-confidence {
+    font-size: 0.78rem;
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+  }
+  .confidence--high { color: var(--color-documented); }
+  .confidence--medium { color: var(--color-inference); }
+  .confidence--low { color: var(--color-contested); }
+
+  /* SECTIONS */
+  .autopsy-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .autopsy-section:last-child { border-bottom: none; }
+  .autopsy-section-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    margin-bottom: 1.25rem;
+  }
+
+  /* CLAIM */
+  .claim-block {
+    border: 1px solid var(--color-border);
+    padding: 1.25rem;
+    background: var(--color-surface);
+  }
+  .claim-text {
+    font-size: 1.05rem;
+    color: var(--color-text-primary);
+    font-style: italic;
+    line-height: 1.6;
+    margin: 0 0 1rem;
+    border: none;
+    padding: 0;
+  }
+  .claim-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.82rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 0.75rem;
+  }
+  .claim-speaker { font-weight: 700; color: var(--color-text-primary); }
+
+  /* SOURCES */
+  .claim-source, .evidence-source {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+  .source-link {
+    font-size: 0.8rem;
+    color: var(--color-documented);
+    text-decoration: none;
+  }
+  .source-link:hover { text-decoration: underline; }
+
+  /* EVIDENCE */
+  .evidence-group { margin-bottom: 1.5rem; }
+  .evidence-group-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    margin-bottom: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    display: inline-block;
+  }
+  .evidence-group-label--supporting {
+    color: var(--color-documented);
+    background: var(--color-documented-bg);
+  }
+  .evidence-group-label--contradicting {
+    color: var(--color-gap);
+    background: var(--color-gap-bg);
+  }
+  .evidence-item {
+    padding: 1rem 1rem 1rem 1.25rem;
+    border-left: 3px solid;
+    margin-bottom: 0.75rem;
+    background: var(--color-surface);
+  }
+  .evidence-item--supporting { border-color: var(--color-documented); }
+  .evidence-item--contradicting { border-color: var(--color-gap); }
+  .evidence-id {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.4rem;
+  }
+  .evidence-description {
+    font-size: 0.9rem;
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+  }
+  .evidence-credibility {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin-top: 0.5rem;
+    font-style: italic;
+    line-height: 1.5;
+  }
+  .credibility-label { font-weight: 700; font-style: normal; }
+
+  /* SEQUENCE */
+  .sequence-intro {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+  .sequence-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .sequence-line {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--color-text-primary);
+  }
+  .sequence-line--documented { background: var(--color-documented-bg); }
+  .sequence-line--inference { background: var(--color-inference-bg); }
+  .sequence-tag {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.4rem;
+    margin-top: 0.15rem;
+    border-radius: 2px;
+  }
+  .tag--documented {
+    background: var(--color-documented);
+    color: var(--color-bg);
+  }
+  .tag--inference {
+    background: var(--color-inference);
+    color: var(--color-bg);
+  }
+
+  /* GAP */
+  .gap-block {
+    border-left: 4px solid var(--color-gap);
+    padding: 1rem 1.25rem;
+    background: var(--color-gap-bg);
+  }
+  .gap-text {
+    font-size: 0.95rem;
+    color: var(--color-text-primary);
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* WHO BENEFITS */
+  .who-benefits-intro {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+  .who-benefits-item {
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    margin-bottom: 0.75rem;
+  }
+  .who-benefits-actor {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+  }
+  .who-benefits-actor a {
+    color: var(--color-documented);
+    text-decoration: none;
+  }
+  .who-benefits-interest {
+    font-size: 0.88rem;
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    margin-bottom: 0.4rem;
+  }
+  .who-benefits-relevance {
+    font-size: 0.82rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    font-style: italic;
+    margin-bottom: 0.5rem;
+  }
+
+  /* VERDICT DETAIL */
+  .verdict-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--color-border);
+  }
+  .verdict-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.88rem;
+    line-height: 1.5;
+  }
+  .verdict-row:last-child { border-bottom: none; }
+  .verdict-row-label {
+    font-weight: 600;
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+  }
+  .verdict-row-value { color: var(--color-text-primary); }
+  .verdict--no.verdict-row-value { color: var(--color-gap); font-weight: 700; }
+  .verdict-unknown { color: var(--color-text-muted); font-style: italic; }
+
+  /* CONTRIBUTE */
+  .autopsy-section--contribute {
+    background: var(--color-surface);
+    padding: 1.25rem;
+    border: 1px solid var(--color-border);
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+  .autopsy-section--contribute p {
+    font-size: 0.88rem;
+    color: var(--color-text-secondary);
+    margin: 0 0 0.4rem;
+  }
+  .autopsy-section--contribute a {
+    color: var(--color-documented);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .contribute-note {
+    color: var(--color-text-muted) !important;
+    font-size: 0.78rem !important;
+  }
+
+  @media (max-width: 600px) {
+    .verdict-row { grid-template-columns: 1fr; gap: 0.25rem; }
+  }
+</style>
