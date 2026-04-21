@@ -15,9 +15,9 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@astrojs/mdx": "^4.1.0",
+    "@astrojs/mdx": "^5.0.3",
     "@astrojs/sitemap": "^3.7.0",
-    "astro": "^5.4.0",
+    "astro": "^6.1.8",
     "yaml": "^2.8.2"
   },
   "devDependencies": {
