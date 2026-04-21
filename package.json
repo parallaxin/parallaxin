@@ -11,7 +11,7 @@
     "lint:links": "npm run --prefix site lint:links"
   },
   "dependencies": {
-    "astro": "^5.18.0"
+    "astro": "^6.1.6"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
