@@ -1,4 +1,5 @@
 ﻿import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
 
 // ════════════════════════════════════════════════════════════
 // PARALLAXIN CONTENT SCHEMA
@@ -13,6 +14,11 @@
 // the editorial process. If content structure evolves, this
 // file evolves with it — checked against the Constitution.
 // ════════════════════════════════════════════════════════════
+
+// Preserve filename IDs (including the `.ar` locale suffix) instead of
+// Astro's default slugification, which removes dots from entry IDs.
+const generateContentId = ({ entry }: { entry: string }) =>
+  entry.replace(/\.(?:md|mdx)$/i, '');
 
 // Shared: evidence item used in supporting/contradicting arrays
 const evidenceItemSchema = z.object({
@@ -42,7 +48,11 @@ const beneficiarySchema = z.object({
 // ════════════════════════════════════════
 
 const autopsies = defineCollection({
-  type: 'content',
+  loader: glob({
+    pattern: '**/*.{md,mdx}',
+    base: './src/content/autopsies',
+    generateId: generateContentId,
+  }),
   schema: z.object({
     // Identity
     schema_version: z.string().default('1.0'),
@@ -167,7 +177,11 @@ const economicIndicatorSchema = z.object({
 });
 
 const conflicts = defineCollection({
-  type: 'content',
+  loader: glob({
+    pattern: '**/*.{md,mdx}',
+    base: './src/content/conflicts',
+    generateId: generateContentId,
+  }),
   schema: z.object({
     schema_version: z.string().default('1.0'),
     record_type: z.string().default('conflict_record'),
@@ -205,7 +219,11 @@ const conflicts = defineCollection({
 // ════════════════════════════════════════
 
 const actors = defineCollection({
-  type: 'content',
+  loader: glob({
+    pattern: '**/*.{md,mdx}',
+    base: './src/content/actors',
+    generateId: generateContentId,
+  }),
   schema: z.object({
     schema_version: z.string().default('1.0'),
     record_type: z.string().default('actor_record'),
