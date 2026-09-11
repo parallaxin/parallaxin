@@ -31,6 +31,6 @@
     "playwright": "^1.58.2",
     "preact": "^10.28.4",
     "typescript": "^5.7.0",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.11"
   }
 }
