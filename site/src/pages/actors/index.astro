@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import RecordStatus from '../../components/RecordStatus.astro';
 
 let actors = [];
 try {
@@ -35,9 +36,12 @@ const base = import.meta.env.BASE_URL;
           <a href={base + 'actors/' + actor.id.replace('.md', '')}
              style="display: block; padding: 1.25rem; border: 1px solid var(--color-border); background: var(--color-surface); text-decoration: none; color: inherit;"
              class="card-link">
-            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-text-muted);">
-              {actor.data.record_id}
-            </span>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-text-muted);">
+                {actor.data.record_id}
+              </span>
+              <RecordStatus status={actor.data.status} />
+            </div>
             <h2 style="font-size: 1.1rem; font-weight: 600; margin: 0.4rem 0; color: var(--color-text-primary);">
               {actor.data.name}
             </h2>

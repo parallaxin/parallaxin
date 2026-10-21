@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import RecordStatus from '../../components/RecordStatus.astro';
 import { getCollection } from 'astro:content';
 import { t, getDirection } from '../../i18n/utils';
 
@@ -86,6 +87,7 @@ const base = import.meta.env.BASE_URL;
             <a href={base + `ar/autopsies/${autopsy.id.replace('.md', '').replace('.ar', '')}`} class="card">
               <div class="card-meta">
                 <span class="card-id">{autopsy.data.record_id}</span>
+                <RecordStatus status={autopsy.data.status} locale="ar" />
                 <span class={`card-confidence card-confidence--${autopsy.data.confidence_rating}`}>
                   {autopsy.data.confidence_rating} ثقة
                 </span>
@@ -160,7 +162,10 @@ const base = import.meta.env.BASE_URL;
         <div class="card-grid">
           {allActors.map((actor) => (
             <a href={base + `ar/actors/${actor.id.replace('.md', '').replace('.ar', '')}`} class="card">
-              <span class="card-id">{actor.data.record_id}</span>
+              <div class="card-meta">
+                <span class="card-id">{actor.data.record_id}</span>
+                <RecordStatus status={actor.data.status} locale="ar" />
+              </div>
               <h3 class="card-title">{actor.data.name}</h3>
               <p class="card-role">{actor.data.role}</p>
               <p class="card-institution">{actor.data.institution}</p>
