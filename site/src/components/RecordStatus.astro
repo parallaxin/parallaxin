@@ -1,0 +1,74 @@
+---
+// Editorial status of an autopsy or actor record, shown to the reader.
+// A record that has not passed review must never look finished:
+// cards and detail pages show the badge; detail pages also show the banner.
+interface Props {
+  status: 'draft' | 'under-review' | 'published';
+  locale?: 'en' | 'ar';
+  banner?: boolean;
+}
+
+const { status, locale = 'en', banner = false } = Astro.props;
+
+const labels = {
+  en: { 'draft': 'DRAFT', 'under-review': 'UNDER REVIEW', 'published': 'PUBLISHED' },
+  ar: { 'draft': 'مسودة', 'under-review': 'قيد المراجعة', 'published': 'منشور' },
+};
+
+const notices = {
+  en: {
+    'draft': 'This record has not passed editorial review. Sources are being verified. Its content may change.',
+    'under-review': 'This record has not completed editorial review. Its findings, including the confidence rating, may change.',
+  },
+  ar: {
+    'draft': 'هذا السجل لم يجتز المراجعة التحريرية بعد. المصادر قيد التحقق، وقد يتغير محتواه.',
+    'under-review': 'هذا السجل لم يُكمل المراجعة التحريرية بعد. قد تتغير نتائجه، ومنها درجة الثقة.',
+  },
+};
+
+const label = labels[locale][status];
+const notice = status === 'published' ? null : notices[locale][status];
+---
+
+{banner ? (
+  notice && (
+    <div class={`record-status-banner record-status-banner--${status}`}>
+      <strong>{label}</strong> — {notice}
+    </div>
+  )
+) : (
+  <span class={`record-status record-status--${status}`}>{label}</span>
+)}
+
+<style>
+  .record-status {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .record-status--draft,
+  .record-status-banner--draft {
+    background: var(--color-inference-bg);
+    color: var(--color-inference);
+  }
+  .record-status--under-review,
+  .record-status-banner--under-review {
+    background: var(--color-contested-bg);
+    color: var(--color-contested);
+  }
+  .record-status--published {
+    background: var(--color-documented-bg);
+    color: var(--color-documented);
+  }
+  .record-status-banner {
+    margin: 1rem 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    border-radius: 2px;
+  }
+</style>

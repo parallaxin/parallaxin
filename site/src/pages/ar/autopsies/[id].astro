@@ -1,5 +1,6 @@
 ---
 import Base from '../../../layouts/Base.astro';
+import RecordStatus from '../../../components/RecordStatus.astro';
 import { getCollection } from 'astro:content';
 import { t, getDirection } from '../../../i18n/utils';
 
@@ -71,7 +72,10 @@ const confidenceClass = {
           <span class="autopsy-updated">
             آخر تحديث: {data.last_updated}
           </span>
+          <RecordStatus status={data.status} locale="ar" />
         </div>
+
+        <RecordStatus status={data.status} locale="ar" banner />
 
         <!-- VERDICT BANNER -->
         <div class={`verdict-banner ${verdictClass}`}>

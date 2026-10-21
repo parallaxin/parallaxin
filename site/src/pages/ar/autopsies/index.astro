@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
+import RecordStatus from '../../../components/RecordStatus.astro';
 
 const allAutopsies = await getCollection('autopsies');
 // Prefer Arabic content, fall back to English
@@ -36,6 +37,7 @@ const base = import.meta.env.BASE_URL;
               <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-text-muted);">
                 {autopsy.data.record_id}
               </span>
+              <RecordStatus status={autopsy.data.status} locale="ar" />
               <span style={`font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.4rem; border-radius: 2px; text-transform: uppercase; ${
                 autopsy.data.confidence_rating === 'high'
                   ? 'background: var(--color-documented-bg); color: var(--color-documented);'
