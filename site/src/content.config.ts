@@ -188,6 +188,8 @@ const conflicts = defineCollection({
     record_id: z.string(),
     name: z.string(),
     status: z.enum(['active', 'ceasefire', 'ended', 'frozen']).default('active'),
+    // Editorial approval; independent of the conflict lifecycle above.
+    editorial_status: z.enum(['draft', 'under-review', 'published']).default('draft'),
     start_date: z.coerce.string(),
     end_date: z.coerce.string().optional(),
     framing_note: z.string().default(

@@ -1,10 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
+import { isVisible } from '../../lib/publication';
 import { isEnglish } from '../../lib/records';
 import Base from '../../layouts/Base.astro';
 import RecordStatus from '../../components/RecordStatus.astro';
 
-const autopsies = (await getCollection('autopsies')).filter(isEnglish);
+const autopsies = (await getCollection('autopsies', isVisible)).filter(isEnglish);
 const base = import.meta.env.BASE_URL;
 ---
 

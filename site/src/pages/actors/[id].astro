@@ -1,10 +1,12 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
+import { isVisible } from '../../lib/publication';
+import { recordLinks } from '../../lib/links';
 import { isEnglish } from '../../lib/records';
 
 export async function getStaticPaths() {
-  const actors = (await getCollection('actors')).filter(isEnglish);
+  const actors = (await getCollection('actors', isVisible)).filter(isEnglish);
   return actors.map((actor) => ({
     params: { id: actor.id },
     props: { actor },
@@ -14,6 +16,7 @@ export async function getStaticPaths() {
 const { actor } = Astro.props;
 const { data } = actor;
 const base = import.meta.env.BASE_URL;
+const linkTo = await recordLinks('en');
 
 const confidenceColors = {
   high: { border: 'var(--color-gap)', bg: 'var(--color-gap-bg)' },
@@ -51,9 +54,11 @@ const confidenceColors = {
         {data.conflicts?.length > 0 && (
           <span class="actor-conflicts">
             Conflict:
-            {data.conflicts.map((c: string) => (
-              <a href={base + 'conflicts/' + c}>{c}</a>
-            ))}
+            {data.conflicts.map((c: string) => {
+              const href = linkTo(c);
+              const Tag = href ? 'a' : 'span';
+              return <Tag href={href}>{c}</Tag>;
+            })}
           </span>
         )}
       </div>

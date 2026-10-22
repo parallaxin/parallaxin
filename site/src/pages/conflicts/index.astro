@@ -1,11 +1,13 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { isVisible } from '../../lib/publication';
 import { isEnglish } from '../../lib/records';
 import Base from '../../layouts/Base.astro';
+import RecordStatus from '../../components/RecordStatus.astro';
 
 let conflicts: CollectionEntry<'conflicts'>[] = [];
 try {
-  conflicts = (await getCollection('conflicts')).filter(isEnglish);
+  conflicts = (await getCollection('conflicts', isVisible)).filter(isEnglish);
 } catch (e) {
   // Collection empty — expected during early build
 }
@@ -48,6 +50,7 @@ const base = import.meta.env.BASE_URL;
               <span style={`font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.4rem; border-radius: 2px; text-transform: uppercase; background: var(--color-gap-bg); color: var(--color-gap);`}>
                 {conflict.data.status}
               </span>
+              <RecordStatus status={conflict.data.editorial_status} />
             </div>
             <h2 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--color-text-primary);">
               {conflict.data.name}

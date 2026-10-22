@@ -1,10 +1,13 @@
 ---
 import Base from '../../layouts/Base.astro';
+import RecordStatus from '../../components/RecordStatus.astro';
 import { getCollection } from 'astro:content';
+import { isVisible } from '../../lib/publication';
+import { recordLinks } from '../../lib/links';
 import { isEnglish } from '../../lib/records';
 
 export async function getStaticPaths() {
-  const conflicts = (await getCollection('conflicts')).filter(isEnglish);
+  const conflicts = (await getCollection('conflicts', isVisible)).filter(isEnglish);
   return conflicts.map((conflict) => ({
     params: { id: conflict.id },
     props: { conflict },
@@ -14,6 +17,7 @@ export async function getStaticPaths() {
 const { conflict } = Astro.props;
 const { data } = conflict;
 const base = import.meta.env.BASE_URL;
+const linkTo = await recordLinks('en');
 
 const statusColors: Record<string, { border: string; bg: string; text: string }> = {
   active: { border: 'var(--color-gap)', bg: 'var(--color-gap-bg)', text: 'var(--color-gap)' },
@@ -38,6 +42,8 @@ const sc = statusColors[data.status] || statusColors.active;
       </div>
 
       <h1 class="conflict-name">{data.name}</h1>
+
+      <RecordStatus status={data.editorial_status} banner />
 
       <div class="conflict-meta-bar">
         <span class="conflict-status" style={`background:${sc.bg};color:${sc.text};border:1px solid ${sc.border};`}>
@@ -71,8 +77,11 @@ const sc = statusColors[data.status] || statusColors.active;
         <section class="conflict-section">
           <h2 class="section-title">Actors</h2>
           <div class="actor-grid">
-            {data.actors.map((a: any) => (
-              <a href={base + 'actors/' + a.actor_id} class="actor-card">
+            {data.actors.map((a: any) => {
+              const href = linkTo(a.actor_id);
+              const Card = href ? 'a' : 'div';
+              return (
+              <Card href={href} class="actor-card">
                 <div class="actor-card-id">{a.actor_id}</div>
                 <div class="actor-card-role">{a.role_in_conflict}</div>
                 <div class="actor-card-meta">
@@ -81,8 +90,9 @@ const sc = statusColors[data.status] || statusColors.active;
                 {a.documentation && (
                   <p class="actor-card-doc">{a.documentation}</p>
                 )}
-              </a>
-            ))}
+              </Card>
+            );
+            })}
           </div>
         </section>
       )}
@@ -225,12 +235,16 @@ const sc = statusColors[data.status] || statusColors.active;
         <section class="conflict-section">
           <h2 class="section-title">Related Claim Autopsies</h2>
           <div class="autopsy-links">
-            {data.autopsies.map((ref: string) => (
-              <a href={base + 'autopsies/' + ref.toLowerCase()} class="autopsy-link-card">
+            {data.autopsies.map((ref: string) => {
+              const href = linkTo(ref);
+              const Card = href ? 'a' : 'div';
+              return (
+              <Card href={href} class="autopsy-link-card">
                 <span class="autopsy-link-id">{ref}</span>
                 <span class="autopsy-link-arrow">→</span>
-              </a>
-            ))}
+              </Card>
+            );
+            })}
           </div>
         </section>
       )}

@@ -2,11 +2,13 @@
 import Base from '../../../layouts/Base.astro';
 import RecordStatus from '../../../components/RecordStatus.astro';
 import { getCollection } from 'astro:content';
+import { isVisible } from '../../../lib/publication';
+import { recordLinks } from '../../../lib/links';
 import { arabicOrEnglish, recordId } from '../../../lib/records';
 import { t, getDirection } from '../../../i18n/utils';
 
 export async function getStaticPaths() {
-  const allAutopsies = await getCollection('autopsies');
+  const allAutopsies = await getCollection('autopsies', isVisible);
   return arabicOrEnglish(allAutopsies).map(({ entry, isTranslated }) => ({
     params: { id: recordId(entry) },
     props: { entry, isTranslated },
@@ -18,6 +20,7 @@ const { data } = entry;
 const locale = 'ar';
 const dir = getDirection(locale);
 const base = import.meta.env.BASE_URL;
+const linkTo = await recordLinks('ar');
 
 // Evidence verdict → display class
 const verdictClass = {
@@ -52,7 +55,7 @@ const confidenceClass = {
 
         <div class="autopsy-meta">
           <span class="autopsy-conflict">
-            النزاع: <a href={base + `ar/conflicts/${data.conflict_ref}`}>{data.conflict_ref}</a>
+            النزاع: {linkTo(data.conflict_ref) ? <a href={linkTo(data.conflict_ref)}>{data.conflict_ref}</a> : data.conflict_ref}
           </span>
           <span class="autopsy-updated">
             آخر تحديث: {data.last_updated}
@@ -204,7 +207,7 @@ const confidenceClass = {
         {data.who_benefits?.map((wb) => (
           <div class="who-benefits-item">
             <div class="who-benefits-actor">
-              <a href={base + `ar/actors/${wb.actor_ref}`}>{wb.actor_ref}</a>
+              {linkTo(wb.actor_ref) ? <a href={linkTo(wb.actor_ref)}>{wb.actor_ref}</a> : wb.actor_ref}
             </div>
             <p class="who-benefits-interest">{wb.documented_interest}</p>
             <p class="who-benefits-relevance">{wb.relevance}</p>
