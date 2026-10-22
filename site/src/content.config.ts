@@ -4,11 +4,11 @@ import { glob } from 'astro/loaders';
 // ════════════════════════════════════════════════════════════
 // PARALLAXIN CONTENT SCHEMA
 // 
-// This schema enforces the Constitution at the data level:
-// - Tier 4 (unverifiable) sources are not representable
-// - Every evidence item requires a tier classification
-// - Inference vs documented distinction is structurally required
-// - Draft content can exist; publish requires checklist pass
+// This schema describes record structure and stays permissive so
+// drafts can hold incomplete evidence. The Evidence Standard for
+// published records (Tier 1-3 only, http(s) sources, archive
+// snapshots, no [SOURCE NEEDED] markers, existing references) is
+// enforced by scripts/check-evidence.mjs (npm run check:evidence).
 //
 // The schema matches the actual content structure produced by
 // the editorial process. If content structure evolves, this
