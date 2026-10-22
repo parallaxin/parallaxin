@@ -2,11 +2,13 @@
 import Base from '../../layouts/Base.astro';
 import RecordStatus from '../../components/RecordStatus.astro';
 import { getCollection, getEntry } from 'astro:content';
+import { isVisible } from '../../lib/publication';
+import { recordLinks } from '../../lib/links';
 import { isEnglish } from '../../lib/records';
 import { t, getDirection } from '../../i18n/utils';
 
 export async function getStaticPaths() {
-  const autopsies = (await getCollection('autopsies')).filter(isEnglish);
+  const autopsies = (await getCollection('autopsies', isVisible)).filter(isEnglish);
   return autopsies.map((autopsy) => ({
     params: { id: autopsy.id },
     props: { autopsy },
@@ -18,6 +20,7 @@ const { data } = autopsy;
 const locale = 'en';
 const dir = getDirection(locale);
 const base = import.meta.env.BASE_URL;
+const linkTo = await recordLinks('en');
 
 // Evidence verdict → display class
 const verdictClass = {
@@ -52,7 +55,7 @@ const confidenceClass = {
 
         <div class="autopsy-meta">
           <span class="autopsy-conflict">
-            Conflict: <a href={base + `conflicts/${data.conflict_ref}`}>{data.conflict_ref}</a>
+            Conflict: {linkTo(data.conflict_ref) ? <a href={linkTo(data.conflict_ref)}>{data.conflict_ref}</a> : data.conflict_ref}
           </span>
           <span class="autopsy-updated">
             Last updated: {data.last_updated}
@@ -203,7 +206,7 @@ const confidenceClass = {
         {data.who_benefits?.map((wb) => (
           <div class="who-benefits-item">
             <div class="who-benefits-actor">
-              <a href={base + `actors/${wb.actor_ref}`}>{wb.actor_ref}</a>
+              {linkTo(wb.actor_ref) ? <a href={linkTo(wb.actor_ref)}>{wb.actor_ref}</a> : wb.actor_ref}
             </div>
             <p class="who-benefits-interest">{wb.documented_interest}</p>
             <p class="who-benefits-relevance">{wb.relevance}</p>

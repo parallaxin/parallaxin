@@ -566,3 +566,13 @@ blockquote cite {
   border-color: var(--color-documented);
   color: var(--color-documented);
 }
+/* Local dev preview: unpublished records are visible */
+.preview-banner {
+  background: var(--color-contested-bg);
+  color: var(--color-contested);
+  border-bottom: 1px solid var(--color-contested);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+  text-align: center;
+}

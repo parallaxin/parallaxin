@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import RecordStatus from '../../components/RecordStatus.astro';
 import { getCollection } from 'astro:content';
+import { isVisible } from '../../lib/publication';
 import { arabicOrEnglish, recordId } from '../../lib/records';
 import { t, getDirection } from '../../i18n/utils';
 
@@ -9,9 +10,9 @@ const locale = 'ar';
 const dir = getDirection(locale);
 
 // Load published content — prefer Arabic translations, fall back to English
-const rawAutopsies = await getCollection('autopsies');
-const rawConflicts = await getCollection('conflicts', ({ data }) => data.status === 'active');
-const rawActors = await getCollection('actors');
+const rawAutopsies = await getCollection('autopsies', isVisible);
+const rawConflicts = await getCollection('conflicts', (e) => isVisible(e) && e.data.status === 'active');
+const rawActors = await getCollection('actors', isVisible);
 
 
 const allAutopsies = arabicOrEnglish(rawAutopsies).map((r) => r.entry);
@@ -122,6 +123,7 @@ const base = import.meta.env.BASE_URL;
                 <span class={`card-status card-status--${conflict.data.status}`}>
                   {conflict.data.status}
                 </span>
+                <RecordStatus status={conflict.data.editorial_status} locale="ar" />
               </div>
               <h3 class="card-title">{conflict.data.name}</h3>
               <p class="card-date">

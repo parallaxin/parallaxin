@@ -23,6 +23,7 @@ const altLocalePath = isArabic
   : base + 'ar/' + pathWithoutBase;               // Add /ar/ prefix for Arabic
 const altLocaleLabel = isArabic ? 'EN' : 'عربي';
 const localePrefix = isArabic ? 'ar/' : '';
+const showPreviewBanner = import.meta.env.DEV;
 ---
 
 <!DOCTYPE html>
@@ -67,6 +68,13 @@ const localePrefix = isArabic ? 'ar/' : '';
     </div>
   </header>
 
+  {showPreviewBanner && (
+    <div class="preview-banner" role="note">
+      {isArabic
+        ? 'معاينة محلية: تشمل سجلات غير معتمدة لا تظهر في الموقع المنشور.'
+        : 'Local preview: includes unpublished records that the published site does not show.'}
+    </div>
+  )}
   <main>
     <slot />
   </main>

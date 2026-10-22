@@ -1,12 +1,13 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { isVisible } from '../../../lib/publication';
 import { arabicOrEnglish, recordId } from '../../../lib/records';
 import Base from '../../../layouts/Base.astro';
 import RecordStatus from '../../../components/RecordStatus.astro';
 
 let allActors: CollectionEntry<'actors'>[] = [];
 try {
-  allActors = await getCollection('actors');
+  allActors = await getCollection('actors', isVisible);
 } catch (e) {
   // Collection empty — expected during early build
 }

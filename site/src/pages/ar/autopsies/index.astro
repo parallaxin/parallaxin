@@ -1,10 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
+import { isVisible } from '../../../lib/publication';
 import { arabicOrEnglish, recordId } from '../../../lib/records';
 import Base from '../../../layouts/Base.astro';
 import RecordStatus from '../../../components/RecordStatus.astro';
 
-const allAutopsies = await getCollection('autopsies');
+const allAutopsies = await getCollection('autopsies', isVisible);
 // Prefer Arabic content, fall back to English
 const autopsies = arabicOrEnglish(allAutopsies).map((r) => r.entry);
 const locale = 'ar';
