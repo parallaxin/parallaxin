@@ -6,7 +6,7 @@
 
 | Record | Editorial status | Issues blocking publication (`npm run check:evidence -- --record ID`) |
 |---|---|---|
-| CA-2026-0001 — claim autopsy | under review | 0. Rebuilt on 22 October 2026 ([correction](corrections/2026-10-22-CA-2026-0001.md)); awaiting a second reviewer |
+| CA-2026-0001 — claim autopsy | under review | 0. Rebuilt on 22 October 2026 ([correction](corrections/2026-10-22-CA-2026-0001.md)); independent review done; awaiting approval |
 | ACT-2026-0001 — actor | draft | 24, mostly `[SOURCE NEEDED]` |
 | ACT-2026-0002 — actor | draft | 18, mostly `[SOURCE NEEDED]` |
 | CON-2025-0001 — conflict | draft | 40: `[SOURCE NEEDED]` markers, and references to three actor records and two autopsies not yet written |
