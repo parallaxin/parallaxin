@@ -26,6 +26,9 @@ The live site now shows only records that have passed editorial review. No recor
 - Records link to each other by record ID; links to unpublished records render as plain text.
 - Documentation: architecture overview rewritten to match the code; contribution guide and record templates updated.
 
+### Corrected
+- **CA-2026-0001** rebuilt after every source was reopened: the claim now quotes the speaker's own words and date, two pieces of evidence that did not say what the record claimed were replaced, and the assessment changed from "no" (high confidence) to "partially" (medium). The record remains under review. Details: [docs/corrections/2026-10-22-CA-2026-0001.md](docs/corrections/2026-10-22-CA-2026-0001.md).
+
 ### Fixed
 - Arabic translations no longer get an extra page under the English routes (e.g. `/actors/ACT-2026-0001.ar/`).
 - Conflict pages linked to claim autopsies with a lower-cased ID.

@@ -6,7 +6,7 @@
 
 | Record | Editorial status | Issues blocking publication (`npm run check:evidence -- --record ID`) |
 |---|---|---|
-| CA-2026-0001 — claim autopsy | under review | 9: missing or untimestamped archive links, a `[SOURCE NEEDED]` note |
+| CA-2026-0001 — claim autopsy | under review | 0. Rebuilt on 22 October 2026 ([correction](corrections/2026-10-22-CA-2026-0001.md)); awaiting two source checks and a second reviewer |
 | ACT-2026-0001 — actor | draft | 24, mostly `[SOURCE NEEDED]` |
 | ACT-2026-0002 — actor | draft | 18, mostly `[SOURCE NEEDED]` |
 | CON-2025-0001 — conflict | draft | 40: `[SOURCE NEEDED]` markers, and references to three actor records and two autopsies not yet written |
@@ -15,7 +15,7 @@ Known source problems (`npm run lint:links`, 22 October 2026):
 - Broken (HTTP 404): the White House archive page on ending US participation in the JCPOA, cited in CON-2025-0001 and ACT-2026-0002.
 - Several government and news sites refuse automated requests (HTTP 403/429). Those links need checking by hand.
 
-Next: complete the evidence review of CA-2026-0001 as the first record to publish.
+Next: the remaining checks and second review of CA-2026-0001, the first record to complete the evidence review.
 
 How the gates work: [architecture overview](8-architecture.md#publication-and-evidence-gates). What changed: [CHANGELOG](../CHANGELOG.md).
 
