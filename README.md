@@ -17,7 +17,7 @@ A lens for documenting the gap between what powerful actors say and what they do
 
 ## Current Status
 
-- **Published records:** none yet. The site shows a record only once it has passed editorial review and the evidence gate. One claim autopsy, two actor records and one conflict record are in draft or under review; run `npm run dev` in `site/` to preview them locally.
+- **Published records:** one claim autopsy, CA-2026-0001. The site shows a record only once it has passed editorial review and the evidence gate. Two actor records and one conflict record are still drafts; run `npm run dev` in `site/` to preview them locally.
 - **Languages:** Full parallel mirror in **Arabic** (`/ar/`) with RTL support. UI support for French and Spanish.
 - **Infrastructure:** Astro 7 static site. Every pull request runs the type check, unit tests, the evidence gate, the build and a route check. A separate source checker tests links and archives them.
 - **Documentation:** Full constitution, architecture overview, and contribution guidelines in place.
