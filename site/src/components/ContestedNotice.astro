@@ -1,0 +1,38 @@
+---
+// Shown on records whose findings are formally disputed (Constitution: contested records).
+interface Props {
+  contested?: boolean;
+  thread?: string;
+  locale?: 'en' | 'ar';
+}
+
+const { contested = false, thread = '', locale = 'en' } = Astro.props;
+
+const text = {
+  en: { label: 'CONTESTED', notice: 'The findings of this record are formally disputed.', link: 'Read the dispute' },
+  ar: { label: 'محل اعتراض', notice: 'نتائج هذا السجل محل اعتراض رسمي.', link: 'اقرأ الاعتراض' },
+}[locale];
+const threadUrl = /^https?:\/\//i.test(thread.trim()) ? thread : '';
+---
+
+{contested && (
+  <div class="contested-notice" role="note">
+    <strong>{text.label}</strong> — {text.notice}
+    {threadUrl && <>{' '}<a href={threadUrl} target="_blank" rel="noopener">{text.link} ↗</a></>}
+  </div>
+)}
+
+<style>
+  .contested-notice {
+    background: var(--color-contested-bg);
+    color: var(--color-contested);
+    border-inline-start: 3px solid var(--color-contested);
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+  }
+  .contested-notice a {
+    color: inherit;
+    margin-inline-start: 0.5rem;
+  }
+</style>

@@ -1,6 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
 import RecordStatus from '../../components/RecordStatus.astro';
+import SourceLinks from '../../components/SourceLinks.astro';
+import ContestedNotice from '../../components/ContestedNotice.astro';
 import { getCollection, getEntry } from 'astro:content';
 import { isVisible } from '../../lib/publication';
 import { recordLinks } from '../../lib/links';
@@ -64,6 +66,7 @@ const confidenceClass = {
         </div>
 
         <RecordStatus status={data.status} banner />
+        <ContestedNotice contested={data.contested} thread={data.contest_thread} />
 
         <!-- VERDICT BANNER -->
         <div class={`verdict-banner ${verdictClass}`}>
@@ -97,9 +100,7 @@ const confidenceClass = {
             <span class="source-tier source-tier--{data.the_claim?.source_tier?.toLowerCase().replace(' ', '-')}">
               {data.the_claim?.source_tier}
             </span>
-            <a href={data.the_claim?.source_url} target="_blank" rel="noopener" class="source-link">
-              {data.the_claim?.source_description} ↗
-            </a>
+            <SourceLinks item={data.the_claim} />
           </div>
         </div>
       </section>
@@ -121,9 +122,7 @@ const confidenceClass = {
                   <span class={`source-tier source-tier--${ev.source_tier?.toLowerCase().replace(' ', '-')}`}>
                     {ev.source_tier}
                   </span>
-                  <a href={ev.source_url} target="_blank" rel="noopener" class="source-link">
-                    {ev.source_description} ↗
-                  </a>
+                  <SourceLinks item={ev} />
                 </div>
                 {ev.credibility_note && (
                   <p class="evidence-credibility">
@@ -148,9 +147,7 @@ const confidenceClass = {
                   <span class={`source-tier source-tier--${ev.source_tier?.toLowerCase().replace(' ', '-')}`}>
                     {ev.source_tier}
                   </span>
-                  <a href={ev.source_url} target="_blank" rel="noopener" class="source-link">
-                    {ev.source_description} ↗
-                  </a>
+                  <SourceLinks item={ev} />
                 </div>
                 {ev.credibility_note && (
                   <p class="evidence-credibility">
@@ -214,9 +211,7 @@ const confidenceClass = {
               <span class={`source-tier source-tier--${wb.source_tier?.toLowerCase().replace(' ', '-')}`}>
                 {wb.source_tier}
               </span>
-              <a href={wb.source_url} target="_blank" rel="noopener" class="source-link">
-                {wb.source_description} ↗
-              </a>
+              <SourceLinks item={wb} />
             </div>
           </div>
         ))}
