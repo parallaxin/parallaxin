@@ -4,7 +4,7 @@ import fa from './fa.json';
 import fr from './fr.json';
 import es from './es.json';
 
-const translations: Record<string, typeof en> = { en, ar, fa, fr, es };
+const translations: Record<Locale, object> = { en, ar, fa, fr, es };
 
 export type Locale = 'en' | 'ar' | 'fa' | 'fr' | 'es';
 

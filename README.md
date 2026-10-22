@@ -41,11 +41,12 @@ A lens for documenting the gap between what powerful actors say and what they do
 4. **Develop** the site:
    ```bash
    cd site
-   npm install
+   npm ci
    npm run dev
    ```
 5. **Run Tests**:
    ```bash
+   npm run check     # Astro type check
    npm run test      # Vitest unit tests
    npm run test:e2e  # Playwright E2E tests
    ```
@@ -71,7 +72,7 @@ No accounts needed to read. No data collected from readers. Zero tracking.
 
 ```bash
 cd site
-npm install
+npm ci
 npm run build    # Output: site/dist/
 npm run preview  # Local preview
 ```

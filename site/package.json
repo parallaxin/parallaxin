@@ -21,6 +21,7 @@
     "yaml": "^2.9.0"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.12",
     "@playwright/test": "^1.58.2",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",

@@ -84,11 +84,11 @@ Current languages: English, Arabic, Farsi. Priority additions: French, Spanish, 
 
 ## Code Contributions
 
-The site is built with [Astro 5](https://astro.build/). To run locally:
+The site is built with [Astro 7](https://astro.build/). To run locally:
 
 ```bash
 cd site
-npm install
+npm ci
 npm run dev
 ```
 

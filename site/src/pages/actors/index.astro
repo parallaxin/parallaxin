@@ -1,9 +1,9 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import RecordStatus from '../../components/RecordStatus.astro';
 
-let actors = [];
+let actors: CollectionEntry<'actors'>[] = [];
 try {
   actors = (await getCollection('actors')).filter(a => !a.id.replace('.md', '').endsWith('.ar'));
 } catch (e) {
