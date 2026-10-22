@@ -9,10 +9,10 @@ const dir = getDirection(locale);
 
 // Load published content — prefer Arabic translations, fall back to English
 const rawAutopsies = await getCollection('autopsies');
-const rawConflicts = await getCollection('conflicts', ({ data }) => data.status === 'active' || data.status === 'published');
+const rawConflicts = await getCollection('conflicts', ({ data }) => data.status === 'active');
 const rawActors = await getCollection('actors');
 
-function preferArabic(items) {
+function preferArabic<T extends { id: string }>(items: T[]): T[] {
   const english = items.filter(a => !a.id.replace('.md', '').endsWith('.ar'));
   return english.map(entry => {
     const baseId = entry.id.replace('.md', '');

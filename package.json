@@ -8,12 +8,7 @@
     "build": "npm run --prefix site build",
     "preview": "npm run --prefix site preview",
     "check": "npm run --prefix site check",
-    "lint:links": "npm run --prefix site lint:links"
-  },
-  "dependencies": {
-    "astro": "^7.2.1"
-  },
-  "devDependencies": {
-    "typescript": "^5.0.0"
+    "lint:links": "npm run --prefix site lint:links",
+    "test": "npm run --prefix site test"
   }
 }

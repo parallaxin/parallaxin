@@ -1,9 +1,9 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
 import RecordStatus from '../../../components/RecordStatus.astro';
 
-let allActors = [];
+let allActors: CollectionEntry<'actors'>[] = [];
 try {
   allActors = await getCollection('actors');
 } catch (e) {
