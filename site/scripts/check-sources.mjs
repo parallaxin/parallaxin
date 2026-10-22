@@ -1,184 +1,82 @@
-﻿import { readdir, readFile, writeFile } from 'fs/promises';
+﻿// Network check of every source and archive link in the content.
+// Exit 1 when a file cannot be parsed or a link is broken.
+// --strict  also exit 1 when a server refuses automated access (unverified)
+// --fix     archive sources that lack a snapshot, after confirming the
+//           snapshot loads; writes the snapshot URL and the check date
+// Structural rules (markers, tiers, references) live in check-evidence.mjs.
+import { readdir, readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
 import YAML from 'yaml';
+import { checkUrl, collectLinks, archiveGaps, archiveUrl, pathLabel } from './source-links.mjs';
 
 const CONTENT_DIR = 'src/content';
 const FIX_MODE = process.argv.includes('--fix');
+const STRICT = process.argv.includes('--strict');
+const FRONT_MATTER = /^(﻿?---\r?\n)([\s\S]*?)(\r?\n---)/;
 
-async function getFiles(dir) {
-  const entries = await readdir(dir, { withFileTypes: true, recursive: true });
-  return entries
-    .filter(e => e.isFile() && (e.name.endsWith('.md') || e.name.endsWith('.mdx')))
-    .map(e => join(e.parentPath || e.path, e.name));
-}
+const files = (await readdir(CONTENT_DIR, { withFileTypes: true, recursive: true }))
+  .filter(e => e.isFile() && /\.mdx?$/.test(e.name))
+  .map(e => join(e.parentPath, e.name));
 
-async function checkUrl(url) {
-  if (url.startsWith('[SOURCE NEEDED]')) return { ok: false, skip: true, reason: 'Marker: [SOURCE NEEDED]' };
-  const headers = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' };
-  try {
-    const res = await fetch(url, { method: 'HEAD', headers, signal: AbortSignal.timeout(5000) });
-    return { url, status: res.status, ok: res.ok || res.status === 403 }; // Treat 403 as 'likely exists but blocked'
-  } catch (e) {
-    try {
-      const res = await fetch(url, { method: 'GET', headers, signal: AbortSignal.timeout(5000) });
-      return { url, status: res.status, ok: res.ok || res.status === 403 };
-    } catch (e2) {
-      return { url, status: 0, ok: false, error: e2.message };
+const stats = { ok: 0, unverified: 0, broken: 0, parseErrors: 0, archived: 0 };
+const cache = new Map();
+const today = new Date().toISOString().slice(0, 10);
+
+console.log(`\nPARALLAXIN SOURCE CHECKER (${FIX_MODE ? 'fix' : 'report'} mode)\n`);
+
+for (const file of files) {
+  const raw = await readFile(file, 'utf8');
+  const match = raw.match(FRONT_MATTER);
+  const doc = match && YAML.parseDocument(match[2]);
+  if (!doc || doc.errors.length) {
+    stats.parseErrors++;
+    console.log(`File: ${file}\n  [PARSE]      ${doc ? doc.errors[0].message.split('\n')[0] : 'missing front matter'}`);
+    continue;
+  }
+  const data = doc.toJS() ?? {};
+  const links = collectLinks(data);
+  if (!links.length) continue;
+
+  console.log(`File: ${file}`);
+  for (const link of links) {
+    if (!cache.has(link.url)) cache.set(link.url, await checkUrl(link.url));
+    const check = cache.get(link.url);
+    stats[check.result]++;
+    if (check.result !== 'ok') {
+      const why = check.error ?? check.status;
+      console.log(`  [${check.result.toUpperCase()}]${' '.repeat(12 - check.result.length)}${pathLabel(link.path)} ${link.url} (${why})`);
     }
   }
-}
 
-async function archiveUrl(url) {
-  console.log(`  > Archiving: ${url}...`);
-  try {
-    const saveUrl = `https://web.archive.org/save/${url}`;
-    const res = await fetch(saveUrl, {
-      signal: AbortSignal.timeout(30000),
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-      }
-    });
-    console.log(`    Save Status: ${res.status}`);
-    if (res.ok || res.status === 302) {
-      const machineId = res.headers.get('x-app-server') || res.headers.get('server') || 'unknown';
-      const location = res.headers.get('location') || '';
-      const timestampMatch = location.match(/\/web\/(\d+)\//);
-      const timestamp = timestampMatch ? timestampMatch[1] : (res.headers.get('x-archive-orig-date') || 'unknown');
-      console.log(`    Archived OK: ${machineId} (ID: ${timestamp})`);
-      return {
-        archiveUrl: `https://web.archive.org/web/${url}`,
-        machineId,
-        timestamp
-      };
-    }
-    console.log(`    Archive failed with status: ${res.status}`);
-    return null;
-  } catch (e) {
-    console.error(`  !! Archive failed: ${e.message}`);
-    return null;
-  }
-}
-
-function collectUrls(obj, path = '') {
-  let results = [];
-  if (!obj || typeof obj !== 'object') return results;
-
-  if (Array.isArray(obj)) {
-    obj.forEach((item, i) => {
-      results = results.concat(collectUrls(item, `${path}[${i}]`));
-    });
-    return results;
-  }
-
-  for (const key in obj) {
-    if (key === 'source_url' || (key.endsWith('_url') && !key.includes('archive'))) {
-      const archiveKey = key === 'source_url' ? 'source_archive_url' : key.replace('_url', '_archive_url');
-      const machineKey = key === 'source_url' ? 'source_archive_machine_id' : key.replace('_url', '_archive_machine_id');
-      const idKey = key === 'source_url' ? 'source_archive_id' : key.replace('_url', '_archive_id');
-      results.push({
-        key,
-        archiveKey: obj[archiveKey] !== undefined ? archiveKey : null,
-        machineKey: machineKey,
-        idKey: idKey,
-        url: obj[key],
-        archiveUrl: obj[archiveKey],
-        parent: obj
-      });
-    } else if (typeof obj[key] === 'object') {
-      results = results.concat(collectUrls(obj[key], `${path}.${key}`));
-    }
-  }
-  return results;
-}
-
-async function main() {
-  const files = await getFiles(CONTENT_DIR);
-  console.log(`\nPARALLAXIN SOURCE CHECKER (Mode: ${FIX_MODE ? 'FIX/ARCHIVE' : 'REPORT'})\n`);
-
-  let globalStats = { total: 0, ok: 0, broken: 0, missingArchive: 0, missingSource: 0, archived: 0 };
-
-  for (const file of files) {
-    const rawContent = await readFile(file, 'utf-8');
-    const parts = rawContent.split('---');
-    if (parts.length < 3) continue;
-
-    let frontmatter;
-    try {
-      frontmatter = YAML.parse(parts[1]);
-    } catch (e) {
-      console.error(`  !! YAML Parse Error in ${file}: ${e.message}`);
-      continue;
-    }
-    const items = collectUrls(frontmatter);
-
-    if (items.length === 0) continue;
-
-    console.log(`\nFile: ${file}`);
-    let fileChanged = false;
-
-    for (const item of items) {
-      if (!item.url || typeof item.url !== 'string') continue;
-
-      if (item.url.startsWith('[SOURCE NEEDED]')) {
-        console.log(`  [MISSING] ${item.key}: Source needed`);
-        globalStats.missingSource++;
+  if (FIX_MODE) {
+    let changed = false;
+    for (const gap of archiveGaps(data)) {
+      if (cache.get(gap.url)?.result !== 'ok') continue;
+      const snapshot = await archiveUrl(gap.url).catch(() => null);
+      if (!snapshot) {
+        console.log(`  [NOT SAVED]  ${pathLabel(gap.path)} ${gap.url}`);
         continue;
       }
-
-      globalStats.total++;
-      const check = await checkUrl(item.url);
-
-      if (check.ok) {
-        globalStats.ok++;
-        const archiveNeeded = !item.archiveUrl || item.archiveUrl.includes('NEEDED');
-
-        if (archiveNeeded) {
-          console.log(`  [OK/UNC]  ${item.url} -> Archive needed (Status: ${check.status})`);
-          globalStats.missingArchive++;
-
-          if (FIX_MODE) {
-            const archiveInfo = await archiveUrl(item.url);
-            if (archiveInfo && item.archiveKey) {
-              item.parent[item.archiveKey] = archiveInfo.archiveUrl;
-              if (item.machineKey) item.parent[item.machineKey] = archiveInfo.machineId;
-              if (item.idKey) item.parent[item.idKey] = archiveInfo.timestamp;
-              fileChanged = true;
-              globalStats.archived++;
-              console.log(`  [FIXED]   Archived to wayback (Machine: ${archiveInfo.machineId})`);
-              await new Promise(r => setTimeout(r, 15000)); // sleep to avoid rate limits
-            }
-          }
-        } else {
-          console.log(`  [OK]      ${item.url}`);
-        }
-      } else {
-        globalStats.broken++;
-        console.log(`  [BROKEN]  ${item.url} (${check.status || check.error})`);
-      }
+      doc.setIn([...gap.path, 'source_archive_url'], snapshot);
+      doc.setIn([...gap.path, 'source_archive_verified'], today);
+      changed = true;
+      stats.archived++;
+      console.log(`  [ARCHIVED]   ${pathLabel(gap.path)} ${snapshot}`);
+      await new Promise(r => setTimeout(r, 15000)); // Wayback rate limit
     }
-
-    if (fileChanged && FIX_MODE) {
-      const newContent = `---\n${YAML.stringify(frontmatter)}---\n${parts.slice(2).join('---')}`;
-      await writeFile(file, newContent, 'utf-8');
-      console.log(`  [SAVED]   File updated with archive URLs.`);
+    if (changed) {
+      const yaml = String(doc).replace(/\n$/, '');
+      await writeFile(file, raw.replace(FRONT_MATTER, (_, open, _body, close) => open + yaml + close), 'utf8');
     }
   }
-
-  console.log(`\n--- FINAL REPORT ---`);
-  console.log(`Total URLs:      ${globalStats.total}`);
-  console.log(`Valid:           ${globalStats.ok}`);
-  console.log(`Broken:          ${globalStats.broken}`);
-  console.log(`Missing Archive: ${globalStats.missingArchive}`);
-  console.log(`[SOURCE NEEDED]: ${globalStats.missingSource}`);
-  if (FIX_MODE) {
-    console.log(`Auto-Archived:   ${globalStats.archived}`);
-  }
-  console.log(`--------------------\n`);
-
-  if (globalStats.broken > 0) process.exit(1);
 }
 
-main().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+console.log(`\n--- REPORT ---`);
+console.log(`Reachable:   ${stats.ok}`);
+console.log(`Unverified:  ${stats.unverified}  (server refused automated access; check by hand)`);
+console.log(`Broken:      ${stats.broken}`);
+console.log(`Parse errors: ${stats.parseErrors}`);
+if (FIX_MODE) console.log(`Archived:    ${stats.archived}`);
+console.log('Reachable means the page loads, not that it supports the claim.\n');
+
+if (stats.broken || stats.parseErrors || (STRICT && stats.unverified)) process.exit(1);
