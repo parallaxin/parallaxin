@@ -1,22 +1,30 @@
-﻿name: Deploy to GitHub Pages
+﻿name: Site — check, build and deploy
+
+# Every pull request and every push to main runs the same gates.
+# Only a push to main (or a manual run on main) deploys, and only the
+# artifact built by that passing run is published.
+# The network link check (npm run lint:links) is not a gate: live sites
+# change and block bots, so its result is not reproducible.
 
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: site-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,23 +33,43 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
 
       - name: Install dependencies
-        working-directory: site
         run: npm ci
 
+      - name: Type check
+        run: npm run check
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Evidence gate
+        run: npm run check:evidence
+
       - name: Build
-        working-directory: site
         run: npm run build
 
+      - name: Route and publication check
+        run: npm run test:routes
+
       - name: Upload artifact
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
           path: site/dist
 
   deploy:
     needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
