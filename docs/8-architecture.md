@@ -1,35 +1,20 @@
 # PARALLAXIN — Architecture Overview
 
-**Version 1.0 — Technical documentation for contributors**
+**Technical documentation for contributors. Updated 22 October 2026.**
+
+The authority on record structure is the code: `site/src/content.config.ts` for the schema and `site/scripts/evidence-rules.mjs` for the publication rules. This document explains how the pieces fit.
 
 ---
 
 ## TECHNOLOGY STACK
 
-### Core Framework
-- **Astro 5.18** — Modern static site generator with zero JavaScript by default
-- **TypeScript** — Type safety and better developer experience
-- **Vite** — Fast development server and build tool
-
-### Content Management
-- **Markdown** — Content authoring in Git with full audit trail
-- **YAML Frontmatter** — Structured metadata validated by Zod schemas
-- **Zod Schemas** — Runtime validation ensuring content integrity
-
-### Styling & UI
-- **TailwindCSS** — Utility-first CSS framework
-- **IBM Plex Sans/Mono** — Typography system
-- **CSS Custom Properties** — Dark theme and evidence color system
-
-### Internationalization
-- **Astro i18n** — Built-in internationalization support
-- **Languages** — English (primary), Arabic, Farsi (planned)
-- **RTL Support** — Right-to-left layout for Arabic content
-
-### Deployment & CI/CD
-- **GitHub Actions** — Automated testing and deployment
-- **GitHub Pages** — Static hosting with custom domain support
-- **Node.js** — Runtime environment
+- **Astro 7** — static site generator; the site ships HTML and CSS with no client framework.
+- **TypeScript** — checked with `astro check`.
+- **Markdown + YAML front matter** — every record is a file in Git, so its full history is public.
+- **Zod** (through Astro content collections) — describes record structure.
+- **Plain CSS** — `site/public/styles/global.css`, with custom properties for the dark theme and the evidence colour system. IBM Plex Sans/Mono are loaded from Google Fonts.
+- **Vitest** (unit tests) and **Playwright** (end-to-end tests).
+- **GitHub Actions** and **GitHub Pages** — CI and hosting.
 
 ---
 
@@ -37,222 +22,118 @@
 
 ```
 parallaxin/
-├── src/
-│   ├── components/          # Reusable Astro components
-│   ├── layouts/            # Page layout templates
-│   ├── pages/              # Route-based pages
-│   │   ├── autopsies/      # Claim autopsy pages
-│   │   ├── actors/         # Actor profile pages
-│   │   └── conflicts/      # Conflict record pages
-│   └── styles/             # Global CSS and Tailwind config
-├── content/
-│   ├── autopsies/          # Claim autopsy content
-│   ├── actors/             # Actor profile content
-│   └── conflicts/          # Conflict record content
-├── src/content/config.ts   # Zod schema definitions
-├── public/                 # Static assets
-├── scripts/                # Build and utility scripts
-└── docs/                   # Project documentation
+├── docs/                         # Constitution, plans, build log, templates
+│   └── templates/                # Starting points for new records
+├── site/                         # The Astro site; install and run everything here
+│   ├── src/
+│   │   ├── content/              # Records: autopsies/, actors/, conflicts/
+│   │   ├── content.config.ts     # Record schemas
+│   │   ├── lib/                  # Language and publication helpers
+│   │   ├── components/           # RecordStatus, SourceLinks, ContestedNotice
+│   │   ├── layouts/Base.astro    # Page shell, language switcher, preview banner
+│   │   ├── pages/                # English routes; pages/ar/ holds the Arabic mirror
+│   │   └── i18n/                 # Interface strings (en, ar, fa, fr, es)
+│   ├── scripts/                  # Evidence gate, route check, source checker
+│   ├── tests/                    # Playwright specs
+│   └── public/                   # Static assets and global CSS
+└── .github/workflows/deploy.yml  # CI and deployment
 ```
 
 ---
 
-## CONTENT SCHEMAS
+## RECORDS
 
-### Claim Autopsy Schema
-```yaml
----
-id: ca-2026-0001
-title: "Claim title in question form"
-status: under-review # draft, under-review, published
-date_published: 2026-03-01
-claim:
-  statement: "Exact claim being investigated"
-  source: "Who made the claim"
-  date: "When the claim was made"
-evidence:
-  - type: document
-    source: "Source URL or reference"
-    assessment: "supports|contradicts|neutral"
-    notes: "Analysis of this evidence"
-conclusion:
-  finding: "Evidence-based conclusion"
-  confidence: high|medium|low
----
-```
+Three collections, one Markdown file per record and language:
 
-### Actor Record Schema
-```yaml
----
-id: act-2026-0001
-name: "Full name"
-type: individual|organization|government
-status: draft|published
-period_active: "YYYY-MM to YYYY-MM"
-key_positions: ["Position 1", "Position 2"]
-notable_statements:
-  - date: YYYY-MM-DD
-    statement: "Exact quote or paraphrase"
-    source: "Reference"
----
-```
+| Collection | ID format | Files |
+|---|---|---|
+| Claim autopsies | `CA-YYYY-NNNN` | `ca-2026-0001.md`, `ca-2026-0001.ar.md` |
+| Actor records | `ACT-YYYY-NNNN` | `ACT-2026-0001.md`, `ACT-2026-0001.ar.md` |
+| Conflict records | `CON-YYYY-NNNN` | `CON-2025-0001.md`, `CON-2025-0001.ar.md` |
 
-### Conflict Record Schema
-```yaml
+- The English file is the record of reference. The Arabic file (`.ar.md`) is its translation and must carry the same `record_id`.
+- Each record has one English page (`/autopsies/ca-2026-0001/`) and one Arabic page (`/ar/autopsies/ca-2026-0001/`). If the Arabic file is missing, the Arabic page shows the English text.
+- Records point to each other by ID: `conflict_ref`, `actor_ref`, `who_benefits[].actor_ref`, `actors[].actor_id`, `autopsies[]`, `conflicts[]`.
+
+### Editorial status
+
+Every record has an editorial status: `draft`, `under-review` or `published`.
+
+- Autopsies and actors keep it in `status`.
+- Conflicts keep it in `editorial_status`. Their `status` field (`active`, `ceasefire`, `ended`, `frozen`) describes the conflict itself, not editorial approval.
+- `contested: true` with a `contest_thread` link marks a record whose findings are formally disputed. Readers see a notice and the link.
+
+Start new records from `docs/templates/`; the full field list is in `site/src/content.config.ts`.
+
 ---
-id: con-2025-0001
-name: "Conflict name"
-type: armed|political|economic
-status: draft|published
-period: "YYYY-MM to YYYY-MM"
-parties:
-  - actor_id: "act-2026-0001"
-    role: "primary|secondary|supporter"
-key_events:
-  - date: YYYY-MM-DD
-    event: "Factual description"
-    sources: ["Source 1", "Source 2"]
----
-```
+
+## PUBLICATION AND EVIDENCE GATES
+
+The schema is deliberately permissive so that drafts can hold incomplete evidence and `[SOURCE NEEDED]` markers. Publication is controlled in two places.
+
+**1. What the site shows** (`site/src/lib/publication.ts`)
+- A production build (`npm run build`) contains published records only. Drafts and records under review get no page, no sitemap entry and no search index entry. Links to them render as plain text.
+- The local dev server (`npm run dev`) shows every record, under a banner saying it is a local preview.
+
+**2. What may be marked published** (`npm run check:evidence`, no network)
+- Fails for every record on unparseable front matter, or a missing, mismatched or duplicate `record_id`.
+- Fails for a published record on: a source tier other than Tier 1–3; a URL that is not http(s); a missing source URL, tier or archive link; a Wayback archive link without a snapshot timestamp; any `[SOURCE NEEDED]` or `[ARCHIVE NEEDED]` marker; duplicate evidence IDs; a contested record without a thread; a documented conflict event without a source; a reference to a record that does not exist.
+- For drafts it reports how many issues remain; `--record ID` lists them.
+
+Passing the gate does not make a record true. It confirms structure and sourcing; reviewers still check that each source says what the record claims.
+
+**Source checker** (`npm run lint:links`, network)
+- Requests every source and archive link, including links inside `sources` lists, and reports each as reachable, unverified (the server refused automated access, e.g. HTTP 403 or 429; check by hand) or broken.
+- `--fix` asks the Wayback Machine to archive sources that lack a snapshot, and writes the snapshot URL with its check date (`source_archive_verified`) only after the snapshot loads.
+- It is not part of CI, because live sites change and block automated requests.
 
 ---
 
 ## DEVELOPMENT WORKFLOW
 
-### Local Development
 ```bash
-# Clone the repository
 git clone https://github.com/parallaxin/parallaxin.git
-cd parallaxin
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Visit http://localhost:4321
+cd parallaxin/site
+npm ci
+npm run dev              # http://localhost:4321/parallaxin/ — includes unpublished records
 ```
 
-### Content Creation
-1. **Choose content type** (autopsy, actor, conflict)
-2. **Copy appropriate template** from `/docs/templates/`
-3. **Fill in frontmatter** following schema requirements
-4. **Write content in Markdown** with proper evidence formatting
-5. **Test locally** with `npm run dev`
-6. **Submit Pull Request** for review
+Checks (the first five run in CI):
 
-### Build & Deploy
 ```bash
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
-
-# Run content validation
-npm run check-sources
+npm run check            # TypeScript and schema check
+npm test                 # unit tests (src/**/*.test.ts, scripts/**/*.test.mjs)
+npm run check:evidence   # evidence gate
+npm run build            # production build into dist/, then Pagefind search index
+npm run test:routes      # dist/: one page per published record and language, no unpublished pages
+npm run test:e2e         # Playwright, against the dev server
+npm run lint:links       # network source check
 ```
 
 ---
 
-## SCHEMA & CONSTITUTION ENFORCEMENT
+## CI AND DEPLOYMENT
 
-### Automated Validation
-The Zod schemas in `src/content/config.ts` enforce constitutional principles:
+`.github/workflows/deploy.yml` runs on every pull request and every push to `main`:
 
-- **Article 2 (Evidence Tiers)**: Schema requires `evidence` array with mandatory `assessment` field
-- **Article 3 (No Framing)**: `date_published` and `period` fields prevent selective timeframes
-- **Article 4 (Dispute Resolution)**: `status` field tracks review workflow
-- **Article 7 (Source Requirements)**: `source` fields mandatory for all claims
+1. `npm ci`
+2. `npm run check`
+3. `npm test`
+4. `npm run check:evidence`
+5. `npm run build`
+6. `npm run test:routes`
 
-### Build-Time Errors
-Invalid content will cause build failures with descriptive error messages:
-- Missing required fields
-- Invalid enum values
-- Incorrect data types
-- Malformed dates or URLs
+A failure at any step stops the run. Only a push (or manual run) on `main` uploads the `dist/` built by that run and deploys it to GitHub Pages. Pull requests never deploy.
 
-### Content Quality Gates
-- **Source checker script** validates all URLs
-- **Archive verification** ensures evidence preservation
-- **Automated testing** prevents schema violations
+The site is served at `https://parallaxin.github.io/parallaxin/` (`site` and `base` in `site/astro.config.mjs`).
 
 ---
 
-## CONTRIBUTION GUIDELINES
+## SECURITY AND PRIVACY NOTES
 
-### Code Contributions
-- Follow existing code style and patterns
-- Add TypeScript types for new components
-- Test responsive design and dark theme
-- Update documentation for new features
+- The site is static: no database, no server code, no user accounts.
+- Git history is a public, tamper-evident record of every change to every record.
+- Contributions go through GitHub. Contributors may use a pseudonymous account, but GitHub and Git record the account name and the commit author name and email. Check these before committing; the project cannot remove them afterwards.
+- Pages load fonts from Google Fonts, so readers' browsers contact Google.
 
-### Content Contributions
-- Use provided templates exactly
-- Cite primary sources whenever possible
-- Maintain neutral, evidence-based language
-- Include archive URLs for web sources
-
-### Review Process
-1. **Automated checks** pass (CI/CD pipeline)
-2. **Content schema validation** succeeds
-3. **Manual review** for constitutional compliance
-4. **Merge** after approval
-
----
-
-## DEPLOYMENT ARCHITECTURE
-
-### GitHub Actions Workflow
-```yaml
-# .github/workflows/deploy.yml
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-      - run: npm ci
-      - run: npm run build
-      - run: npm run check-sources
-```
-
-### Static Site Generation
-- **Output**: Pure HTML/CSS/JS (no server required)
-- **CDN Ready**: Optimized for global distribution
-- **Secure**: No database or server-side processing
-
-### Hosting Options
-- **Primary**: GitHub Pages (free, integrated)
-- **Alternative**: Cloudflare Pages (better performance)
-- **Future**: IPFS/Arweave for permanent archival
-
----
-
-## SECURITY CONSIDERATIONS
-
-### Content Integrity
-- **Git history** provides tamper-evident audit trail
-- **Schema validation** prevents structural corruption
-- **Source archiving** preserves evidence availability
-
-### Contributor Safety
-- **No user accounts** required (GitHub-based)
-- **Anonymous contributions** possible via forks
-- **Decentralized hosting** options for resilience
-
-### Operational Security
-- **Static sites** minimize attack surface
-- **No user data** collection or storage
-- **Open source** code for transparency
-
----
-
-*This document serves as the technical foundation for contributors to understand and extend the Parallaxin platform while maintaining constitutional compliance.*
+See [SECURITY.md](../SECURITY.md) for reporting vulnerabilities.

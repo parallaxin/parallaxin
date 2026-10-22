@@ -1,4 +1,28 @@
 # PARALLAXIN — Project Status
+
+## Current status — 22 October 2026
+
+**Published records: none.** The site now shows a record only after it passes editorial review and the evidence gate. Until then a record stays out of the live site and can be previewed locally with `npm run dev` in `site/`.
+
+| Record | Editorial status | Issues blocking publication (`npm run check:evidence -- --record ID`) |
+|---|---|---|
+| CA-2026-0001 — claim autopsy | under review | 9: missing or untimestamped archive links, a `[SOURCE NEEDED]` note |
+| ACT-2026-0001 — actor | draft | 24, mostly `[SOURCE NEEDED]` |
+| ACT-2026-0002 — actor | draft | 18, mostly `[SOURCE NEEDED]` |
+| CON-2025-0001 — conflict | draft | 40: `[SOURCE NEEDED]` markers, and references to three actor records and two autopsies not yet written |
+
+Known source problems (`npm run lint:links`, 22 October 2026):
+- Broken (HTTP 404): the White House archive page on ending US participation in the JCPOA, cited in CON-2025-0001 and ACT-2026-0002.
+- Several government and news sites refuse automated requests (HTTP 403/429). Those links need checking by hand.
+
+Next: complete the evidence review of CA-2026-0001 as the first record to publish.
+
+How the gates work: [architecture overview](8-architecture.md#publication-and-evidence-gates). What changed: [CHANGELOG](../CHANGELOG.md).
+
+The March 2026 snapshot below is kept as history. Its checked items are not a current verification; in particular, the records it lists as live are no longer published.
+
+---
+
 ## As of 2026-03-07 ~01:20 UTC
 
 ---
@@ -141,7 +165,7 @@ Archive — auto-submit valid URLs to archive.ph and write the archive URL back 
 
 1. **Actor-Behavior Gap is the product** — not timelines, not news
 2. **Claim Autopsy is the shareable unit** — what citizens read and share
-3. **Schema enforces constitution** — Tier 4 unrepresentable by design
+3. **Gates enforce the constitution** — the evidence gate blocks publication of Tier 4 sources, unsourced claims and unarchived sources
 4. **Evidence color system** — green=documented, amber=inference, red=gap
 5. **No framing by omission** — Article 3.4, start dates are editorial acts
 6. **Forkability is the anti-capture mechanism** — not governance committees

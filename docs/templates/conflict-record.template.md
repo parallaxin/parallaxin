@@ -16,9 +16,9 @@ contributors: []                              # Git commit hashes — auto-popul
 ## IDENTIFICATION
 
 name: ""                                      # [REQUIRED] Factual name — no framing labels
-status: ""                                    # [REQUIRED] active / concluded / frozen
+status: ""                                    # [REQUIRED] Conflict lifecycle: active / ceasefire / ended / frozen
 start_date: "YYYY-MM-DD"                      # [REQUIRED] First documented military/armed event
-end_date: "YYYY-MM-DD"                        # [IF CONCLUDED]
+end_date: "YYYY-MM-DD"                        # [IF ENDED]
 geography: []                                 # [REQUIRED] Countries/regions directly involved
 
 # FRAMING NOTE:
@@ -158,13 +158,13 @@ economic_cost:
 # Autopsies are first-class records — they live in their own files.
 # This is the index.
 
-claim_autopsies: []                           # List of CA record IDs e.g. [CA-2026-0001, CA-2026-0002]
+autopsies: []                                 # List of CA record IDs e.g. [CA-2026-0001, CA-2026-0002]
 
 ---
 
 ## RECORD STATUS
 
-status: "draft"                               # draft / under-review / published / contested
+editorial_status: "draft"                     # draft / under-review / published — approval, separate from the lifecycle `status` above
 contested: false
 contest_thread: ""
 review_notes: ""

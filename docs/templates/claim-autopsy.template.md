@@ -124,7 +124,7 @@ confidence_rationale: ""                      # [REQUIRED] Why
 
 ## RECORD STATUS
 
-status: "draft"                               # draft / under-review / published / contested
+status: "draft"                               # draft / under-review / published (published only after the evidence gate passes)
 contested: false
 contest_thread: ""
 review_notes: ""
