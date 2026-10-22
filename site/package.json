@@ -13,7 +13,8 @@
     "test": "vitest run",
     "test:ui": "vitest --ui",
     "test:e2e": "playwright test",
-    "test:routes": "node scripts/check-routes.mjs"
+    "test:routes": "node scripts/check-routes.mjs",
+    "check:evidence": "node scripts/check-evidence.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.2",
