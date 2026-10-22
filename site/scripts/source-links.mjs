@@ -1,7 +1,9 @@
 // Network checks for source and archive links. Reachability only:
 // a page that loads does not prove that it supports the claim.
 
-const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
+import { isWayback } from './evidence-rules.mjs';
+
+const USER_AGENT ='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 const MARKER = /\[(SOURCE|ARCHIVE) NEEDED[^\]]*\]/;
 const URL_IN_TEXT = /https?:\/\/[^\s\]"'<>]+/g;
 const WAYBACK_SNAPSHOT = /^https:\/\/web\.archive\.org\/web\/\d{14}\//;
@@ -78,7 +80,7 @@ export function archiveGaps(data) {
     if (typeof url !== 'string' || !/^https?:\/\//.test(url)) return;
     const archive = obj.source_archive_url;
     const usable = typeof archive === 'string' && /^https?:\/\//.test(archive)
-      && (!archive.includes('web.archive.org') || WAYBACK_SNAPSHOT.test(archive));
+      && (!isWayback(archive) || WAYBACK_SNAPSHOT.test(archive));
     if (!usable) gaps.push({ path, url });
   });
   return gaps;
