@@ -1,11 +1,12 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
+import { isEnglish } from '../../lib/records';
 
 export async function getStaticPaths() {
-  const actors = await getCollection('actors');
+  const actors = (await getCollection('actors')).filter(isEnglish);
   return actors.map((actor) => ({
-    params: { id: actor.id.replace('.md', '') },
+    params: { id: actor.id },
     props: { actor },
   }));
 }

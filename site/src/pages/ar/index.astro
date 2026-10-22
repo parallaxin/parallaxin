@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import RecordStatus from '../../components/RecordStatus.astro';
 import { getCollection } from 'astro:content';
+import { arabicOrEnglish, recordId } from '../../lib/records';
 import { t, getDirection } from '../../i18n/utils';
 
 const locale = 'ar';
@@ -12,18 +13,10 @@ const rawAutopsies = await getCollection('autopsies');
 const rawConflicts = await getCollection('conflicts', ({ data }) => data.status === 'active');
 const rawActors = await getCollection('actors');
 
-function preferArabic<T extends { id: string }>(items: T[]): T[] {
-  const english = items.filter(a => !a.id.replace('.md', '').endsWith('.ar'));
-  return english.map(entry => {
-    const baseId = entry.id.replace('.md', '');
-    const arEntry = items.find(a => a.id.replace('.md', '') === baseId + '.ar');
-    return arEntry || entry;
-  });
-}
 
-const allAutopsies = preferArabic(rawAutopsies);
-const allConflicts = preferArabic(rawConflicts);
-const allActors = preferArabic(rawActors);
+const allAutopsies = arabicOrEnglish(rawAutopsies).map((r) => r.entry);
+const allConflicts = arabicOrEnglish(rawConflicts).map((r) => r.entry);
+const allActors = arabicOrEnglish(rawActors).map((r) => r.entry);
 const base = import.meta.env.BASE_URL;
 ---
 
@@ -84,7 +77,7 @@ const base = import.meta.env.BASE_URL;
       ) : (
         <div class="card-grid">
           {allAutopsies.map((autopsy) => (
-            <a href={base + `ar/autopsies/${autopsy.id.replace('.md', '').replace('.ar', '')}`} class="card">
+            <a href={base + `ar/autopsies/${recordId(autopsy)}`} class="card">
               <div class="card-meta">
                 <span class="card-id">{autopsy.data.record_id}</span>
                 <RecordStatus status={autopsy.data.status} locale="ar" />
@@ -123,7 +116,7 @@ const base = import.meta.env.BASE_URL;
       ) : (
         <div class="card-grid">
           {allConflicts.map((conflict) => (
-            <a href={base + `ar/conflicts/${conflict.id.replace('.md', '').replace('.ar', '')}`} class="card">
+            <a href={base + `ar/conflicts/${recordId(conflict)}`} class="card">
               <div class="card-meta">
                 <span class="card-id">{conflict.data.record_id}</span>
                 <span class={`card-status card-status--${conflict.data.status}`}>
@@ -161,7 +154,7 @@ const base = import.meta.env.BASE_URL;
       ) : (
         <div class="card-grid">
           {allActors.map((actor) => (
-            <a href={base + `ar/actors/${actor.id.replace('.md', '').replace('.ar', '')}`} class="card">
+            <a href={base + `ar/actors/${recordId(actor)}`} class="card">
               <div class="card-meta">
                 <span class="card-id">{actor.data.record_id}</span>
                 <RecordStatus status={actor.data.status} locale="ar" />

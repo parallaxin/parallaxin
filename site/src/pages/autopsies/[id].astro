@@ -2,12 +2,13 @@
 import Base from '../../layouts/Base.astro';
 import RecordStatus from '../../components/RecordStatus.astro';
 import { getCollection, getEntry } from 'astro:content';
+import { isEnglish } from '../../lib/records';
 import { t, getDirection } from '../../i18n/utils';
 
 export async function getStaticPaths() {
-  const autopsies = await getCollection('autopsies');
+  const autopsies = (await getCollection('autopsies')).filter(isEnglish);
   return autopsies.map((autopsy) => ({
-    params: { id: autopsy.id.replace('.md', '') },
+    params: { id: autopsy.id },
     props: { autopsy },
   }));
 }

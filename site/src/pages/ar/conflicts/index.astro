@@ -1,5 +1,6 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { arabicOrEnglish, recordId } from '../../../lib/records';
 import Base from '../../../layouts/Base.astro';
 
 let allConflicts: CollectionEntry<'conflicts'>[] = [];
@@ -9,12 +10,7 @@ try {
   // Collection empty — expected during early build
 }
 // Prefer Arabic content, fall back to English. Never show duplicates.
-const englishEntries = allConflicts.filter(a => !a.id.replace('.md', '').endsWith('.ar'));
-const conflicts = englishEntries.map(entry => {
-  const baseId = entry.id.replace('.md', '');
-  const arabicEntry = allConflicts.find(a => a.id.replace('.md', '') === baseId + '.ar');
-  return arabicEntry || entry;
-});
+const conflicts = arabicOrEnglish(allConflicts).map((r) => r.entry);
 const locale = 'ar';
 const base = import.meta.env.BASE_URL;
 ---
@@ -44,7 +40,7 @@ const base = import.meta.env.BASE_URL;
     ) : (
       <div style="display: flex; flex-direction: column; gap: 1rem;">
         {conflicts.map((conflict) => (
-          <a href={base + 'ar/conflicts/' + conflict.id.replace('.md', '').replace('.ar', '')}
+          <a href={base + 'ar/conflicts/' + recordId(conflict)}
              style="display: block; padding: 1.25rem; border: 1px solid var(--color-border); background: var(--color-surface); text-decoration: none; color: inherit;"
              class="card-link">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">

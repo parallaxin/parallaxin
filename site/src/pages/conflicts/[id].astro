@@ -1,11 +1,12 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
+import { isEnglish } from '../../lib/records';
 
 export async function getStaticPaths() {
-  const conflicts = await getCollection('conflicts');
+  const conflicts = (await getCollection('conflicts')).filter(isEnglish);
   return conflicts.map((conflict) => ({
-    params: { id: conflict.id.replace('.md', '') },
+    params: { id: conflict.id },
     props: { conflict },
   }));
 }

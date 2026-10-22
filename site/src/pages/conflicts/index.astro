@@ -1,10 +1,11 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { isEnglish } from '../../lib/records';
 import Base from '../../layouts/Base.astro';
 
 let conflicts: CollectionEntry<'conflicts'>[] = [];
 try {
-  conflicts = (await getCollection('conflicts')).filter(a => !a.id.replace('.md', '').endsWith('.ar'));
+  conflicts = (await getCollection('conflicts')).filter(isEnglish);
 } catch (e) {
   // Collection empty — expected during early build
 }
