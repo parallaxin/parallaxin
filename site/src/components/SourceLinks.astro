@@ -1,0 +1,50 @@
+---
+// Original source link plus its archived copy. Readers need the archive
+// when the original moves or disappears; a missing archive is shown, not hidden.
+interface Props {
+  item?: {
+    source_url?: string;
+    source_description?: string;
+    source_archive_url?: string;
+  };
+  locale?: 'en' | 'ar';
+}
+
+const { item = {}, locale = 'en' } = Astro.props;
+
+const isHttp = (value?: string) => !!value && /^https?:\/\//i.test(value.trim());
+const text = {
+  en: { source: 'Source', archive: 'Archived copy', noArchive: 'No archived copy yet', noSource: 'Source not yet linked' },
+  ar: { source: 'المصدر', archive: 'نسخة مؤرشفة', noArchive: 'لا توجد نسخة مؤرشفة بعد', noSource: 'لم يُربط المصدر بعد' },
+}[locale];
+const label = item.source_description || text.source;
+---
+
+<span class="source-links">
+  {isHttp(item.source_url)
+    ? <a href={item.source_url} target="_blank" rel="noopener" class="source-link">{label} ↗</a>
+    : <span class="source-missing">{label} · {text.noSource}</span>}
+  {isHttp(item.source_url) && (isHttp(item.source_archive_url)
+    ? <a href={item.source_archive_url} target="_blank" rel="noopener" class="source-link source-link--archive">{text.archive} ↗</a>
+    : <span class="source-missing">{text.noArchive}</span>)}
+</span>
+
+<style>
+  .source-links {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    align-items: baseline;
+  }
+  .source-link {
+    font-size: 0.8rem;
+    color: var(--color-documented);
+    text-decoration: none;
+  }
+  .source-link:hover { text-decoration: underline; }
+  .source-link--archive { color: var(--color-text-secondary); }
+  .source-missing {
+    font-size: 0.75rem;
+    color: var(--color-inference);
+  }
+</style>

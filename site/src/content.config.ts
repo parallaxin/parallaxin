@@ -27,6 +27,7 @@ const evidenceItemSchema = z.object({
   source_description: z.string(),
   source_url: z.string(),
   source_archive_url: z.string().default('[ARCHIVE NEEDED]'),
+  source_archive_verified: z.coerce.string().optional(),  // date the snapshot was confirmed to load
   source_tier: z.string(),  // "Tier 1", "Tier 2", "Tier 3"
   credibility_note: z.string().optional(),
 });
@@ -39,6 +40,7 @@ const beneficiarySchema = z.object({
   source_description: z.string().optional(),
   source_url: z.string().optional(),
   source_archive_url: z.string().default('[ARCHIVE NEEDED]'),
+  source_archive_verified: z.coerce.string().optional(),  // date the snapshot was confirmed to load
   source_tier: z.string().optional(),
 });
 
@@ -74,6 +76,7 @@ const autopsies = defineCollection({
       source_description: z.string().optional(),
       source_url: z.string().optional(),
       source_archive_url: z.string().default('[ARCHIVE NEEDED]'),
+      source_archive_verified: z.coerce.string().optional(),  // date the snapshot was confirmed to load
       source_tier: z.string().optional(),
     }),
 
