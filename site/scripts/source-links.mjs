@@ -92,17 +92,32 @@ export function snapshotFromSave(url, location) {
   return ts ? `https://web.archive.org/web/${ts}/${url}` : null;
 }
 
+/** Latest successful capture in a Wayback CDX JSON response, or null. */
+export function snapshotFromCdx(url, rows) {
+  const last = Array.isArray(rows) && rows.length > 1 ? rows[rows.length - 1] : null;
+  return last && /^\d{14}$/.test(last[0]) ? `https://web.archive.org/web/${last[0]}/${url}` : null;
+}
+
 /**
  * Asks the Wayback Machine to save `url`, then confirms the snapshot loads.
  * Returns the snapshot URL, or null. A save response alone is not proof.
+ * The save response often names no snapshot, so the capture index is checked too.
  */
-export async function archiveUrl(url, { fetchImpl = fetch } = {}) {
+export async function archiveUrl(url, { fetchImpl = fetch, cdxDelayMs = 30000 } = {}) {
   const res = await fetchImpl(`https://web.archive.org/save/${url}`, {
     redirect: 'manual',
     headers: { 'User-Agent': USER_AGENT },
     signal: AbortSignal.timeout(60000),
   });
-  const snapshot = snapshotFromSave(url, res.headers.get('location') ?? res.headers.get('content-location'));
+  let snapshot = snapshotFromSave(url, res.headers.get('location') ?? res.headers.get('content-location'));
+  if (!snapshot) {
+    await new Promise((r) => setTimeout(r, cdxDelayMs)); // let the index catch up
+    const cdx = await fetchImpl(
+      `https://web.archive.org/cdx/search/cdx?url=${encodeURIComponent(url)}&output=json&limit=-1&filter=statuscode:200&fl=timestamp`,
+      { headers: { 'User-Agent': USER_AGENT }, signal: AbortSignal.timeout(60000) },
+    );
+    snapshot = cdx.ok ? snapshotFromCdx(url, await cdx.json()) : null;
+  }
   if (!snapshot) return null;
   const check = await checkUrl(snapshot, { timeout: 30000, fetchImpl });
   return check.result === 'ok' ? snapshot : null;

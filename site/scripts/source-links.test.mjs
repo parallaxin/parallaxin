@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import http from 'node:http';
-import { classify, checkUrl, collectLinks, archiveGaps, snapshotFromSave } from './source-links.mjs';
+import { classify, checkUrl, collectLinks, archiveGaps, snapshotFromSave, snapshotFromCdx } from './source-links.mjs';
 
 let server;
 let base;
@@ -72,6 +72,13 @@ describe('archives', () => {
       e: { source_url: '[SOURCE NEEDED]' },
     };
     expect(archiveGaps(data).map(g => g.path)).toEqual([['a'], ['b'], ['c']]);
+  });
+
+  it('reads the latest capture from a CDX index response', () => {
+    const rows = [['timestamp'], ['20251231001647'], ['20261022084048']];
+    expect(snapshotFromCdx('https://x.example', rows)).toBe('https://web.archive.org/web/20261022084048/https://x.example');
+    expect(snapshotFromCdx('https://x.example', [['timestamp']])).toBeNull();
+    expect(snapshotFromCdx('https://x.example', [])).toBeNull();
   });
 
   it('builds a snapshot URL only from a timestamped save location', () => {

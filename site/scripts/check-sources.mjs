@@ -3,6 +3,8 @@
 // --strict  also exit 1 when a server refuses automated access (unverified)
 // --fix     archive sources that lack a snapshot, after confirming the
 //           snapshot loads; writes the snapshot URL and the check date
+// --only <text>     check only files whose path contains <text>
+// --delay <seconds> wait between archive requests (default 15)
 // Structural rules (markers, tiers, references) live in check-evidence.mjs.
 import { readdir, readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
@@ -12,14 +14,20 @@ import { checkUrl, collectLinks, archiveGaps, archiveUrl, pathLabel } from './so
 const CONTENT_DIR = 'src/content';
 const FIX_MODE = process.argv.includes('--fix');
 const STRICT = process.argv.includes('--strict');
+const option = (name) => (process.argv.includes(name) ? process.argv[process.argv.indexOf(name) + 1] : undefined);
+const ONLY = option('--only');
+const DELAY_MS = Number(option('--delay') ?? 15) * 1000;
 const FRONT_MATTER = /^(﻿?---\r?\n)([\s\S]*?)(\r?\n---)/;
 
 const files = (await readdir(CONTENT_DIR, { withFileTypes: true, recursive: true }))
   .filter(e => e.isFile() && /\.mdx?$/.test(e.name))
-  .map(e => join(e.parentPath, e.name));
+  .map(e => join(e.parentPath, e.name))
+  .filter(f => !ONLY || f.replace(/\\/g, '/').includes(ONLY));
 
 const stats = { ok: 0, unverified: 0, broken: 0, parseErrors: 0, archived: 0 };
 const cache = new Map();
+const snapshots = new Map(); // source URL -> snapshot URL or null, one save request per URL
+let requests = 0;
 const today = new Date().toISOString().slice(0, 10);
 
 console.log(`\nPARALLAXIN SOURCE CHECKER (${FIX_MODE ? 'fix' : 'report'} mode)\n`);
@@ -51,8 +59,13 @@ for (const file of files) {
   if (FIX_MODE) {
     let changed = false;
     for (const gap of archiveGaps(data)) {
-      if (cache.get(gap.url)?.result !== 'ok') continue;
-      const snapshot = await archiveUrl(gap.url).catch(() => null);
+      // A 403 to us does not mean the archive is refused; only skip dead links.
+      if (cache.get(gap.url)?.result === 'broken') continue;
+      if (!snapshots.has(gap.url)) {
+        if (requests++) await new Promise(r => setTimeout(r, DELAY_MS)); // Wayback rate limit
+        snapshots.set(gap.url, await archiveUrl(gap.url).catch(() => null));
+      }
+      const snapshot = snapshots.get(gap.url);
       if (!snapshot) {
         console.log(`  [NOT SAVED]  ${pathLabel(gap.path)} ${gap.url}`);
         continue;
@@ -62,10 +75,9 @@ for (const file of files) {
       changed = true;
       stats.archived++;
       console.log(`  [ARCHIVED]   ${pathLabel(gap.path)} ${snapshot}`);
-      await new Promise(r => setTimeout(r, 15000)); // Wayback rate limit
     }
     if (changed) {
-      const yaml = String(doc).replace(/\n$/, '');
+      const yaml = doc.toString({ lineWidth: 0 }).replace(/\n$/, '');
       await writeFile(file, raw.replace(FRONT_MATTER, (_, open, _body, close) => open + yaml + close), 'utf8');
     }
   }
