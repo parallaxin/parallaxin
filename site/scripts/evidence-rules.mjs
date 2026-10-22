@@ -84,6 +84,16 @@ export function publicationProblems(type, data, body = '') {
 
   for (const marker of markers(body)) problems.push(`body: contains ${marker}`);
 
+  // Sources cited inside the sequence text must carry an archived copy on the same line.
+  if (typeof data.sequence === 'string') {
+    data.sequence.split('\n').forEach((line, i) => {
+      const urls = line.match(/https?:\/\/[^\s)]+/g) ?? [];
+      const sources = urls.filter((u) => !isWayback(u) && !/^https?:\/\/archive\.(ph|today|is)\//.test(u));
+      const archived = urls.some((u) => WAYBACK_SNAPSHOT.test(u) || /^https?:\/\/archive\.(ph|today|is)\//.test(u));
+      if (sources.length && !archived) problems.push(`sequence line ${i + 1}: source link without an archived copy`);
+    });
+  }
+
   if (type === 'autopsies') {
     checkSourced(data.the_claim, 'the_claim', problems, { archive: true });
     for (const side of ['supporting', 'contradicting']) {
