@@ -12,7 +12,8 @@
     "lint:links": "node scripts/check-sources.mjs",
     "test": "vitest run",
     "test:ui": "vitest --ui",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:routes": "node scripts/check-routes.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.2",

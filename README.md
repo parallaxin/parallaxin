@@ -49,6 +49,7 @@ A lens for documenting the gap between what powerful actors say and what they do
    npm run check     # Astro type check
    npm run test      # Vitest unit tests
    npm run test:e2e  # Playwright E2E tests
+   npm run test:routes  # Language routes in dist/ (after build)
    ```
 6. **Submit** a Pull Request with your changes.
 

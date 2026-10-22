@@ -1,5 +1,6 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { arabicOrEnglish, recordId } from '../../../lib/records';
 import Base from '../../../layouts/Base.astro';
 import RecordStatus from '../../../components/RecordStatus.astro';
 
@@ -10,12 +11,7 @@ try {
   // Collection empty — expected during early build
 }
 // Prefer Arabic content, fall back to English
-const englishEntries = allActors.filter(a => !a.id.replace('.md', '').endsWith('.ar'));
-const actors = englishEntries.map(entry => {
-  const baseId = entry.id.replace('.md', '');
-  const arabicEntry = allActors.find(a => a.id.replace('.md', '') === baseId + '.ar');
-  return arabicEntry || entry;
-});
+const actors = arabicOrEnglish(allActors).map((r) => r.entry);
 const locale = 'ar';
 const base = import.meta.env.BASE_URL;
 ---
@@ -40,7 +36,7 @@ const base = import.meta.env.BASE_URL;
     ) : (
       <div style="display: flex; flex-direction: column; gap: 1rem;">
         {actors.map((actor) => (
-          <a href={base + 'ar/actors/' + actor.id.replace('.md', '').replace('.ar', '')}
+          <a href={base + 'ar/actors/' + recordId(actor)}
              style="display: block; padding: 1.25rem; border: 1px solid var(--color-border); background: var(--color-surface); text-decoration: none; color: inherit;"
              class="card-link">
             <div style="display: flex; justify-content: space-between; align-items: center;">

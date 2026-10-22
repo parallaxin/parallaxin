@@ -2,30 +2,15 @@
 import Base from '../../../layouts/Base.astro';
 import RecordStatus from '../../../components/RecordStatus.astro';
 import { getCollection } from 'astro:content';
+import { arabicOrEnglish, recordId } from '../../../lib/records';
 import { t, getDirection } from '../../../i18n/utils';
 
 export async function getStaticPaths() {
   const allAutopsies = await getCollection('autopsies');
-  // Get base entries (English — no .ar suffix)
-  const englishEntries = allAutopsies.filter(a => {
-    const cleanId = a.id.replace('.md', '');
-    return !cleanId.endsWith('.ar');
-  });
-
-  return englishEntries.map((entry) => {
-    const baseId = entry.id.replace('.md', '');
-    // Look for Arabic version
-    const arabicEntry = allAutopsies.find(a =>
-      a.id.replace('.md', '') === baseId + '.ar'
-    );
-    return {
-      params: { id: baseId },
-      props: {
-        entry: arabicEntry || entry,
-        isTranslated: !!arabicEntry
-      },
-    };
-  });
+  return arabicOrEnglish(allAutopsies).map(({ entry, isTranslated }) => ({
+    params: { id: recordId(entry) },
+    props: { entry, isTranslated },
+  }));
 }
 
 const { entry, isTranslated } = Astro.props;
