@@ -43,11 +43,15 @@ You want to write or edit a Claim Autopsy, Actor Record, or Conflict Record dire
 3. Use the templates in `docs/templates/` as your starting structure
 4. Every factual claim needs a source URL and a tier rating
 5. Every inference must be labeled `[INFERENCE]` — never disguised as fact
-6. Submit a pull request
+6. Keep `status: "draft"` (conflicts: `editorial_status`) until review. Only `published` records appear on the site.
+7. Check your record: in `site/`, run `npm run check:evidence -- --record CA-2026-0001` (with your record ID) to list what still blocks publication, and `npm run dev` to preview it
+8. Submit a pull request
 
 **Your PR will be reviewed against:**
 - [ ] Every claim has a source URL
-- [ ] Every source has a tier rating
+- [ ] Every source has a tier rating (Tier 1–3)
+- [ ] Every web source has an archived snapshot (a timestamped Wayback Machine link or archive.ph)
+- [ ] `npm run check:evidence` passes once the record is marked `published`
 - [ ] Every inference is labeled
 - [ ] No identity labels (Article 3.1) — describe acts, not identities
 - [ ] No editorializing — facts in sequence, reader concludes
@@ -89,8 +93,20 @@ The site is built with [Astro 7](https://astro.build/). To run locally:
 ```bash
 cd site
 npm ci
-npm run dev
+npm run dev        # local preview, including unpublished records
 ```
+
+Before opening a pull request, run the same checks as CI:
+
+```bash
+npm run check            # type check
+npm test                 # unit tests
+npm run check:evidence   # Evidence Standard gate for published records
+npm run build
+npm run test:routes      # one page per published record and language
+```
+
+`npm run lint:links` checks every source and archive link over the network. It is not part of CI, because live sites change and block automated requests.
 
 Code is MIT licensed. Content is CC-BY 4.0.
 

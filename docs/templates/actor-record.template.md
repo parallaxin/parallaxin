@@ -113,7 +113,7 @@ personal_interests:
 
 ## RECORD STATUS
 
-status: "draft"                               # draft / under-review / published / contested
+status: "draft"                               # draft / under-review / published (published only after the evidence gate passes)
 contested: false                              # true if any claim in this record is under dispute
 contest_thread: ""                            # Link to public dispute thread if contested
 review_notes: ""                              # Internal notes for reviewers — removed before publication

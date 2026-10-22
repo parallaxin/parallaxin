@@ -8,6 +8,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Publication and evidence gates
+
+The live site now shows only records that have passed editorial review. No record is published yet, so the next deploy will show the site pages without records until the first one passes review.
+
+### Added
+- **Publication gate**: production builds include only records whose editorial status is `published`. The local dev server shows every record under a "local preview" banner.
+- **`editorial_status` for conflicts**, separate from the conflict lifecycle `status` (active, ceasefire, ended, frozen).
+- **Evidence gate** (`npm run check:evidence`): fails when a published record has a source tier other than Tier 1–3, a non-http(s) link, a missing source or archive link, a Wayback link without a snapshot timestamp, a `[SOURCE NEEDED]`/`[ARCHIVE NEEDED]` marker, or a reference to a record that does not exist. `--record ID` lists what still blocks a draft.
+- **Route check** (`npm run test:routes`): one English and one Arabic page per published record, none for unpublished records.
+- **Archived copies and disputes on autopsy pages**: each source shows its archived copy, or says none exists yet; contested records show a notice with a link to the dispute.
+- **CI on pull requests**: type check, unit tests, evidence gate, build and route check run on every pull request and push. Only a passing run on `main` deploys.
+
+### Changed
+- **Source checker** (`npm run lint:links`): HTTP 401/403/429 is now "unverified", not valid. It also checks archive links and links inside `sources` lists, and fails on unparseable files. `--fix` saves a timestamped Wayback snapshot, and only after the snapshot loads.
+- Install from the lockfile with `npm ci` in `site/`. The unused root dependencies were removed.
+- Records link to each other by record ID; links to unpublished records render as plain text.
+- Documentation: architecture overview rewritten to match the code; contribution guide and record templates updated.
+
+### Fixed
+- Arabic translations no longer get an extra page under the English routes (e.g. `/actors/ACT-2026-0001.ar/`).
+- Conflict pages linked to claim autopsies with a lower-cased ID.
+- `astro check` passes (23 type errors fixed).
+- Garbled characters in the English and Farsi draft notice strings.
+
 ---
 
 ## [0.3.0] — 2026-03-10

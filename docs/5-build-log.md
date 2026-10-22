@@ -857,3 +857,28 @@ Site: https://parallaxin.github.io/parallaxin/
 Repo: https://github.com/parallaxin/parallaxin
 Constitution (what governs it): https://parallaxin.github.io/parallaxin/constitution
 ```
+---
+
+### Part 13: Publication and evidence gates (2026-10-22)
+
+A review of the live site found that records in draft or under review were shown as if they were findings, and that several "enforced" rules were not enforced in code. This round fixed the build and put gates in front of publication. Details are in the [CHANGELOG](../CHANGELOG.md) and the [architecture overview](8-architecture.md#publication-and-evidence-gates).
+
+#### Build and routing
+- Clean install from `site/package-lock.json`; added `@astrojs/check`. `astro check` went from 23 errors to 0.
+- Arabic translation files were generating extra pages under the English routes. Language selection now goes through `site/src/lib/records.ts`, and `npm run test:routes` checks the built site.
+
+#### Publication
+- Production builds show published records only; `npm run dev` shows everything under a preview banner.
+- Conflicts gained `editorial_status`; their `status` remains the conflict lifecycle.
+- Result: the live site will show no records until the first one is approved.
+
+#### Evidence
+- `npm run check:evidence` turns the Evidence Standard into checks that block publication: Tier 1–3 only, http(s) sources, timestamped archive snapshots, no `[SOURCE NEEDED]` markers, existing references.
+- `npm run lint:links` now reports refused requests (403/429) as unverified instead of valid, and only writes a Wayback snapshot after confirming it loads.
+
+#### CI
+- Pull requests and pushes run type check, unit tests (40), evidence gate, build and route check. Only a passing run on `main` deploys.
+
+#### Not yet done
+- Visual check in a browser and the Playwright suite were not run in this round.
+- Records still need their evidence reviewed; CA-2026-0001 is next.
