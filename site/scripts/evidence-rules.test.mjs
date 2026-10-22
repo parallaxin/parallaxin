@@ -66,6 +66,19 @@ describe('publicationProblems', () => {
     expect(problems(autopsy([source({ source_archive_url: 'https://web.archive.org.evil.example/x' })]))).toEqual([]);
   });
 
+  it('requires an archived copy for links in the sequence', () => {
+    const sequence = [
+      'Source: https://example.org/a',
+      'Source: https://example.org/b (archived: https://web.archive.org/web/20260101000000/https://example.org/b)',
+      'Source: https://example.org/c (archived: https://web.archive.org/web/https://example.org/c)',
+      'No link here.',
+    ].join('\n');
+    expect(problems(autopsy([source()], { sequence }))).toEqual([
+      'sequence line 1: source link without an archived copy',
+      'sequence line 3: source link without an archived copy',
+    ]);
+  });
+
   it('rejects duplicate evidence IDs', () => {
     expect(problems(autopsy([source(), source()]))).toContain('the_evidence: duplicate evidence_id E1');
   });
