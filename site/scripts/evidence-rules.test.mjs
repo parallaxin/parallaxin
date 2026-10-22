@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseRecord, publicationProblems, integrityProblems, references } from './evidence-rules.mjs';
+import { parseRecord, publicationProblems, integrityProblems, references, isWayback } from './evidence-rules.mjs';
 
 const source = (extra = {}) => ({
   evidence_id: 'E1',
@@ -57,6 +57,13 @@ describe('publicationProblems', () => {
   it('rejects a Wayback link without a snapshot timestamp', () => {
     expect(problems(autopsy([source({ source_archive_url: 'https://web.archive.org/web/https://example.org/doc' })]))).toContain(
       'the_evidence.contradicting[0].source_archive_url: Wayback link has no snapshot timestamp');
+  });
+
+  it('treats only the web.archive.org host as Wayback', () => {
+    expect(isWayback('https://web.archive.org/web/https://x.example')).toBe(true);
+    expect(isWayback('https://web.archive.org.evil.example/web/https://x.example')).toBe(false);
+    expect(isWayback('https://evil.example/web.archive.org/x')).toBe(false);
+    expect(problems(autopsy([source({ source_archive_url: 'https://web.archive.org.evil.example/x' })]))).toEqual([]);
   });
 
   it('rejects duplicate evidence IDs', () => {

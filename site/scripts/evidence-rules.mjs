@@ -32,6 +32,14 @@ export function isHttpUrl(value) {
   }
 }
 
+export function isWayback(value) {
+  try {
+    return new URL(value).hostname === 'web.archive.org';
+  } catch {
+    return false;
+  }
+}
+
 function present(value) {
   return typeof value === 'string' && value.trim() !== '';
 }
@@ -60,7 +68,7 @@ export function publicationProblems(type, data, body = '') {
     for (const marker of found) problems.push(`${path}: contains ${marker}`);
     if ((key.endsWith('_url') || key === 'contest_thread') && present(value) && !found.length) {
       if (!isHttpUrl(value)) problems.push(`${path}: not an http(s) URL`);
-      else if (key === 'source_archive_url' && value.includes('web.archive.org') && !WAYBACK_SNAPSHOT.test(value)) {
+      else if (key === 'source_archive_url' && isWayback(value) && !WAYBACK_SNAPSHOT.test(value)) {
         problems.push(`${path}: Wayback link has no snapshot timestamp`);
       }
     }
